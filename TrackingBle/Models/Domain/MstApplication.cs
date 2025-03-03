@@ -74,5 +74,7 @@ namespace TrackingBle.Models.Domain
         public int ApplicationStatus { get; set; }
 
         public virtual ICollection<MstIntegration> Integrations { get; set; } = new List<MstIntegration>();
+
+    
     }
 }

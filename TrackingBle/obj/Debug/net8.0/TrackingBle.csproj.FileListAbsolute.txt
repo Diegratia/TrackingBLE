@@ -153,3 +153,4 @@
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.pdb
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.genruntimeconfig.cache
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/ref/TrackingBle.dll
+/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.sourcelink.json

@@ -1,0 +1,96 @@
+using System;
+using Microsoft.EntityFrameworkCore;
+using TrackingBle.Models.Domain;
+
+namespace TrackingBle.Data
+{
+    public class TrackingBleDbContext : DbContext
+    {
+        public TrackingBleDbContext(DbContextOptions<TrackingBleDbContext> dbContextOptions) 
+            : base(dbContextOptions) { }
+
+        public DbSet<MstAccessCctv> MstAccessCctvs { get; set; }
+        public DbSet<MstApplication> MstApplications { get; set; }
+        public DbSet<MstIntegration> MstIntegrations { get; set; }
+
+        public DbSet<MstAccessControl> MstAccessControls { get; set; } 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<MstApplication>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasMaxLength(32)
+                    .IsRequired();
+            });
+
+            modelBuilder.Entity<MstIntegration>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasMaxLength(32)
+                    .IsRequired();
+                
+                entity.Property(e => e.ApplicationId)
+                    .HasMaxLength(32)
+                    .IsRequired();
+
+                entity.HasOne(m => m.Application)
+                    .WithMany(a => a.Integrations)
+                    .HasForeignKey(m => m.ApplicationId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<MstAccessCctv>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasMaxLength(32)
+                    .IsRequired();
+                
+                entity.Property(e => e.IntegrationId)
+                    .HasMaxLength(32) // Matches MstIntegration.Id
+                    .IsRequired();
+                
+                entity.Property(e => e.ApplicationId)
+                    .HasMaxLength(32) // Matches MstApplication.Id
+                    .IsRequired();
+
+                entity.HasOne(m => m.Integration) // Singular, not Integrations
+                    .WithMany()
+                    .HasForeignKey(m => m.IntegrationId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasOne(m => m.Application)
+                    .WithMany()
+                    .HasForeignKey(m => m.ApplicationId)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            modelBuilder.Entity<MstAccessControl>(entity =>
+            {
+                entity.Property(e => e.Id)
+                    .HasMaxLength(32)
+                    .IsRequired();
+                
+                entity.Property(e => e.IntegrationId)
+                    .HasMaxLength(32)
+                    .IsRequired();
+                
+                entity.Property(e => e.ApplicationId)
+                    .HasMaxLength(32)
+                    .IsRequired();
+
+                entity.HasOne(m => m.Integration)
+                    .WithMany()
+                    .HasForeignKey(m => m.IntegrationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(m => m.Application)
+                    .WithMany()
+                    .HasForeignKey(m => m.ApplicationId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+        }
+    }
+}

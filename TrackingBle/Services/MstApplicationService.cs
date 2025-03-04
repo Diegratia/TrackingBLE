@@ -45,6 +45,8 @@ namespace TrackingBle.Services
                 .ToListAsync();
         }
 
+        
+
         public async Task<MstApplicationDto> GetApplicationByIdAsync(Guid id)
         {
             return await _context.MstApplications

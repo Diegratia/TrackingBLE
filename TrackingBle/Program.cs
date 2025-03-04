@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data; 
+using TrackingBle.MappingProfiles;
 using TrackingBle.Services;
 
 
@@ -7,7 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+// Tambahkan AutoMapper ke DI
+builder.Services.AddAutoMapper(typeof(MstApplicationProfile));
+builder.Services.AddAutoMapper(typeof(MstIntegrationProfile));
+builder.Services.AddAutoMapper(typeof(MstAccessCctvProfile));
+
 builder.Services.AddControllers();
+// Tambahkan konfigurasi lain seperti DbContext
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -21,6 +28,7 @@ builder.Services.AddDbContext<TrackingBleDbContext>(options =>
 builder.Services.AddScoped<IMstAreaService, MstAreaService>();
 builder.Services.AddScoped<IMstApplicationService, MstApplicationService>();
 builder.Services.AddScoped<IMstIntegrationService, MstIntegrationService>();
+builder.Services.AddScoped<IMstAccessCctvService, MstAccessCctvService>();
 var app = builder.Build();
 
 

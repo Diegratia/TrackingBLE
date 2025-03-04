@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstIntegrationDto; // Assuming this namespace
+using TrackingBle.Models.Dto.MstAccessCctvDto;
 using TrackingBle.Services;
 using System.Linq;
 
@@ -9,27 +9,27 @@ namespace TrackingBle.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MstIntegrationController : ControllerBase
+    public class MstAccessCctvController : ControllerBase
     {
-        private readonly IMstIntegrationService _mstIntegrationService;
+        private readonly IMstAccessCctvService _mstAccessCctvService;
 
-        public MstIntegrationController(IMstIntegrationService mstIntegrationService)
+        public MstAccessCctvController(IMstAccessCctvService mstAccessCctvService)
         {
-            _mstIntegrationService = mstIntegrationService;
+            _mstAccessCctvService = mstAccessCctvService;
         }
 
-        // GET: api/MstIntegration
+        // GET: api/MstAccessCctv
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var integrations = await _mstIntegrationService.GetAllAsync();
+                var accessCctvs = await _mstAccessCctvService.GetAllAsync();
                 return Ok(new
                 {
                     success = true,
-                    msg = "Integrations retrieved successfully",
-                    collection = new { data = integrations },
+                    msg = "Access CCTVs retrieved successfully",
+                    collection = new { data = accessCctvs },
                     code = 200
                 });
             }
@@ -45,19 +45,19 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // GET: api/MstIntegration/{id}
+        // GET: api/MstAccessCctv/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
-                var integration = await _mstIntegrationService.GetByIdAsync(id);
-                if (integration == null)
+                var accessCctv = await _mstAccessCctvService.GetByIdAsync(id);
+                if (accessCctv == null)
                 {
                     return NotFound(new
                     {
                         success = false,
-                        msg = "Integration not found",
+                        msg = "Access CCTV not found",
                         collection = new { data = (object)null },
                         code = 404
                     });
@@ -65,8 +65,8 @@ namespace TrackingBle.Controllers
                 return Ok(new
                 {
                     success = true,
-                    msg = "Integration retrieved successfully",
-                    collection = new { data = integration },
+                    msg = "Access CCTV retrieved successfully",
+                    collection = new { data = accessCctv },
                     code = 200
                 });
             }
@@ -82,9 +82,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // POST: api/MstIntegration
+        // POST: api/MstAccessCctv
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MstIntegrationCreateDto mstIntegrationDto)
+        public async Task<IActionResult> Create([FromBody] MstAccessCctvCreateDto mstAccessCctvDto)
         {
             if (!ModelState.IsValid)
             {
@@ -100,12 +100,12 @@ namespace TrackingBle.Controllers
 
             try
             {
-                var createdIntegration = await _mstIntegrationService.CreateAsync(mstIntegrationDto);
+                var createdAccessCctv = await _mstAccessCctvService.CreateAsync(mstAccessCctvDto);
                 return StatusCode(201, new
                 {
                     success = true,
-                    msg = "Integration created successfully",
-                    collection = new { data = createdIntegration },
+                    msg = "Access CCTV created successfully",
+                    collection = new { data = createdAccessCctv },
                     code = 201
                 });
             }
@@ -121,9 +121,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // PUT: api/MstIntegration/{id}
+        // PUT: api/MstAccessCctv/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MstIntegrationUpdateDto mstIntegrationDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] MstAccessCctvUpdateDto mstAccessCctvDto)
         {
             if (!ModelState.IsValid)
             {
@@ -139,11 +139,11 @@ namespace TrackingBle.Controllers
 
             try
             {
-                await _mstIntegrationService.UpdateAsync(id, mstIntegrationDto); // No var assignment
+                await _mstAccessCctvService.UpdateAsync(id, mstAccessCctvDto);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Integration updated successfully",
+                    msg = "Access CCTV updated successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });
@@ -153,7 +153,7 @@ namespace TrackingBle.Controllers
                 return NotFound(new
                 {
                     success = false,
-                    msg = "Integration not found",
+                    msg = "Access CCTV not found",
                     collection = new { data = (object)null },
                     code = 404
                 });
@@ -170,17 +170,17 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // DELETE: api/MstIntegration/{id}
+        // DELETE: api/MstAccessCctv/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                await _mstIntegrationService.DeleteAsync(id); // No var assignment
+                await _mstAccessCctvService.DeleteAsync(id);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Integration deleted successfully",
+                    msg = "Access CCTV deleted successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });
@@ -190,7 +190,7 @@ namespace TrackingBle.Controllers
                 return NotFound(new
                 {
                     success = false,
-                    msg = "Integration not found",
+                    msg = "Access CCTV not found",
                     collection = new { data = (object)null },
                     code = 404
                 });

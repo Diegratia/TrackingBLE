@@ -1,140 +1,62 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data;
+using TrackingBle.Models.Dto.MstIntegrationDto;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace TrackingBle.Services
 {
     public class MstIntegrationService : IMstIntegrationService
     {
         private readonly TrackingBleDbContext _context;
+        private readonly IMapper _mapper;
 
-        public MstIntegrationService(TrackingBleDbContext context)
+        public MstIntegrationService(TrackingBleDbContext context, IMapper mapper)
         {
             _context = context;
-        }
-
-        public async Task<IEnumerable<MstIntegrationDto>> GetAllAsync()
-        {
-            return await _context.MstIntegrations
-                .Select(i => new MstIntegrationDto
-                {
-                    Generate = i.Generate,
-                    Id = i.Id,
-                    BrandId = i.BrandId,
-                    IntegrationType = i.IntegrationType,
-                    ApiTypeAuth = i.ApiTypeAuth,
-                    ApiUrl = i.ApiUrl,
-                    ApiAuthUsername = i.ApiAuthUsername,
-                    ApiAuthPasswd = i.ApiAuthPasswd,
-                    ApiKeyField = i.ApiKeyField,
-                    ApiKeyValue = i.ApiKeyValue,
-                    ApplicationId = i.ApplicationId,
-                    CreatedBy = i.CreatedBy,
-                    CreatedAt = i.CreatedAt,
-                    UpdatedBy = i.UpdatedBy,
-                    UpdatedAt = i.UpdatedAt,
-                    Status = i.Status
-                })
-                .ToListAsync();
+            _mapper = mapper;
         }
 
         public async Task<MstIntegrationDto> GetByIdAsync(Guid id)
         {
-            return await _context.MstIntegrations
-                .Where(i => i.Id == id)
-                .Select(i => new MstIntegrationDto
-                {
-                    Generate = i.Generate,
-                    Id = i.Id,
-                    BrandId = i.BrandId,
-                    IntegrationType = i.IntegrationType,
-                    ApiTypeAuth = i.ApiTypeAuth,
-                    ApiUrl = i.ApiUrl,
-                    ApiAuthUsername = i.ApiAuthUsername,
-                    ApiAuthPasswd = i.ApiAuthPasswd,
-                    ApiKeyField = i.ApiKeyField,
-                    ApiKeyValue = i.ApiKeyValue,
-                    ApplicationId = i.ApplicationId,
-                    CreatedBy = i.CreatedBy,
-                    CreatedAt = i.CreatedAt,
-                    UpdatedBy = i.UpdatedBy,
-                    UpdatedAt = i.UpdatedAt,
-                    Status = i.Status
-                })
-                .FirstOrDefaultAsync();
+            var integration = await _context.MstIntegrations
+                .FirstOrDefaultAsync(i => i.Id == id);
+            return integration == null ? null : _mapper.Map<MstIntegrationDto>(integration);
         }
 
-        public async Task<MstIntegrationDto> CreateAsync(MstIntegrationDto dto)
+        public async Task<IEnumerable<MstIntegrationDto>> GetAllAsync()
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            var integrations = await _context.MstIntegrations.ToListAsync();
+            return _mapper.Map<IEnumerable<MstIntegrationDto>>(integrations);
+        }
 
-            var mstIntegration = new MstIntegration
-            {
-                Id = dto.Id == Guid.Empty ? Guid.NewGuid() : dto.Id,
-                Generate = dto.Generate, // Akan diatur oleh database
-                BrandId = dto.BrandId,
-                IntegrationType = dto.IntegrationType,
-                ApiTypeAuth = dto.ApiTypeAuth,
-                ApiUrl = dto.ApiUrl,
-                ApiAuthUsername = dto.ApiAuthUsername,
-                ApiAuthPasswd = dto.ApiAuthPasswd,
-                ApiKeyField = dto.ApiKeyField,
-                ApiKeyValue = dto.ApiKeyValue,
-                ApplicationId = dto.ApplicationId,
-                CreatedBy = dto.CreatedBy,
-                CreatedAt = dto.CreatedAt,
-                UpdatedBy = dto.UpdatedBy,
-                UpdatedAt = dto.UpdatedAt,
-                Status = dto.Status
-            };
-
-            _context.MstIntegrations.Add(mstIntegration);
+        public async Task<MstIntegrationDto> CreateAsync(MstIntegrationCreateDto createDto)
+        {
+            var integration = _mapper.Map<MstIntegration>(createDto);
+            _context.MstIntegrations.Add(integration);
             await _context.SaveChangesAsync();
-
-            // Update DTO dengan nilai yang dihasilkan
-            dto.Id = mstIntegration.Id;
-            dto.Generate = mstIntegration.Generate;
-            return dto;
+            return _mapper.Map<MstIntegrationDto>(integration);
         }
 
-        public async Task UpdateAsync(Guid id, MstIntegrationDto dto)
+        public async Task UpdateAsync(Guid id, MstIntegrationUpdateDto updateDto)
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
-            if (id != dto.Id) throw new ArgumentException("Id mismatch");
+            var integration = await _context.MstIntegrations.FindAsync(id);
+            if (integration == null)
+                throw new KeyNotFoundException("Integration not found");
 
-            var existingIntegration = await _context.MstIntegrations.FindAsync(id);
-            if (existingIntegration == null) throw new KeyNotFoundException("Integration not found");
-
-            // Update properties
-            existingIntegration.Generate = dto.Generate;
-            existingIntegration.BrandId = dto.BrandId;
-            existingIntegration.IntegrationType = dto.IntegrationType;
-            existingIntegration.ApiTypeAuth = dto.ApiTypeAuth;
-            existingIntegration.ApiUrl = dto.ApiUrl;
-            existingIntegration.ApiAuthUsername = dto.ApiAuthUsername;
-            existingIntegration.ApiAuthPasswd = dto.ApiAuthPasswd;
-            existingIntegration.ApiKeyField = dto.ApiKeyField;
-            existingIntegration.ApiKeyValue = dto.ApiKeyValue;
-            existingIntegration.ApplicationId = dto.ApplicationId;
-            existingIntegration.CreatedBy = dto.CreatedBy;
-            existingIntegration.CreatedAt = dto.CreatedAt;
-            existingIntegration.UpdatedBy = dto.UpdatedBy;
-            existingIntegration.UpdatedAt = dto.UpdatedAt;
-            existingIntegration.Status = dto.Status;
-
-            _context.MstIntegrations.Update(existingIntegration);
+            _mapper.Map(updateDto, integration);
+            _context.MstIntegrations.Update(integration);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
             var integration = await _context.MstIntegrations.FindAsync(id);
-            if (integration == null) throw new KeyNotFoundException("Integration not found");
+            if (integration == null)
+                throw new KeyNotFoundException("Integration not found");
 
             _context.MstIntegrations.Remove(integration);
             await _context.SaveChangesAsync();

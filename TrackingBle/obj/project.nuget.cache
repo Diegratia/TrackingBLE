@@ -1,10 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "8FKoaIcYKoU=",
+  "dgSpecHash": "3LN/DI5yejo=",
   "success": true,
   "projectFilePath": "/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/TrackingBle.csproj",
   "expectedPackageFiles": [
-    "/Users/developerpci/.nuget/packages/automapper/14.0.0/automapper.14.0.0.nupkg.sha512",
+    "/Users/developerpci/.nuget/packages/automapper/12.0.1/automapper.12.0.1.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/automapper.extensions.microsoft.dependencyinjection/12.0.1/automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/azure.core/1.38.0/azure.core.1.38.0.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/azure.identity/1.11.4/azure.identity.1.11.4.nupkg.sha512",
@@ -32,7 +32,7 @@
     "/Users/developerpci/.nuget/packages/microsoft.codeanalysis.csharp/4.5.0/microsoft.codeanalysis.csharp.4.5.0.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/microsoft.codeanalysis.csharp.workspaces/4.5.0/microsoft.codeanalysis.csharp.workspaces.4.5.0.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/microsoft.codeanalysis.workspaces.common/4.5.0/microsoft.codeanalysis.workspaces.common.4.5.0.nupkg.sha512",
-    "/Users/developerpci/.nuget/packages/microsoft.csharp/4.5.0/microsoft.csharp.4.5.0.nupkg.sha512",
+    "/Users/developerpci/.nuget/packages/microsoft.csharp/4.7.0/microsoft.csharp.4.7.0.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/microsoft.data.sqlclient/5.1.6/microsoft.data.sqlclient.5.1.6.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/microsoft.data.sqlclient.sni.runtime/5.1.1/microsoft.data.sqlclient.sni.runtime.5.1.1.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/microsoft.entityframeworkcore/8.0.13/microsoft.entityframeworkcore.8.0.13.nupkg.sha512",
@@ -119,16 +119,5 @@
     "/Users/developerpci/.nuget/packages/system.threading.tasks.extensions/4.5.4/system.threading.tasks.extensions.4.5.4.nupkg.sha512",
     "/Users/developerpci/.nuget/packages/system.windows.extensions/6.0.0/system.windows.extensions.6.0.0.nupkg.sha512"
   ],
-  "logs": [
-    {
-      "code": "NU1608",
-      "level": "Warning",
-      "warningLevel": 1,
-      "message": "Detected package version outside of dependency constraint: AutoMapper.Extensions.Microsoft.DependencyInjection 12.0.1 requires AutoMapper (= 12.0.1) but version AutoMapper 14.0.0 was resolved.",
-      "libraryId": "AutoMapper",
-      "targetGraphs": [
-        "net8.0"
-      ]
-    }
-  ]
+  "logs": []
 }

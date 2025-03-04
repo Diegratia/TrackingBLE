@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper; // Tambahkan namespace AutoMapper
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
@@ -12,118 +13,39 @@ namespace TrackingBle.Services
     public class MstApplicationService : IMstApplicationService
     {
         private readonly TrackingBleDbContext _context;
+        private readonly IMapper _mapper; // Tambahkan IMapper
 
-        public MstApplicationService(TrackingBleDbContext context)
+        public MstApplicationService(TrackingBleDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task<IEnumerable<MstApplicationDto>> GetAllApplicationsAsync()
         {
-            return await _context.MstApplications
-                .Select(a => new MstApplicationDto
-                {
-                    Id = a.Id,
-                    Generate = a.Generate,
-                    ApplicationName = a.ApplicationName,
-                    OrganizationType = a.OrganizationType,
-                    OrganizationAddress = a.OrganizationAddress,
-                    ApplicationType = a.ApplicationType,
-                    ApplicationRegistered = a.ApplicationRegistered,
-                    ApplicationExpired = a.ApplicationExpired,
-                    HostName = a.HostName,
-                    HostPhone = a.HostPhone,
-                    HostEmail = a.HostEmail,
-                    HostAddress = a.HostAddress,
-                    ApplicationCustomName = a.ApplicationCustomName,
-                    ApplicationCustomDomain = a.ApplicationCustomDomain,
-                    ApplicationCustomPort = a.ApplicationCustomPort,
-                    LicenseCode = a.LicenseCode,
-                    LicenseType = a.LicenseType,
-                    ApplicationStatus = a.ApplicationStatus
-                })
-                .ToListAsync();
+            var applications = await _context.MstApplications.ToListAsync();
+            return _mapper.Map<IEnumerable<MstApplicationDto>>(applications);
         }
-
-        
 
         public async Task<MstApplicationDto> GetApplicationByIdAsync(Guid id)
         {
-            return await _context.MstApplications
-                .Where(a => a.Id == id)
-                .Select(a => new MstApplicationDto
-                {
-                    Id = a.Id,
-                    Generate = a.Generate,
-                    ApplicationName = a.ApplicationName,
-                    OrganizationType = a.OrganizationType,
-                    OrganizationAddress = a.OrganizationAddress,
-                    ApplicationType = a.ApplicationType,
-                    ApplicationRegistered = a.ApplicationRegistered,
-                    ApplicationExpired = a.ApplicationExpired,
-                    HostName = a.HostName,
-                    HostPhone = a.HostPhone,
-                    HostEmail = a.HostEmail,
-                    HostAddress = a.HostAddress,
-                    ApplicationCustomName = a.ApplicationCustomName,
-                    ApplicationCustomDomain = a.ApplicationCustomDomain,
-                    ApplicationCustomPort = a.ApplicationCustomPort,
-                    LicenseCode = a.LicenseCode,
-                    LicenseType = a.LicenseType,
-                    ApplicationStatus = a.ApplicationStatus
-                })
-                .FirstOrDefaultAsync();
+            var application = await _context.MstApplications.FirstOrDefaultAsync(a => a.Id == id);
+            return _mapper.Map<MstApplicationDto>(application);
         }
 
         public async Task<MstApplicationDto> CreateApplicationAsync(MstApplicationCreateDto dto)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-            var application = new MstApplication
-            {
-                Id = Guid.NewGuid(),
-                ApplicationName = dto.ApplicationName,
-                OrganizationType = dto.OrganizationType,
-                OrganizationAddress = dto.OrganizationAddress,
-                ApplicationType = dto.ApplicationType,
-                ApplicationRegistered = dto.ApplicationRegistered,
-                ApplicationExpired = dto.ApplicationExpired,
-                HostName = dto.HostName,
-                HostPhone = dto.HostPhone,
-                HostEmail = dto.HostEmail,
-                HostAddress = dto.HostAddress,
-                ApplicationCustomName = dto.ApplicationCustomName,
-                ApplicationCustomDomain = dto.ApplicationCustomDomain,
-                ApplicationCustomPort = dto.ApplicationCustomPort,
-                LicenseCode = dto.LicenseCode,
-                LicenseType = dto.LicenseType,
-                ApplicationStatus = dto.ApplicationStatus
-            };
+            // Map dari DTO ke model
+            var application = _mapper.Map<MstApplication>(dto);
+            application.Id = Guid.NewGuid(); // Tetap hasilkan Id di server
 
             _context.MstApplications.Add(application);
             await _context.SaveChangesAsync();
 
-            return new MstApplicationDto
-            {
-                Id = application.Id,
-                Generate = application.Generate,
-                ApplicationName = application.ApplicationName,
-                OrganizationType = application.OrganizationType,
-                OrganizationAddress = application.OrganizationAddress,
-                ApplicationType = application.ApplicationType,
-                ApplicationRegistered = application.ApplicationRegistered,
-                ApplicationExpired = application.ApplicationExpired,
-                HostName = application.HostName,
-                HostPhone = application.HostPhone,
-                HostEmail = application.HostEmail,
-                HostAddress = application.HostAddress,
-                ApplicationCustomName = application.ApplicationCustomName,
-                ApplicationCustomDomain = application.ApplicationCustomDomain,
-                ApplicationCustomPort = application.ApplicationCustomPort,
-                LicenseCode = application.LicenseCode,
-                LicenseType = application.LicenseType,
-                ApplicationStatus = application.ApplicationStatus
-            };
+            // Map kembali ke DTO untuk respons
+            return _mapper.Map<MstApplicationDto>(application);
         }
 
         public async Task UpdateApplicationAsync(Guid id, MstApplicationUpdateDto dto)
@@ -136,23 +58,8 @@ namespace TrackingBle.Services
                 throw new KeyNotFoundException($"Application with ID {id} not found.");
             }
 
-            // Update hanya properti yang dikirim oleh klien
-            application.ApplicationName = dto.ApplicationName;
-            application.OrganizationType = dto.OrganizationType;
-            application.OrganizationAddress = dto.OrganizationAddress;
-            application.ApplicationType = dto.ApplicationType;
-            application.ApplicationRegistered = dto.ApplicationRegistered;
-            application.ApplicationExpired = dto.ApplicationExpired;
-            application.HostName = dto.HostName;
-            application.HostPhone = dto.HostPhone;
-            application.HostEmail = dto.HostEmail;
-            application.HostAddress = dto.HostAddress;
-            application.ApplicationCustomName = dto.ApplicationCustomName;
-            application.ApplicationCustomDomain = dto.ApplicationCustomDomain;
-            application.ApplicationCustomPort = dto.ApplicationCustomPort;
-            application.LicenseCode = dto.LicenseCode;
-            application.LicenseType = dto.LicenseType;
-            application.ApplicationStatus = dto.ApplicationStatus;
+            // Map dari DTO ke model yang sudah ada
+            _mapper.Map(dto, application);
 
             await _context.SaveChangesAsync();
         }

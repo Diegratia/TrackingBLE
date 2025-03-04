@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAutoMapper(typeof(MstApplicationProfile));
 builder.Services.AddAutoMapper(typeof(MstIntegrationProfile));
 builder.Services.AddAutoMapper(typeof(MstAccessCctvProfile));
+builder.Services.AddAutoMapper(typeof(MstAccessControlProfile));
+builder.Services.AddAutoMapper(typeof(MstAreaProfile));
 
 builder.Services.AddControllers();
 // Tambahkan konfigurasi lain seperti DbContext
@@ -29,6 +31,8 @@ builder.Services.AddScoped<IMstAreaService, MstAreaService>();
 builder.Services.AddScoped<IMstApplicationService, MstApplicationService>();
 builder.Services.AddScoped<IMstIntegrationService, MstIntegrationService>();
 builder.Services.AddScoped<IMstAccessCctvService, MstAccessCctvService>();
+builder.Services.AddScoped<IMstAccessControlService, MstAccessControlService>();
+builder.Services.AddScoped<IMstAreaService, MstAreaService>();
 var app = builder.Build();
 
 

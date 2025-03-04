@@ -1,0 +1,22 @@
+namespace TrackingBle.Models.Dto.MstAccessControlDto
+{
+    public class MstAccessControlDto
+    {
+        public long Generate { get; set; }
+        public Guid Id { get; set; }
+        public string ControllerBrandId { get; set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Description { get; set; }
+        public string Channel { get; set; }
+        public string DoorId { get; set; }
+        public string Raw { get; set; }
+        public Guid IntegrationId { get; set; }
+        public Guid ApplicationId { get; set; }
+        public string CreatedBy { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedBy { get; set; }
+        public long UpdatedAt { get; set; }
+        public int Status { get; set; }
+    }
+}

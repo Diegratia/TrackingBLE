@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto;
+using TrackingBle.Models.Dto.MstAreaDto;
 
 namespace TrackingBle.Services
 {
     public interface IMstAreaService
     {
-        Task<IEnumerable<MstAreaDto>> GetAllAsync();
         Task<MstAreaDto> GetByIdAsync(Guid id);
-        Task<MstAreaDto> CreateAsync(MstAreaDto dto);
-        Task UpdateAsync(Guid id, MstAreaDto dto);
+        Task<IEnumerable<MstAreaDto>> GetAllAsync();
+        Task<MstAreaDto> CreateAsync(MstAreaCreateDto createDto);
+        Task UpdateAsync(Guid id, MstAreaUpdateDto updateDto);
         Task DeleteAsync(Guid id);
     }
 }

@@ -1,16 +1,14 @@
-using System;
 
-namespace TrackingBle.Models.Dto
+
+namespace TrackingBle.Models.Dto.MstAreaDto
 {
-    public class MstAreaDto
+    public class MstAreaCreateDto
     {
-        public int Generate { get; set; }
-        public Guid Id { get; set; }
         public Guid FloorId { get; set; }
         public string Name { get; set; }
         public string AreaShape { get; set; }
         public string ColorArea { get; set; }
-        public string RestrictedStatus { get; set; } // Bisa diubah ke enum jika perlu
+        public RestrictedStatus RestrictedStatus { get; set; }
         public string EngineAreaId { get; set; }
         public long WideArea { get; set; }
         public long PositionPxX { get; set; }
@@ -21,4 +19,6 @@ namespace TrackingBle.Models.Dto
         public DateTime UpdatedAt { get; set; }
         public int Status { get; set; }
     }
+
+
 }

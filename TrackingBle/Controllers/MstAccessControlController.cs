@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstAreaDto;
+using TrackingBle.Models.Dto.MstAccessControlDto;
 using TrackingBle.Services;
 using System.Linq;
 
@@ -9,27 +9,27 @@ namespace TrackingBle.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MstAreaController : ControllerBase
+    public class MstAccessControlController : ControllerBase
     {
-        private readonly IMstAreaService _mstAreaService;
+        private readonly IMstAccessControlService _mstAccessControlService;
 
-        public MstAreaController(IMstAreaService mstAreaService)
+        public MstAccessControlController(IMstAccessControlService mstAccessControlService)
         {
-            _mstAreaService = mstAreaService;
+            _mstAccessControlService = mstAccessControlService;
         }
 
-        // GET: api/MstArea
+        // GET: api/MstAccessControl
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var areas = await _mstAreaService.GetAllAsync();
+                var accessControls = await _mstAccessControlService.GetAllAsync();
                 return Ok(new
                 {
                     success = true,
-                    msg = "Areas retrieved successfully",
-                    collection = new { data = areas },
+                    msg = "Access Controls retrieved successfully",
+                    collection = new { data = accessControls },
                     code = 200
                 });
             }
@@ -45,19 +45,19 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // GET: api/MstArea/{id}
+        // GET: api/MstAccessControl/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
-                var area = await _mstAreaService.GetByIdAsync(id);
-                if (area == null)
+                var accessControl = await _mstAccessControlService.GetByIdAsync(id);
+                if (accessControl == null)
                 {
                     return NotFound(new
                     {
                         success = false,
-                        msg = "Area not found",
+                        msg = "Access Control not found",
                         collection = new { data = (object)null },
                         code = 404
                     });
@@ -65,8 +65,8 @@ namespace TrackingBle.Controllers
                 return Ok(new
                 {
                     success = true,
-                    msg = "Area retrieved successfully",
-                    collection = new { data = area },
+                    msg = "Access Control retrieved successfully",
+                    collection = new { data = accessControl },
                     code = 200
                 });
             }
@@ -82,9 +82,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // POST: api/MstArea
+        // POST: api/MstAccessControl
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MstAreaCreateDto mstAreaDto)
+        public async Task<IActionResult> Create([FromBody] MstAccessControlCreateDto mstAccessControlDto)
         {
             if (!ModelState.IsValid)
             {
@@ -100,12 +100,12 @@ namespace TrackingBle.Controllers
 
             try
             {
-                var createdArea = await _mstAreaService.CreateAsync(mstAreaDto);
+                var createdAccessControl = await _mstAccessControlService.CreateAsync(mstAccessControlDto);
                 return StatusCode(201, new
                 {
                     success = true,
-                    msg = "Area created successfully",
-                    collection = new { data = createdArea },
+                    msg = "Access Control created successfully",
+                    collection = new { data = createdAccessControl },
                     code = 201
                 });
             }
@@ -121,9 +121,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // PUT: api/MstArea/{id}
+        // PUT: api/MstAccessControl/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MstAreaUpdateDto mstAreaDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] MstAccessControlUpdateDto mstAccessControlDto)
         {
             if (!ModelState.IsValid)
             {
@@ -139,11 +139,11 @@ namespace TrackingBle.Controllers
 
             try
             {
-                await _mstAreaService.UpdateAsync(id, mstAreaDto);
+                await _mstAccessControlService.UpdateAsync(id, mstAccessControlDto);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Area updated successfully",
+                    msg = "Access Control updated successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });
@@ -153,7 +153,7 @@ namespace TrackingBle.Controllers
                 return NotFound(new
                 {
                     success = false,
-                    msg = "Area not found",
+                    msg = "Access Control not found",
                     collection = new { data = (object)null },
                     code = 404
                 });
@@ -170,17 +170,17 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // DELETE: api/MstArea/{id}
+        // DELETE: api/MstAccessControl/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                await _mstAreaService.DeleteAsync(id);
+                await _mstAccessControlService.DeleteAsync(id);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Area deleted successfully",
+                    msg = "Access Control deleted successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });
@@ -190,7 +190,7 @@ namespace TrackingBle.Controllers
                 return NotFound(new
                 {
                     success = false,
-                    msg = "Area not found",
+                    msg = "Access Control not found",
                     collection = new { data = (object)null },
                     code = 404
                 });

@@ -55,11 +55,11 @@ namespace TrackingBle.Models.Domain
         Mutation
     }
 
-    public enum RestrictedStatus
-    {
-        Restrict,
-        NonRestrict
-    }
+    // public enum RestrictedStatus
+    // {
+    //     Restrict,
+    //     NonRestrict
+    // }
 
     public enum VisitorStatus
     {

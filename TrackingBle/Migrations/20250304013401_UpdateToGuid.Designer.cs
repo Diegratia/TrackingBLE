@@ -12,8 +12,8 @@ using TrackingBle.Data;
 namespace TrackingBle.Migrations
 {
     [DbContext(typeof(TrackingBleDbContext))]
-    [Migration("20250303070621_test migrations")]
-    partial class testmigrations
+    [Migration("20250304013401_UpdateToGuid")]
+    partial class UpdateToGuid
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,14 +27,14 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstAccessCctv", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -50,10 +50,9 @@ namespace TrackingBle.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
 
-                    b.Property<string>("IntegrationId")
-                        .IsRequired()
+                    b.Property<Guid>("IntegrationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -86,14 +85,14 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstAccessControl", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Channel")
                         .IsRequired()
@@ -123,12 +122,14 @@ namespace TrackingBle.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<long>("Generate")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
-                    b.Property<string>("IntegrationId")
-                        .IsRequired()
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
+
+                    b.Property<Guid>("IntegrationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -164,9 +165,10 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstApplication", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ApplicationCustomDomain")
                         .IsRequired()
@@ -202,7 +204,10 @@ namespace TrackingBle.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("Generate")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
 
                     b.Property<string>("HostAddress")
                         .IsRequired()
@@ -248,9 +253,10 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstArea", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AreaShape")
                         .IsRequired()
@@ -274,10 +280,9 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("FloorId")
-                        .IsRequired()
+                    b.Property<Guid>("FloorId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Generate")
                         .ValueGeneratedOnAdd()
@@ -285,8 +290,8 @@ namespace TrackingBle.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Generate"));
 
-                    b.Property<string>("MstFloorId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("MstFloorId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -327,14 +332,14 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstBleReader", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BrandId")
-                        .IsRequired()
+                    b.Property<Guid>("BrandId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -402,12 +407,16 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstBrand", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Generate")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Generate"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -429,14 +438,14 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstDepartment", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -487,14 +496,14 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstDistrict", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -545,9 +554,10 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstFloor", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BuildingId")
                         .IsRequired()
@@ -611,9 +621,10 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstIntegration", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("ApiAuthPasswd")
                         .IsRequired()
@@ -643,10 +654,9 @@ namespace TrackingBle.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BrandId")
                         .IsRequired()
@@ -662,7 +672,10 @@ namespace TrackingBle.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.Property<int>("Generate")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Generate"));
 
                     b.Property<string>("IntegrationType")
                         .IsRequired()
@@ -686,18 +699,18 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstMember", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
@@ -720,15 +733,13 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("DepartmentId")
-                        .IsRequired()
+                    b.Property<Guid>("DepartmentId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DistrictId")
-                        .IsRequired()
+                    b.Property<Guid>("DistrictId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -769,24 +780,23 @@ namespace TrackingBle.Migrations
                     b.Property<DateTime>("JoinDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("MstDepartmentId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("MstDepartmentId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("MstDistrictId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("MstDistrictId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("MstOrganizationId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("MstOrganizationId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("OrganizationId")
-                        .IsRequired()
+                    b.Property<Guid>("OrganizationId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PersonId")
                         .IsRequired()
@@ -844,14 +854,14 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstOrganization", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Code")
                         .IsRequired()
@@ -902,17 +912,17 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.TrackingTransaction", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("AlarmStatus")
                         .HasColumnType("int");
 
-                    b.Property<string>("AreaId")
-                        .IsRequired()
+                    b.Property<Guid>("AreaId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Battery")
                         .HasColumnType("bigint");
@@ -932,16 +942,15 @@ namespace TrackingBle.Migrations
                     b.Property<decimal>("CoordinateY")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("MstAreaId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("MstAreaId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("MstBleReaderId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("MstBleReaderId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("ReaderId")
-                        .IsRequired()
+                    b.Property<Guid>("ReaderId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("TransTime")
                         .HasColumnType("datetime2");
@@ -961,18 +970,18 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.Visitor", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Address")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ApplicationId")
-                        .IsRequired()
+                    b.Property<Guid>("ApplicationId")
                         .HasMaxLength(32)
-                        .HasColumnType("nvarchar(32)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("BleCardNumber")
                         .IsRequired()
@@ -1115,14 +1124,14 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.VisitorBlacklistArea", b =>
                 {
-                    b.Property<string>("Id")
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("AreaId")
-                        .IsRequired()
+                    b.Property<Guid>("AreaId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Generate")
                         .ValueGeneratedOnAdd()
@@ -1130,16 +1139,15 @@ namespace TrackingBle.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
 
-                    b.Property<string>("MstAreaId")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("MstAreaId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("VisitorId")
-                        .IsRequired()
+                    b.Property<Guid>("VisitorId")
                         .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("VisitorId1")
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid?>("VisitorId1")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 

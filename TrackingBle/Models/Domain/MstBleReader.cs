@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,16 +7,16 @@ namespace TrackingBle.Models.Domain
 {
     public class MstBleReader
     {
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Generate { get; set; }
 
         [Key]
-        [StringLength(255)]
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        [StringLength(255)]
-        public string BrandId { get; set; }
+        [ForeignKey("Brand")]
+        public Guid BrandId { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -62,7 +63,6 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int Status { get; set; }
 
-        [ForeignKey("BrandId")]
         public virtual MstBrand Brand { get; set; }
 
         public virtual ICollection<TrackingTransaction> TrackingTransactions { get; set; } = new List<TrackingTransaction>();

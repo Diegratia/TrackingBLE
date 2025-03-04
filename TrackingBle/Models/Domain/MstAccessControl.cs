@@ -1,77 +1,70 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Threading.Tasks;
 
 namespace TrackingBle.Models.Domain
 {
-
-
     public class MstAccessControl
     {
-        [Key]
-        [StringLength(32)]
-        public string Id { get; set; }
-        
         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Generate { get; set; }
-        
+
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         [Required]
         [StringLength(255)]
-        public string ControllerBrandId { get; set; }
-        
+        public string ControllerBrandId { get; set; } // Ubah ke Guid jika ada relasi
+
         [Required]
         [StringLength(255)]
         public string Name { get; set; }
-        
+
         [Required]
         [StringLength(255)]
         public string Type { get; set; }
-        
+
         [Required]
         public string Description { get; set; }
-        
+
         [Required]
         [StringLength(255)]
         public string Channel { get; set; }
-        
+
         [Required]
         [StringLength(255)]
-        public string DoorId { get; set; }
-        
+        public string DoorId { get; set; } // Ubah ke Guid jika ada relasi
+
         [Required]
         public string Raw { get; set; }
-        
+
         [Required]
-        [StringLength(32)]
-        public string IntegrationId { get; set; }
-        
+        [ForeignKey("Integration")]
+        public Guid IntegrationId { get; set; }
+
         [Required]
-        [StringLength(32)]
-        public string ApplicationId { get; set; }
-        
+        [ForeignKey("Application")]
+        public Guid ApplicationId { get; set; }
+
         [Required]
         [StringLength(255)]
         public string CreatedBy { get; set; }
-        
+
         [Required]
         public DateTime CreatedAt { get; set; }
-        
+
         [Required]
-        public DateTime UpdatedBy { get; set; }
-        
+        public DateTime UpdatedBy { get; set; } // Sesuai database, tapi nama membingungkan
+
         [Required]
         public long UpdatedAt { get; set; }
-        
+
         [Required]
         public int Status { get; set; }
 
-        [ForeignKey("ApplicationId")]
         public virtual MstApplication Application { get; set; }
-        
-        [ForeignKey("IntegrationId")]
+
         public virtual MstIntegration Integration { get; set; }
     }
 }

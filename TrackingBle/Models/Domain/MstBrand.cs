@@ -10,11 +10,12 @@ namespace TrackingBle.Models.Domain
 {
     public class MstBrand
     {
-        [Key]
-        public string Id { get; set; }
-        
         [Required]
-        public int Generate { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Generate { get; set; } 
+
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid(); 
         
         [Required]
         [StringLength(255)]

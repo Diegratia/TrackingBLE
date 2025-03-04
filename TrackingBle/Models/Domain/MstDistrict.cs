@@ -9,12 +9,12 @@ namespace TrackingBle.Models.Domain
 {
     public class MstDistrict
     {
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Generate { get; set; }
+        public int Generate { get; set; } 
 
         [Key]
-        [StringLength(255)]
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid(); 
 
         [Required]
         [StringLength(255)]
@@ -29,8 +29,8 @@ namespace TrackingBle.Models.Domain
         public string DistrictHost { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string ApplicationId { get; set; }
+        [ForeignKey("ApplicationId")]
+        public Guid ApplicationId { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -49,7 +49,7 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int Status { get; set; }
 
-        [ForeignKey("ApplicationId")]
+     
         public virtual MstApplication Application { get; set; }
 
         public virtual ICollection<MstMember> Members { get; set; } = new List<MstMember>();

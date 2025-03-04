@@ -1,21 +1,22 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Collections.Generic;
 
 namespace TrackingBle.Models.Domain
 {
     public class MstArea
     {
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Generate { get; set; }
 
         [Key]
-        [StringLength(255)]
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        [StringLength(255)]
-        public string FloorId { get; set; }
+        [ForeignKey("Floor")]
+        public Guid FloorId { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -56,15 +57,21 @@ namespace TrackingBle.Models.Domain
         public string UpdatedBy { get; set; }
 
         [Required]
-        public DateTime UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; } // Tetap DateTime, sesuaikan penggunaan
 
         [Required]
         public int Status { get; set; }
 
-        [ForeignKey("FloorId")]
         public virtual MstFloor Floor { get; set; }
 
         public virtual ICollection<VisitorBlacklistArea> BlacklistAreas { get; set; } = new List<VisitorBlacklistArea>();
         public virtual ICollection<TrackingTransaction> TrackingTransactions { get; set; } = new List<TrackingTransaction>();
     }
+
+        public enum RestrictedStatus
+    {
+        Restrict,
+        NonRestrict // Matches "non-restrict" in database
+    }
+
 }

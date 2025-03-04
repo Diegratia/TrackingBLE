@@ -7,22 +7,21 @@ namespace TrackingBle.Models.Domain
     public class TrackingTransaction
     {
         [Key]
-        [StringLength(255)]
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         public DateTime TransTime { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string ReaderId { get; set; }
+        [ForeignKey("Reader")]
+        public Guid ReaderId { get; set; }
 
         [Required]
         public long CardId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string AreaId { get; set; }
+        [ForeignKey("Area")]
+        public Guid AreaId { get; set; }
 
         [Required]
         public decimal CoordinateX { get; set; }
@@ -42,10 +41,8 @@ namespace TrackingBle.Models.Domain
         [Required]
         public long Battery { get; set; }
 
-        [ForeignKey("ReaderId")]
         public virtual MstBleReader Reader { get; set; }
 
-        [ForeignKey("AreaId")]
         public virtual MstArea Area { get; set; }
     }
 }

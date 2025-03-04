@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackingBle.Migrations
 {
     /// <inheritdoc />
-    public partial class testmigrations : Migration
+    public partial class UpdateToGuid : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,8 +15,9 @@ namespace TrackingBle.Migrations
                 name: "MstApplications",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    Generate = table.Column<long>(type: "bigint", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
+                    Generate = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     OrganizationType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OrganizationAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -43,8 +44,9 @@ namespace TrackingBle.Migrations
                 name: "MstBrands",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Generate = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
+                    Generate = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Tag = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
@@ -58,7 +60,7 @@ namespace TrackingBle.Migrations
                 name: "MstFloors",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BuildingId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -85,13 +87,13 @@ namespace TrackingBle.Migrations
                 name: "MstDepartments",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DepartmentHost = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -112,13 +114,13 @@ namespace TrackingBle.Migrations
                 name: "MstDistricts",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DistrictHost = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -139,8 +141,9 @@ namespace TrackingBle.Migrations
                 name: "MstIntegrations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    Generate = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
+                    Generate = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     BrandId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     IntegrationType = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApiTypeAuth = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -149,7 +152,7 @@ namespace TrackingBle.Migrations
                     ApiAuthPasswd = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ApiKeyField = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ApiKeyValue = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<long>(type: "bigint", nullable: false),
@@ -170,13 +173,13 @@ namespace TrackingBle.Migrations
                 name: "MstOrganizations",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     OrganizationHost = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -197,7 +200,7 @@ namespace TrackingBle.Migrations
                 name: "Visitors",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PersonId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -212,7 +215,7 @@ namespace TrackingBle.Migrations
                     FaceImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UploadFr = table.Column<int>(type: "int", nullable: false),
                     UploadFrError = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     RegisteredDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     VisitorArrival = table.Column<DateTime>(type: "datetime2", nullable: false),
                     VisitorEnd = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -247,10 +250,10 @@ namespace TrackingBle.Migrations
                 name: "MstBleReaders",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BrandId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    BrandId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Mac = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Ip = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -279,10 +282,10 @@ namespace TrackingBle.Migrations
                 name: "MstAreas",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FloorId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    FloorId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     AreaShape = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ColorArea = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -296,7 +299,7 @@ namespace TrackingBle.Migrations
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    MstFloorId = table.Column<string>(type: "nvarchar(255)", nullable: true)
+                    MstFloorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -317,7 +320,7 @@ namespace TrackingBle.Migrations
                 name: "MstAccessCctvs",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     Generate = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -326,8 +329,8 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IntegrationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    IntegrationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -349,8 +352,9 @@ namespace TrackingBle.Migrations
                 name: "MstAccessControls",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Generate = table.Column<long>(type: "bigint", nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
+                    Generate = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     ControllerBrandId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Type = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -358,8 +362,8 @@ namespace TrackingBle.Migrations
                     Channel = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     DoorId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Raw = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IntegrationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    IntegrationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -385,13 +389,13 @@ namespace TrackingBle.Migrations
                 name: "MstMembers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PersonId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    OrganizationId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DepartmentId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    DistrictId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    OrganizationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
+                    DepartmentId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
+                    DistrictId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     IdentityId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CardNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     BleCardNumber = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
@@ -408,16 +412,16 @@ namespace TrackingBle.Migrations
                     ExitDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     HeadMember1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     HeadMember2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ApplicationId = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 32, nullable: false),
                     StatusEmployee = table.Column<int>(type: "int", nullable: false),
                     CreatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    MstDepartmentId = table.Column<string>(type: "nvarchar(255)", nullable: true),
-                    MstDistrictId = table.Column<string>(type: "nvarchar(255)", nullable: true),
-                    MstOrganizationId = table.Column<string>(type: "nvarchar(255)", nullable: true)
+                    MstDepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MstDistrictId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MstOrganizationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -463,19 +467,19 @@ namespace TrackingBle.Migrations
                 name: "TrackingTransactions",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     TransTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ReaderId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ReaderId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     CardId = table.Column<long>(type: "bigint", nullable: false),
-                    AreaId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    AreaId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     CoordinateX = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CoordinateY = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CoordinatePxX = table.Column<long>(type: "bigint", nullable: false),
                     CoordinatePxY = table.Column<long>(type: "bigint", nullable: false),
                     AlarmStatus = table.Column<int>(type: "int", nullable: false),
                     Battery = table.Column<long>(type: "bigint", nullable: false),
-                    MstAreaId = table.Column<string>(type: "nvarchar(255)", nullable: true),
-                    MstBleReaderId = table.Column<string>(type: "nvarchar(255)", nullable: true)
+                    MstAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    MstBleReaderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -506,13 +510,13 @@ namespace TrackingBle.Migrations
                 name: "VisitorBlacklistAreas",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
                     Generate = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AreaId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    VisitorId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    MstAreaId = table.Column<string>(type: "nvarchar(255)", nullable: true),
-                    VisitorId1 = table.Column<string>(type: "nvarchar(255)", nullable: true)
+                    AreaId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
+                    VisitorId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
+                    MstAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    VisitorId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {

@@ -1,18 +1,18 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
 
 namespace TrackingBle.Models.Domain
 {
     public class MstDepartment
     {
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Generate { get; set; } 
+        public int Generate { get; set; } // Diubah ke int
 
-        [Key] 
-        [StringLength(255)]
-        public string Id { get; set; }
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         [StringLength(255)]
@@ -27,8 +27,8 @@ namespace TrackingBle.Models.Domain
         public string DepartmentHost { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string ApplicationId { get; set; }
+        [ForeignKey("Application")]
+        public Guid ApplicationId { get; set; } // Diubah ke Guid
 
         [Required]
         [StringLength(255)]
@@ -47,7 +47,6 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int Status { get; set; }
 
-        [ForeignKey("ApplicationId")]
         public virtual MstApplication Application { get; set; }
 
         public virtual ICollection<MstMember> Members { get; set; } = new List<MstMember>();

@@ -10,8 +10,7 @@ namespace TrackingBle.Models.Domain
         public long Generate { get; set; }
 
         [Key]
-        [StringLength(255)]
-        public string Id { get; set; }
+        public Guid Id { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -57,8 +56,8 @@ namespace TrackingBle.Models.Domain
         public string UploadFrError { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string ApplicationId { get; set; }
+        [ForeignKey("ApplicationId")]
+        public Guid ApplicationId { get; set; }
 
         [Required]
         public DateTime RegisteredDate { get; set; }
@@ -125,7 +124,6 @@ namespace TrackingBle.Models.Domain
         [Required]
         public VisitorStatus Status { get; set; }
 
-        [ForeignKey("ApplicationId")]
         public virtual MstApplication Application { get; set; }
 
         public virtual ICollection<VisitorBlacklistArea> BlacklistAreas { get; set; } = new List<VisitorBlacklistArea>();

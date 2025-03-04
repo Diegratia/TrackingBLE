@@ -9,12 +9,14 @@ namespace TrackingBle.Models.Domain
 {
     public class MstApplication
     {
-        [Key]
-        [StringLength(32)] // Explicitly set length
-        public string Id { get; set; }
-        
+
         [Required]
-        public long Generate { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long Generate { get; set; } 
+
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid(); 
+
         
         [Required]
         [StringLength(255)]

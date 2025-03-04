@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,28 +7,28 @@ namespace TrackingBle.Models.Domain
 {
     public class MstMember
     {
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public long Generate { get; set; }
 
         [Key]
-        [StringLength(255)]
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
         [StringLength(255)]
         public string PersonId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string OrganizationId { get; set; }
+        [ForeignKey("Organization")]
+        public Guid OrganizationId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string DepartmentId { get; set; }
+        [ForeignKey("Department")]
+        public Guid DepartmentId { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string DistrictId { get; set; }
+        [ForeignKey("District")]
+        public Guid DistrictId { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -62,8 +60,11 @@ namespace TrackingBle.Models.Domain
         public enum GenderEnum
         {
             Male,
-            Female
+            Female,
+            Other
         }
+
+        [Required]
         public string Address { get; set; }
 
         [Required]
@@ -93,16 +94,17 @@ namespace TrackingBle.Models.Domain
         public string HeadMember2 { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string ApplicationId { get; set; }
+        [ForeignKey("Application")]
+        public Guid ApplicationId { get; set; }
 
         [Required]
         public StatusEmployeeType StatusEmployee { get; set; }
 
-        public enum StatusEmployeeType {
-            Contract,
-            FullTime,
-            Intern
+        public enum StatusEmployeeType
+        {
+            Active,
+            NonActive,
+            Mutation
         }
 
         [Required]
@@ -122,16 +124,12 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int Status { get; set; }
 
-        [ForeignKey("ApplicationId")]
         public virtual MstApplication Application { get; set; }
 
-        [ForeignKey("OrganizationId")]
         public virtual MstOrganization Organization { get; set; }
 
-        [ForeignKey("DepartmentId")]
         public virtual MstDepartment Department { get; set; }
 
-        [ForeignKey("DistrictId")]
         public virtual MstDistrict District { get; set; }
     }
 }

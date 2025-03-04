@@ -10,12 +10,12 @@ namespace TrackingBle.Models.Domain
 
     public class MstIntegration
     {
-        [Key]
-        [StringLength(32)]
-        public string Id { get; set; }
+         [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Generate { get; set; } 
 
-        [Required]
-        public int Generate { get; set; }
+        [Key]
+        public Guid Id { get; set; } = Guid.NewGuid(); 
 
         [Required]
         [StringLength(255)]
@@ -47,8 +47,8 @@ namespace TrackingBle.Models.Domain
         public string ApiKeyValue { get; set; }
 
         [Required]
-        [StringLength(32)]
-        public string ApplicationId { get; set; }
+        [ForeignKey("ApplicationId")]  
+        public Guid ApplicationId { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -66,7 +66,6 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int Status { get; set; }
 
-        [ForeignKey("ApplicationId")]
         public virtual MstApplication Application { get; set; }
     }
 

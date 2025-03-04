@@ -6,25 +6,23 @@ namespace TrackingBle.Models.Domain
 {
     public class VisitorBlacklistArea
     {
+        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Generate { get; set; }
+        public long Generate { get; set; } 
 
         [Key]
-        [StringLength(255)]
-        public string Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid(); 
 
         [Required]
-        [StringLength(255)]
-        public string AreaId { get; set; }
-
-        [Required]
-        [StringLength(255)]
-        public string VisitorId { get; set; }
-
         [ForeignKey("AreaId")]
+        public Guid AreaId { get; set; }
+
+        [Required]
+        [ForeignKey("VisitorId")]
+        public Guid VisitorId { get; set; }
+
         public virtual MstArea Area { get; set; }
 
-        [ForeignKey("VisitorId")]
         public virtual Visitor Visitor { get; set; }
     }
 }

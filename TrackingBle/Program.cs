@@ -16,6 +16,9 @@ builder.Services.AddAutoMapper(typeof(MstAccessControlProfile));
 builder.Services.AddAutoMapper(typeof(MstAreaProfile));
 builder.Services.AddAutoMapper(typeof(MstBleReaderProfile));
 builder.Services.AddAutoMapper(typeof(MstBrandProfile));
+builder.Services.AddAutoMapper(typeof(MstDepartmentProfile));
+builder.Services.AddAutoMapper(typeof(MstDistrictProfile));
+builder.Services.AddAutoMapper(typeof(MstFloorProfile));
 
 builder.Services.AddControllers();
 // Tambahkan konfigurasi lain seperti DbContext
@@ -37,6 +40,9 @@ builder.Services.AddScoped<IMstAccessControlService, MstAccessControlService>();
 builder.Services.AddScoped<IMstAreaService, MstAreaService>();
 builder.Services.AddScoped<IMstBleReaderService, MstBleReaderService>();
 builder.Services.AddScoped<IMstBrandService, MstBrandService>();
+builder.Services.AddScoped<IMstDepartmentService, MstDepartmentService>();
+builder.Services.AddScoped<IMstDistrictService, MstDistrictService>();
+builder.Services.AddScoped<IMstFloorService, MstFloorService>();
 var app = builder.Build();
 
 

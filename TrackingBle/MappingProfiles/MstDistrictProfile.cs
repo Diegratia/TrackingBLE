@@ -1,0 +1,26 @@
+using AutoMapper;
+using TrackingBle.Models.Domain;
+using TrackingBle.Models.Dto.MstDistrictDto;
+
+namespace TrackingBle.MappingProfiles
+{
+    public class MstDistrictProfile : Profile
+    {
+        public MstDistrictProfile()
+        {
+            CreateMap<MstDistrict, MstDistrictDto>();
+            CreateMap<MstDistrictCreateDto, MstDistrict>()
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore()) // Diisi di service
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) // Diisi di service
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
+            CreateMap<MstDistrictUpdateDto, MstDistrict>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Generate, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) // Diisi di service
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
+        }
+    }
+}

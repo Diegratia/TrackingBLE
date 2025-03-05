@@ -35,11 +35,14 @@ namespace TrackingBle.Services
 
         public async Task<MstDepartmentDto> CreateAsync(MstDepartmentCreateDto createDto)
         {
-            // Set default "System" jika CreatedBy atau UpdatedBy tidak disediakan
-            createDto.CreatedBy ??= "System";
-            createDto.UpdatedBy ??= "System";
+            // Set default "System" 
 
             var department = _mapper.Map<MstDepartment>(createDto);
+
+            department.CreatedBy ??= "";
+            department.UpdatedBy ??= "";
+            department.Status = 1;
+
             _context.MstDepartments.Add(department);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstDepartmentDto>(department);
@@ -51,8 +54,8 @@ namespace TrackingBle.Services
             if (department == null)
                 throw new KeyNotFoundException("Department not found");
 
-            // Set default "System" jika UpdatedBy tidak disediakan
-            updateDto.UpdatedBy ??= "System";
+            // Set default "System"
+            department.UpdatedBy ??= "";
 
             _mapper.Map(updateDto, department);
             _context.MstDepartments.Update(department);
@@ -65,7 +68,9 @@ namespace TrackingBle.Services
             if (department == null)
                 throw new KeyNotFoundException("Department not found");
 
-            _context.MstDepartments.Remove(department);
+            department.Status = 0;
+
+            // _context.MstDepartments.Remove(department);
             await _context.SaveChangesAsync();
         }
     }

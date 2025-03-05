@@ -53,11 +53,11 @@ namespace TrackingBle.Data
                 entity.Property(e => e.OrganizationType)
                     .HasColumnType("nvarchar(255)")
                     .IsRequired()
-                    .HasDefaultValue(OrganizationType.Single) // Gunakan enum langsung
-                    .HasConversion(
-                        v => v.ToString().ToLower(), // Simpan ke DB sebagai "single"
-                        v => (OrganizationType)Enum.Parse(typeof(OrganizationType), v, true)
-                    );
+                    .HasDefaultValue(OrganizationType.Single); // Gunakan enum langsung
+                    // .HasConversion(
+                    //     v => v.ToString().ToLower(), // Simpan ke DB sebagai "single"
+                    //     v => (OrganizationType)Enum.Parse(typeof(OrganizationType), v, true)
+                    // );
                 entity.Property(e => e.ApplicationType)
                     .HasColumnType("nvarchar(255)")
                     .IsRequired()
@@ -73,7 +73,33 @@ namespace TrackingBle.Data
                         v => v.ToString().ToLower(),
                         v => (LicenseType)Enum.Parse(typeof(LicenseType), v, true)
                     );
+
+                entity.Property(e => e.ApplicationStatus)
+                    .IsRequired()
+                    .HasDefaultValue(1);   
             });
+
+            modelBuilder.Entity<MstApplication>()
+                .HasQueryFilter(m => m.ApplicationStatus != 0);
+            modelBuilder.Entity<MstIntegration>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstAccessControl>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstAccessCctv>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstArea>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstBleReader>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstBrand>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstDepartment>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstDistrict>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstFloor>()
+                .HasQueryFilter(m => m.Status != 0);
+
             // MstIntegration
             modelBuilder.Entity<MstIntegration>(entity =>
             {
@@ -104,6 +130,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.BrandId)
                     .OnDelete(DeleteBehavior.NoAction);
+                    
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);   
             });
 
             // MstAccessCctv
@@ -122,6 +152,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.ApplicationId)
                     .OnDelete(DeleteBehavior.NoAction);
+                
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1); 
             });
 
             // MstAccessControl
@@ -140,6 +174,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.IntegrationId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+                 entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);   
             });
 
             // MstBrand
@@ -158,6 +196,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.ApplicationId)
                     .OnDelete(DeleteBehavior.NoAction);
+                
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);  
             });
 
             // MstDepartment
@@ -170,6 +212,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.ApplicationId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+                 entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);  
             });
 
             // MstDistrict
@@ -182,6 +228,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.ApplicationId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);  
             });
 
             // MstMember
@@ -235,7 +285,10 @@ namespace TrackingBle.Data
             modelBuilder.Entity<MstFloor>(entity =>
             {
                 entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
-                entity.Property(e => e.BuildingId).HasMaxLength(255); // Tetap 255 karena bukan GUID
+                entity.Property(e => e.BuildingId).HasMaxLength(255);
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);   
             });
 
             // MstArea
@@ -255,6 +308,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.FloorId)
                     .OnDelete(DeleteBehavior.NoAction);
+
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);   
             });
 
             // Visitor
@@ -314,6 +371,11 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.BrandId)
                     .OnDelete(DeleteBehavior.NoAction);
+                    
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);
+                  
             });
 
             // TrackingTransaction

@@ -73,7 +73,7 @@ namespace TrackingBle.Models.Domain
         public LicenseType LicenseType { get; set; }
         
         [Required]
-        public int ApplicationStatus { get; set; }
+        public int? ApplicationStatus { get; set; } = 1;
 
        
         public virtual ICollection<MstIntegration> Integrations { get; set; } = new List<MstIntegration>();

@@ -8,10 +8,11 @@ namespace TrackingBle.MappingProfiles
     {
         public MstDistrictProfile()
         {
-            CreateMap<MstDistrict, MstDistrictDto>();
+            CreateMap<MstDistrict, MstDistrictDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
             CreateMap<MstDistrictCreateDto, MstDistrict>()
-                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore()) // Diisi di service
-                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) // Diisi di service
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore()) 
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) 
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
             CreateMap<MstDistrictUpdateDto, MstDistrict>()
@@ -19,7 +20,7 @@ namespace TrackingBle.MappingProfiles
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) // Diisi di service
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore()) 
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
         }
     }

@@ -8,6 +8,6 @@ namespace TrackingBle.Models.Dto.MstBrandDto
         public Guid Id { get; set; }
         public string Name { get; set; }
         public string Tag { get; set; }
-        public int Status { get; set; }
+        public int? Status { get; set; }
     }
 }

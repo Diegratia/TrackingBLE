@@ -8,14 +8,21 @@ namespace TrackingBle.MappingProfiles
     {
         public MstApplicationProfile()
         {
-            // Dari MstApplication ke MstApplicationDto (untuk GET)
-            CreateMap<MstApplication, MstApplicationDto>();
+            CreateMap<MstApplication, MstApplicationDto>()
+            .ForMember(dest => dest.ApplicationStatus, opt => opt.MapFrom(src => src.ApplicationStatus));
 
-            // Dari MstApplicationCreateDto ke MstApplication (untuk POST)
-            CreateMap<MstApplicationCreateDto, MstApplication>();
+            CreateMap<MstApplicationCreateDto, MstApplication>()
+              .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Generate, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationRegistered, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.ApplicationExpired, opt => opt.MapFrom(src => DateTime.Now));
 
-            // Dari MstApplicationUpdateDto ke MstApplication (untuk PUT)
-            CreateMap<MstApplicationUpdateDto, MstApplication>();
+            CreateMap<MstApplicationUpdateDto, MstApplication>()
+              .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Generate, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationRegistered, opt => opt.Ignore())
+                .ForMember(dest => dest.ApplicationExpired, opt => opt.MapFrom(src => DateTime.Now));
+
         }
     }
 }

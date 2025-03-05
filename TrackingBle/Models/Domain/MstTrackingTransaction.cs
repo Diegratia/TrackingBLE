@@ -14,7 +14,7 @@ namespace TrackingBle.Models.Domain
 
         [Required]
         [ForeignKey("Reader")]
-        public Guid ReaderId { get; set; }
+        public Guid ReaderId { get; set; } // rear_reader, reader terdekat
 
         [Required]
         public long CardId { get; set; }

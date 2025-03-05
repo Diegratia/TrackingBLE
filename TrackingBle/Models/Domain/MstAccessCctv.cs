@@ -44,7 +44,7 @@ namespace TrackingBle.Models.Domain
         public Guid ApplicationId { get; set; }
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual MstIntegration Integration { get; set; }
 

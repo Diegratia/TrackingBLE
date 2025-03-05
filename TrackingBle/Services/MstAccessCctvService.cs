@@ -36,6 +36,11 @@ namespace TrackingBle.Services
         public async Task<MstAccessCctvDto> CreateAsync(MstAccessCctvCreateDto createDto)
         {
             var accessCctv = _mapper.Map<MstAccessCctv>(createDto);
+
+            accessCctv.Status = 1;
+             accessCctv.CreatedBy = "";
+             accessCctv.UpdatedBy = "";
+
             _context.MstAccessCctvs.Add(accessCctv);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstAccessCctvDto>(accessCctv);
@@ -47,6 +52,8 @@ namespace TrackingBle.Services
             if (accessCctv == null)
                 throw new KeyNotFoundException("Access CCTV not found");
 
+            accessCctv.UpdatedBy = "";
+            
             _mapper.Map(updateDto, accessCctv);
             _context.MstAccessCctvs.Update(accessCctv);
             await _context.SaveChangesAsync();
@@ -57,8 +64,10 @@ namespace TrackingBle.Services
             var accessCctv = await _context.MstAccessCctvs.FindAsync(id);
             if (accessCctv == null)
                 throw new KeyNotFoundException("Access CCTV not found");
+            
+            accessCctv.Status = 0;
 
-            _context.MstAccessCctvs.Remove(accessCctv);
+            // _context.MstAccessCctvs.Remove(accessCctv);
             await _context.SaveChangesAsync();
         }
     }

@@ -35,7 +35,13 @@ namespace TrackingBle.Services
 
         public async Task<MstIntegrationDto> CreateAsync(MstIntegrationCreateDto createDto)
         {
+        
+
             var integration = _mapper.Map<MstIntegration>(createDto);
+                // Set default "System" 
+            integration.Status = 1;
+            integration.CreatedBy ??= "System";
+            integration.UpdatedBy ??= "System";
             _context.MstIntegrations.Add(integration);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstIntegrationDto>(integration);
@@ -46,6 +52,8 @@ namespace TrackingBle.Services
             var integration = await _context.MstIntegrations.FindAsync(id);
             if (integration == null)
                 throw new KeyNotFoundException("Integration not found");
+
+            integration.UpdatedBy ??= "System";
 
             _mapper.Map(updateDto, integration);
             _context.MstIntegrations.Update(integration);
@@ -58,7 +66,9 @@ namespace TrackingBle.Services
             if (integration == null)
                 throw new KeyNotFoundException("Integration not found");
 
-            _context.MstIntegrations.Remove(integration);
+            integration.Status = 0;
+
+            // _context.MstIntegrations.Remove(integration);
             await _context.SaveChangesAsync();
         }
     }

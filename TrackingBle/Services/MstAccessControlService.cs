@@ -36,6 +36,11 @@ namespace TrackingBle.Services
         public async Task<MstAccessControlDto> CreateAsync(MstAccessControlCreateDto createDto)
         {
             var accessControl = _mapper.Map<MstAccessControl>(createDto);
+            
+             accessControl.Status = 1;
+             accessControl.CreatedBy = "";
+             accessControl.UpdatedBy = "";
+
             _context.MstAccessControls.Add(accessControl);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstAccessControlDto>(accessControl);
@@ -46,6 +51,8 @@ namespace TrackingBle.Services
             var accessControl = await _context.MstAccessControls.FindAsync(id);
             if (accessControl == null)
                 throw new KeyNotFoundException("Access Control not found");
+
+            accessControl.UpdatedBy = "";
 
             _mapper.Map(updateDto, accessControl);
             _context.MstAccessControls.Update(accessControl);
@@ -58,7 +65,8 @@ namespace TrackingBle.Services
             if (accessControl == null)
                 throw new KeyNotFoundException("Access Control not found");
 
-            _context.MstAccessControls.Remove(accessControl);
+            accessControl.Status = 0;
+            // _context.MstAccessControls.Remove(accessControl);
             await _context.SaveChangesAsync();
         }
     }

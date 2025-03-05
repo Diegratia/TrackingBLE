@@ -11,6 +11,5 @@ namespace TrackingBle.Models.Dto.MstFloorDto
         public long FloorY { get; set; }
         public decimal MeterPerPx { get; set; }
         public long EngineFloorId { get; set; }
-        public int Status { get; set; }
     }
 }

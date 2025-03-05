@@ -60,7 +60,7 @@ namespace TrackingBle.Models.Domain
         public DateTime UpdatedAt { get; set; } // Tetap DateTime, sesuaikan penggunaan
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual MstFloor Floor { get; set; }
 

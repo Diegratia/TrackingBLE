@@ -36,8 +36,8 @@ namespace TrackingBle.Services
         public async Task<MstDistrictDto> CreateAsync(MstDistrictCreateDto createDto)
         {
             var district = _mapper.Map<MstDistrict>(createDto);
-            district.CreatedBy = "System"; // Default di server
-            district.UpdatedBy = "System"; // Default di server
+            district.CreatedBy = ""; 
+            district.UpdatedBy = ""; 
 
             _context.MstDistricts.Add(district);
             await _context.SaveChangesAsync();
@@ -50,8 +50,8 @@ namespace TrackingBle.Services
             if (district == null)
                 throw new KeyNotFoundException("District not found");
 
+            district.UpdatedBy = "";
             _mapper.Map(updateDto, district);
-            district.UpdatedBy = "System"; // Default di server
 
             _context.MstDistricts.Update(district);
             await _context.SaveChangesAsync();
@@ -62,8 +62,10 @@ namespace TrackingBle.Services
             var district = await _context.MstDistricts.FindAsync(id);
             if (district == null)
                 throw new KeyNotFoundException("District not found");
+            
+            district.Status = 0;
 
-            _context.MstDistricts.Remove(district);
+            // _context.MstDistricts.Remove(district);
             await _context.SaveChangesAsync();
         }
     }

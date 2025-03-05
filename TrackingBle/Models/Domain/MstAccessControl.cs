@@ -55,13 +55,13 @@ namespace TrackingBle.Models.Domain
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        public String UpdatedBy { get; set; } // Sesuai database, tapi nama membingungkan
+        public String UpdatedBy { get; set; }
 
         [Required]
         public DateTime UpdatedAt { get; set; }
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual MstApplication Application { get; set; }
         public virtual MstBrand Brand { get; set; }

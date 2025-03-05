@@ -36,6 +36,11 @@ namespace TrackingBle.Services
         public async Task<MstAreaDto> CreateAsync(MstAreaCreateDto createDto)
         {
             var area = _mapper.Map<MstArea>(createDto);
+
+             area.Status = 1;
+             area.CreatedBy = "";
+             area.UpdatedBy = "";
+
             _context.MstAreas.Add(area);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstAreaDto>(area);
@@ -46,6 +51,8 @@ namespace TrackingBle.Services
             var area = await _context.MstAreas.FindAsync(id);
             if (area == null)
                 throw new KeyNotFoundException("Area not found");
+
+            area.UpdatedBy = "";
 
             _mapper.Map(updateDto, area);
             _context.MstAreas.Update(area);
@@ -58,7 +65,9 @@ namespace TrackingBle.Services
             if (area == null)
                 throw new KeyNotFoundException("Area not found");
 
-            _context.MstAreas.Remove(area);
+            area.Status = 0;
+
+            // _context.MstAreas.Remove(area);
             await _context.SaveChangesAsync();
         }
     }

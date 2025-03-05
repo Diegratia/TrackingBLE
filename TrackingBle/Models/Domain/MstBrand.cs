@@ -26,7 +26,7 @@ namespace TrackingBle.Models.Domain
         public string Tag { get; set; }
         
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual ICollection<MstIntegration> Integrations { get; set; } = new List<MstIntegration>(); 
         public virtual ICollection<MstBleReader> BleReaders { get; set; } = new List<MstBleReader>();

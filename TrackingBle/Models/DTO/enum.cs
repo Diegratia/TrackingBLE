@@ -1,4 +1,4 @@
-namespace TrackingBle.Models.Domain
+namespace TrackingBle.Models.Dto
 {
     public enum OrganizationType
     {
@@ -55,11 +55,11 @@ namespace TrackingBle.Models.Domain
         Mutation
     }
 
-    public enum RestrictedStatus
-    {   
-        Restrict,
-        NonRestrict
-    }
+    // public enum RestrictedStatus
+    // {
+    //     Restrict,
+    //     NonRestrict
+    // }
 
     public enum VisitorStatus
     {

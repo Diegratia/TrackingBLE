@@ -14,8 +14,8 @@ namespace TrackingBle.Models.Domain
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        [StringLength(255)]
-        public string ControllerBrandId { get; set; } // Ubah ke Guid jika ada relasi
+        [ForeignKey("Brand")]
+        public Guid ControllerBrandId { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -34,7 +34,7 @@ namespace TrackingBle.Models.Domain
 
         [Required]
         [StringLength(255)]
-        public string DoorId { get; set; } // Ubah ke Guid jika ada relasi
+        public string DoorId { get; set; } // relasi dari table?
 
         [Required]
         public string Raw { get; set; }
@@ -55,16 +55,16 @@ namespace TrackingBle.Models.Domain
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        public DateTime UpdatedBy { get; set; } // Sesuai database, tapi nama membingungkan
+        public String UpdatedBy { get; set; } // Sesuai database, tapi nama membingungkan
 
         [Required]
-        public long UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
         public int Status { get; set; }
 
         public virtual MstApplication Application { get; set; }
-
+        public virtual MstBrand Brand { get; set; }
         public virtual MstIntegration Integration { get; set; }
     }
 }

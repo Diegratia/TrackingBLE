@@ -67,11 +67,4 @@ namespace TrackingBle.Models.Domain
         public virtual ICollection<VisitorBlacklistArea> BlacklistAreas { get; set; } = new List<VisitorBlacklistArea>();
         public virtual ICollection<TrackingTransaction> TrackingTransactions { get; set; } = new List<TrackingTransaction>();
     }
-
-        public enum RestrictedStatus
-    {
-        Restrict,
-        NonRestrict // Matches "non-restrict" in database
-    }
-
 }

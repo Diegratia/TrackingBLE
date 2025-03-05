@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Runtime.CompilerServices;
 
 namespace TrackingBle.Models.Domain
 {
@@ -55,14 +56,7 @@ namespace TrackingBle.Models.Domain
         public string Email { get; set; }
 
         [Required]
-        public GenderEnum Gender { get; set; }
-
-        public enum GenderEnum
-        {
-            Male,
-            Female,
-            Other
-        }
+        public Gender Gender { get; set; }
 
         [Required]
         public string Address { get; set; }
@@ -71,7 +65,7 @@ namespace TrackingBle.Models.Domain
         public string FaceImage { get; set; }
 
         [Required]
-        public int UploadFr { get; set; } = 0;
+        public int UploadFr { get; set; } = 0; // jika sukses = 1, jika gagal = 2
 
         [Required]
         public string UploadFrError { get; set; }
@@ -98,14 +92,7 @@ namespace TrackingBle.Models.Domain
         public Guid ApplicationId { get; set; }
 
         [Required]
-        public StatusEmployeeType StatusEmployee { get; set; }
-
-        public enum StatusEmployeeType
-        {
-            Active,
-            NonActive,
-            Mutation
-        }
+        public StatusEmployee StatusEmployee { get; set; }
 
         [Required]
         [StringLength(255)]

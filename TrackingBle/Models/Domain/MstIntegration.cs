@@ -18,14 +18,14 @@ namespace TrackingBle.Models.Domain
         public Guid Id { get; set; } = Guid.NewGuid(); 
 
         [Required]
-        [StringLength(255)]
-        public string BrandId { get; set; }
+        [ForeignKey("Brand")]  
+        public Guid BrandId { get; set; }
 
         [Required]
-        public string IntegrationType { get; set; }
+        public IntegrationType IntegrationType { get; set; }
 
         [Required]
-        public string ApiTypeAuth { get; set; }
+        public ApiTypeAuth ApiTypeAuth { get; set; }
 
         [Required]
         public string ApiUrl { get; set; }
@@ -47,7 +47,7 @@ namespace TrackingBle.Models.Domain
         public string ApiKeyValue { get; set; }
 
         [Required]
-        [ForeignKey("ApplicationId")]  
+        [ForeignKey("Application")]  
         public Guid ApplicationId { get; set; }
 
         [Required]
@@ -58,13 +58,15 @@ namespace TrackingBle.Models.Domain
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        public long UpdatedBy { get; set; }
+        public string UpdatedBy { get; set; }
 
         [Required]
-        public long UpdatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
         public int Status { get; set; }
+
+        public virtual MstBrand Brand { get; set; }
 
         public virtual MstApplication Application { get; set; }
     }

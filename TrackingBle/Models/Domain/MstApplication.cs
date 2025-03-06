@@ -23,13 +23,13 @@ namespace TrackingBle.Models.Domain
         public string ApplicationName { get; set; }
         
         [Required]
-        public string OrganizationType { get; set; }
+        public OrganizationType OrganizationType { get; set; } = OrganizationType.Single;
         
         [Required]
         public string OrganizationAddress { get; set; }
         
         [Required]
-        public string ApplicationType { get; set; }
+        public ApplicationType ApplicationType { get; set; } = ApplicationType.Empty;
         
         [Required]
         public DateTime ApplicationRegistered { get; set; }
@@ -70,12 +70,20 @@ namespace TrackingBle.Models.Domain
         public string LicenseCode { get; set; }
         
         [Required]
-        public string LicenseType { get; set; }
+        public LicenseType LicenseType { get; set; }
         
         [Required]
-        public int ApplicationStatus { get; set; }
+        public int? ApplicationStatus { get; set; } = 1;
 
+       
         public virtual ICollection<MstIntegration> Integrations { get; set; } = new List<MstIntegration>();
+        public virtual ICollection<MstAccessCctv> AccessCctvs { get; set; } = new List<MstAccessCctv>();
+        public virtual ICollection<MstAccessControl> AccessControls { get; set; } = new List<MstAccessControl>();
+        public virtual ICollection<MstDepartment> Departments { get; set; } = new List<MstDepartment>();
+        public virtual ICollection<MstDistrict> Districts { get; set; } = new List<MstDistrict>();
+        public virtual ICollection<MstOrganization> Organizations { get; set; } = new List<MstOrganization>();
+        public virtual ICollection<MstMember> Members { get; set; } = new List<MstMember>();
+        public virtual ICollection<Visitor> Visitors { get; set; } = new List<Visitor>();
 
     
     }

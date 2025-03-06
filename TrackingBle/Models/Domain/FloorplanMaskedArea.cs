@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TrackingBle.Models.Domain
 {
-    public class MstArea
+    public class FloorplanMaskedArea
     {
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,6 +13,9 @@ namespace TrackingBle.Models.Domain
 
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Required]
+        public string FloorplanId { get; set; }
 
         [Required]
         [ForeignKey("Floor")]
@@ -57,21 +60,14 @@ namespace TrackingBle.Models.Domain
         public string UpdatedBy { get; set; }
 
         [Required]
-        public DateTime UpdatedAt { get; set; } // Tetap DateTime, sesuaikan penggunaan
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual MstFloor Floor { get; set; }
 
         public virtual ICollection<VisitorBlacklistArea> BlacklistAreas { get; set; } = new List<VisitorBlacklistArea>();
         public virtual ICollection<TrackingTransaction> TrackingTransactions { get; set; } = new List<TrackingTransaction>();
     }
-
-        public enum RestrictedStatus
-    {
-        Restrict,
-        NonRestrict // Matches "non-restrict" in database
-    }
-
 }

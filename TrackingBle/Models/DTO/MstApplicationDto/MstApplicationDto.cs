@@ -21,6 +21,6 @@ namespace TrackingBle.Models.Dto.MstApplicationDto
         public string ApplicationCustomPort { get; set; }
         public string LicenseCode { get; set; }
         public string LicenseType { get; set; }
-        public int ApplicationStatus { get; set; }
+        public int? ApplicationStatus { get; set; }
     }
 }

@@ -8,19 +8,20 @@ namespace TrackingBle.MappingProfiles
     {
         public MstFloorProfile()
         {
-            CreateMap<MstFloor, MstFloorDto>();
+            CreateMap<MstFloor, MstFloorDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
             CreateMap<MstFloorCreateDto, MstFloor>()
                 .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now)) // Waktu lokal Jakarta
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now)); // Waktu lokal Jakarta
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now)) 
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now)); 
             CreateMap<MstFloorUpdateDto, MstFloor>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
-                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now)); // Waktu lokal Jakarta
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now)); 
         }
     }
 }

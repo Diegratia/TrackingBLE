@@ -56,8 +56,8 @@ namespace TrackingBle.Models.Domain
         public DateTime UpdatedAt { get; set; }
 
     
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
-        public virtual ICollection<MstArea> Areas { get; set; } = new List<MstArea>();
+        public virtual ICollection<FloorplanMaskedArea> Floorplans { get; set; } = new List<FloorplanMaskedArea>();
     }
 }

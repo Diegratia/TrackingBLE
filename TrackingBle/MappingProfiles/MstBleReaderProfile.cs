@@ -8,13 +8,18 @@ namespace TrackingBle.MappingProfiles
     {
         public MstBleReaderProfile()
         {
-            CreateMap<MstBleReader, MstBleReaderDto>();
-            CreateMap<MstBleReaderCreateDto, MstBleReader>();
+            CreateMap<MstBleReader, MstBleReaderDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+            CreateMap<MstBleReaderCreateDto, MstBleReader>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Generate, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
             CreateMap<MstBleReaderUpdateDto, MstBleReader>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
-                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
         }
     }
 }

@@ -13,10 +13,5 @@ namespace TrackingBle.Models.Dto.MstBleReaderDto
         public long LocationPxX { get; set; }
         public long LocationPxY { get; set; }
         public string EngineReaderId { get; set; }
-        public string CreatedBy { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public string UpdatedBy { get; set; }
-        public DateTime UpdatedAt { get; set; }
-        public int Status { get; set; }
     }
 }

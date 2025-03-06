@@ -44,7 +44,7 @@ namespace TrackingBle.Models.Domain
         public DateTime UpdatedAt { get; set; }
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; }
 
         public virtual MstApplication Application { get; set; }
 

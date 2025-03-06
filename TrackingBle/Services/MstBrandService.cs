@@ -36,6 +36,9 @@ namespace TrackingBle.Services
         public async Task<MstBrandDto> CreateAsync(MstBrandCreateDto createDto)
         {
             var brand = _mapper.Map<MstBrand>(createDto);
+
+            brand.Status = 1;
+
             _context.MstBrands.Add(brand);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstBrandDto>(brand);
@@ -58,7 +61,9 @@ namespace TrackingBle.Services
             if (brand == null)
                 throw new KeyNotFoundException("Brand not found");
 
-            _context.MstBrands.Remove(brand);
+             brand.Status = 0;
+
+            // _context.MstBrands.Remove(brand);
             await _context.SaveChangesAsync();
         }
     }

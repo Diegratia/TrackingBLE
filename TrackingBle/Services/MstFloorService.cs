@@ -36,8 +36,9 @@ namespace TrackingBle.Services
         public async Task<MstFloorDto> CreateAsync(MstFloorCreateDto createDto)
         {
             var floor = _mapper.Map<MstFloor>(createDto);
-            floor.CreatedBy = "System";
-            floor.UpdatedBy = "System";
+            floor.CreatedBy = "";
+            floor.UpdatedBy = "";
+            floor.Status = 1;
 
             _context.MstFloors.Add(floor);
             await _context.SaveChangesAsync();
@@ -50,8 +51,9 @@ namespace TrackingBle.Services
             if (floor == null)
                 throw new KeyNotFoundException("Floor not found");
 
+             floor.UpdatedBy = "";
             _mapper.Map(updateDto, floor);
-            floor.UpdatedBy = "System";
+           
 
             _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();
@@ -63,7 +65,9 @@ namespace TrackingBle.Services
             if (floor == null)
                 throw new KeyNotFoundException("Floor not found");
 
-            _context.MstFloors.Remove(floor);
+            floor.Status = 1;
+
+            // _context.MstFloors.Remove(floor);
             await _context.SaveChangesAsync();
         }
     }

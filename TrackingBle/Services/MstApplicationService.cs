@@ -40,6 +40,7 @@ namespace TrackingBle.Services
             // Map dari DTO ke model
             var application = _mapper.Map<MstApplication>(dto);
             application.Id = Guid.NewGuid(); // Tetap hasilkan Id di server
+            application.ApplicationStatus = 1;
 
             _context.MstApplications.Add(application);
             await _context.SaveChangesAsync();
@@ -72,7 +73,8 @@ namespace TrackingBle.Services
                 throw new KeyNotFoundException($"Application with ID {id} not found.");
             }
 
-            _context.MstApplications.Remove(application);
+            application.ApplicationStatus = 0;
+            // _context.MstApplications.Remove(application);
             await _context.SaveChangesAsync();
         }
     }

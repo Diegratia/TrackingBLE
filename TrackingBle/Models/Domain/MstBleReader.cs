@@ -61,7 +61,7 @@ namespace TrackingBle.Models.Domain
         public DateTime UpdatedAt { get; set; }
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual MstBrand Brand { get; set; }
 

@@ -12,6 +12,6 @@ namespace TrackingBle.Models.Dto.MstAccessCctvDto
         public DateTime UpdatedAt { get; set; }
         public Guid IntegrationId { get; set; }
         public Guid ApplicationId { get; set; }
-        public int Status { get; set; }
+        public int? Status { get; set; }
     }
 }

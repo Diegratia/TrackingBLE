@@ -14,6 +14,6 @@ namespace TrackingBle.Models.Dto.MstDepartmentDto
         public DateTime CreatedAt { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public int Status { get; set; }
+        public int? Status { get; set; }
     }
 }

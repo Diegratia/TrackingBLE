@@ -1,35 +1,34 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstAreaDto;
+using TrackingBle.Models.Dto.MstOrganizationDto;
 using TrackingBle.Services;
-using System.Linq;
 
 namespace TrackingBle.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MstAreaController : ControllerBase
+    public class MstOrganizationController : ControllerBase
     {
-        private readonly IMstAreaService _mstAreaService;
+        private readonly IMstOrganizationService _mstOrganizationService;
 
-        public MstAreaController(IMstAreaService mstAreaService)
+        public MstOrganizationController(IMstOrganizationService mstOrganizationService)
         {
-            _mstAreaService = mstAreaService;
+            _mstOrganizationService = mstOrganizationService;
         }
 
-        // GET: api/MstArea
+        // GET: api/MstOrganization
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var areas = await _mstAreaService.GetAllAsync();
+                var organizations = await _mstOrganizationService.GetAllOrganizationsAsync();
                 return Ok(new
                 {
                     success = true,
-                    msg = "Areas retrieved successfully",
-                    collection = new { data = areas },
+                    msg = "Organizations retrieved successfully",
+                    collection = new { data = organizations },
                     code = 200
                 });
             }
@@ -45,19 +44,19 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // GET: api/MstArea/{id}
+        // GET: api/MstOrganization/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
-                var area = await _mstAreaService.GetByIdAsync(id);
-                if (area == null)
+                var organization = await _mstOrganizationService.GetOrganizationByIdAsync(id);
+                if (organization == null)
                 {
                     return NotFound(new
                     {
                         success = false,
-                        msg = "Area not found",
+                        msg = "Organization not found",
                         collection = new { data = (object)null },
                         code = 404
                     });
@@ -65,8 +64,8 @@ namespace TrackingBle.Controllers
                 return Ok(new
                 {
                     success = true,
-                    msg = "Area retrieved successfully",
-                    collection = new { data = area },
+                    msg = "Organization retrieved successfully",
+                    collection = new { data = organization },
                     code = 200
                 });
             }
@@ -82,9 +81,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // POST: api/MstArea
+        // POST: api/MstOrganization
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MstAreaCreateDto mstAreaDto)
+        public async Task<IActionResult> Create([FromBody] MstOrganizationCreateDto mstOrganizationDto)
         {
             if (!ModelState.IsValid)
             {
@@ -100,12 +99,12 @@ namespace TrackingBle.Controllers
 
             try
             {
-                var createdArea = await _mstAreaService.CreateAsync(mstAreaDto);
+                var createdOrganization = await _mstOrganizationService.CreateOrganizationAsync(mstOrganizationDto);
                 return StatusCode(201, new
                 {
                     success = true,
-                    msg = "Area created successfully",
-                    collection = new { data = createdArea },
+                    msg = "Organization created successfully",
+                    collection = new { data = createdOrganization },
                     code = 201
                 });
             }
@@ -121,9 +120,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // PUT: api/MstArea/{id}
+        // PUT: api/MstOrganization/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MstAreaUpdateDto mstAreaDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] MstOrganizationUpdateDto mstOrganizationDto)
         {
             if (!ModelState.IsValid)
             {
@@ -139,21 +138,21 @@ namespace TrackingBle.Controllers
 
             try
             {
-                await _mstAreaService.UpdateAsync(id, mstAreaDto);
+                await _mstOrganizationService.UpdateOrganizationAsync(id, mstOrganizationDto);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Area updated successfully",
+                    msg = "Organization updated successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(new
                 {
                     success = false,
-                    msg = "Area not found",
+                    msg = ex.Message,
                     collection = new { data = (object)null },
                     code = 404
                 });
@@ -170,27 +169,27 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // DELETE: api/MstArea/{id}
+        // DELETE: api/MstOrganization/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                await _mstAreaService.DeleteAsync(id);
+                await _mstOrganizationService.DeleteOrganizationAsync(id);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Area deleted successfully",
+                    msg = "Organization marked as deleted successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });
             }
-            catch (KeyNotFoundException)
+            catch (KeyNotFoundException ex)
             {
                 return NotFound(new
                 {
                     success = false,
-                    msg = "Area not found",
+                    msg = ex.Message,
                     collection = new { data = (object)null },
                     code = 404
                 });

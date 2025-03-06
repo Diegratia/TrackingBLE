@@ -28,7 +28,7 @@ namespace TrackingBle.Models.Domain
 
         [Required]
         [ForeignKey("Application")]
-        public Guid ApplicationId { get; set; } // Diubah ke Guid
+        public Guid ApplicationId { get; set; } 
 
         [Required]
         [StringLength(255)]
@@ -45,7 +45,7 @@ namespace TrackingBle.Models.Domain
         public DateTime UpdatedAt { get; set; }
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual MstApplication Application { get; set; }
 

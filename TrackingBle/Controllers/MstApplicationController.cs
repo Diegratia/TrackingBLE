@@ -179,7 +179,7 @@ namespace TrackingBle.Controllers
                 return Ok(new
                 {
                     success = true,
-                    msg = "Application deleted successfully",
+                    msg = "Application marked as deleted successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });

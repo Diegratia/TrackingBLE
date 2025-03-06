@@ -36,6 +36,11 @@ namespace TrackingBle.Services
         public async Task<MstBleReaderDto> CreateAsync(MstBleReaderCreateDto createDto)
         {
             var bleReader = _mapper.Map<MstBleReader>(createDto);
+
+            bleReader.CreatedBy = "";
+            bleReader.UpdatedBy = "";
+            bleReader.Status = 1;
+
             _context.MstBleReaders.Add(bleReader);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstBleReaderDto>(bleReader);
@@ -47,6 +52,8 @@ namespace TrackingBle.Services
             if (bleReader == null)
                 throw new KeyNotFoundException("BLE Reader not found");
 
+            bleReader.UpdatedBy = "";
+
             _mapper.Map(updateDto, bleReader);
             _context.MstBleReaders.Update(bleReader);
             await _context.SaveChangesAsync();
@@ -57,8 +64,10 @@ namespace TrackingBle.Services
             var bleReader = await _context.MstBleReaders.FindAsync(id);
             if (bleReader == null)
                 throw new KeyNotFoundException("BLE Reader not found");
+            
+            bleReader.Status = 0;
 
-            _context.MstBleReaders.Remove(bleReader);
+            // _context.MstBleReaders.Remove(bleReader);
             await _context.SaveChangesAsync();
         }
     }

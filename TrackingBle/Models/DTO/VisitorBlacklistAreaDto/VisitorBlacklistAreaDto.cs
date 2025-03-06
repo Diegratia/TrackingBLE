@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TrackingBle.Models.DTO.VisitorBlacklistAreaDto
+namespace TrackingBle.Models.Dto.VisitorBlacklistAreaDto
 {
     public class VisitorBlacklistAreaDto
     {
@@ -14,7 +14,7 @@ namespace TrackingBle.Models.DTO.VisitorBlacklistAreaDto
         public Guid FloorplanId { get; set; }
 
         public Guid VisitorId { get; set; }
-        
+
 
     }
 }

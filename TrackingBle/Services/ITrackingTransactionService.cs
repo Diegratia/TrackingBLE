@@ -10,7 +10,7 @@ namespace TrackingBle.Services
         Task<IEnumerable<TrackingTransactionDto>> GetAllTrackingTransactionsAsync();
         Task<TrackingTransactionDto> CreateTrackingTransactionAsync(TrackingTransactionCreateDto dto);
         Task<TrackingTransactionDto> GetTrackingTransactionByIdAsync(Guid id);
-        Task UpdateTrackingTransactionAsync(Guid id, TrackingTransactionCreateDto dto);
+        Task UpdateTrackingTransactionAsync(Guid id, TrackingTransactionUpdateDto dto);
         Task DeleteTrackingTransactionAsync(Guid id);
     }
 }

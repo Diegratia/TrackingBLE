@@ -21,11 +21,11 @@ namespace TrackingBle.Services
             _mapper = mapper;
         }
 
-        public async Task<TrackingTransactionDto> CreateTrackingTransactionAsync(TrackingTransactionCreateDto dto)
+        public async Task<TrackingTransactionDto> CreateTrackingTransactionAsync(TrackingTransactionCreateDto createDto)
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
-            var transaction = _mapper.Map<TrackingTransaction>(dto);
+            var transaction = _mapper.Map<TrackingTransaction>(createDto);
             transaction.Id = Guid.NewGuid();
 
             _context.TrackingTransactions.Add(transaction);
@@ -52,9 +52,9 @@ namespace TrackingBle.Services
             return _mapper.Map<IEnumerable<TrackingTransactionDto>>(transactions);
         }
 
-        public async Task UpdateTrackingTransactionAsync(Guid id, TrackingTransactionCreateDto dto)
+        public async Task UpdateTrackingTransactionAsync(Guid id, TrackingTransactionUpdateDto updateDto)
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (updateDto == null) throw new ArgumentNullException(nameof(updateDto));
 
             var transaction = await _context.TrackingTransactions.FindAsync(id);
             if (transaction == null)
@@ -62,7 +62,7 @@ namespace TrackingBle.Services
                 throw new KeyNotFoundException($"TrackingTransaction with ID {id} not found.");
             }
 
-            _mapper.Map(dto, transaction);
+            _mapper.Map(updateDto, transaction);
             await _context.SaveChangesAsync();
         }
 

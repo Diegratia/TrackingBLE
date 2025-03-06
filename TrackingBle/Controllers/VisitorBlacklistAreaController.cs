@@ -1,26 +1,25 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.TrackingTransactionDto;
+using TrackingBle.Models.Dto.VisitorBlacklistAreaDto;
 using TrackingBle.Services;
-using Microsoft.AspNetCore.Mvc;
 
 namespace TrackingBle.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TrackingTransactionController : ControllerBase
+    public class VisitorBlacklistAreaController : ControllerBase
     {
-        private readonly ITrackingTransactionService _trackingTransactionService;
+        private readonly IVisitorBlacklistAreaService _visitorBlacklistAreaService;
 
-        public TrackingTransactionController(ITrackingTransactionService trackingTransactionService)
+        public VisitorBlacklistAreaController(IVisitorBlacklistAreaService visitorBlacklistAreaService)
         {
-            _trackingTransactionService = trackingTransactionService;
+            _visitorBlacklistAreaService = visitorBlacklistAreaService;
         }
 
-        // POST: api/TrackingTransaction
+        // POST: api/VisitorBlacklistArea
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] TrackingTransactionCreateDto dto)
+        public async Task<IActionResult> Create([FromBody] VisitorBlacklistAreaCreateDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -36,13 +35,23 @@ namespace TrackingBle.Controllers
 
             try
             {
-                var createdTransaction = await _trackingTransactionService.CreateTrackingTransactionAsync(dto);
+                var createdBlacklistArea = await _visitorBlacklistAreaService.CreateVisitorBlacklistAreaAsync(dto);
                 return StatusCode(201, new
                 {
                     success = true,
-                    msg = "Tracking transaction created successfully",
-                    collection = new { data = createdTransaction },
+                    msg = "Visitor blacklist area created successfully",
+                    collection = new { data = createdBlacklistArea },
                     code = 201
+                });
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    msg = ex.Message,
+                    collection = new { data = (object)null },
+                    code = 400
                 });
             }
             catch (Exception ex)
@@ -57,19 +66,19 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // GET: api/TrackingTransaction/{id}
+        // GET: api/VisitorBlacklistArea/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
-                var transaction = await _trackingTransactionService.GetTrackingTransactionByIdAsync(id);
-                if (transaction == null)
+                var blacklistArea = await _visitorBlacklistAreaService.GetVisitorBlacklistAreaByIdAsync(id);
+                if (blacklistArea == null)
                 {
                     return NotFound(new
                     {
                         success = false,
-                        msg = "Tracking transaction not found",
+                        msg = "Visitor blacklist area not found",
                         collection = new { data = (object)null },
                         code = 404
                     });
@@ -77,8 +86,8 @@ namespace TrackingBle.Controllers
                 return Ok(new
                 {
                     success = true,
-                    msg = "Tracking transaction retrieved successfully",
-                    collection = new { data = transaction },
+                    msg = "Visitor blacklist area retrieved successfully",
+                    collection = new { data = blacklistArea },
                     code = 200
                 });
             }
@@ -94,18 +103,18 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // GET: api/TrackingTransaction
+        // GET: api/VisitorBlacklistArea
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var transactions = await _trackingTransactionService.GetAllTrackingTransactionsAsync();
+                var blacklistAreas = await _visitorBlacklistAreaService.GetAllVisitorBlacklistAreasAsync();
                 return Ok(new
                 {
                     success = true,
-                    msg = "Tracking transactions retrieved successfully",
-                    collection = new { data = transactions },
+                    msg = "Visitor blacklist areas retrieved successfully",
+                    collection = new { data = blacklistAreas },
                     code = 200
                 });
             }
@@ -121,9 +130,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // PUT: api/TrackingTransaction/{id}
+        // PUT: api/VisitorBlacklistArea/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] TrackingTransactionUpdateDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] VisitorBlacklistAreaCreateDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -139,11 +148,11 @@ namespace TrackingBle.Controllers
 
             try
             {
-                await _trackingTransactionService.UpdateTrackingTransactionAsync(id, dto);
+                await _visitorBlacklistAreaService.UpdateVisitorBlacklistAreaAsync(id, dto);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Tracking transaction updated successfully",
+                    msg = "Visitor blacklist area updated successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });
@@ -158,6 +167,16 @@ namespace TrackingBle.Controllers
                     code = 404
                 });
             }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    msg = ex.Message,
+                    collection = new { data = (object)null },
+                    code = 400
+                });
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new
@@ -170,17 +189,17 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // DELETE: api/TrackingTransaction/{id}
+        // DELETE: api/VisitorBlacklistArea/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                await _trackingTransactionService.DeleteTrackingTransactionAsync(id);
+                await _visitorBlacklistAreaService.DeleteVisitorBlacklistAreaAsync(id);
                 return Ok(new
                 {
                     success = true,
-                    msg = "Tracking transaction deleted successfully",
+                    msg = "Visitor blacklist area deleted successfully",
                     collection = new { data = (object)null },
                     code = 204
                 });

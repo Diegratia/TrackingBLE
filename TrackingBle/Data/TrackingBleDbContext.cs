@@ -99,6 +99,10 @@ namespace TrackingBle.Data
                 .HasQueryFilter(m => m.Status != 0);
             modelBuilder.Entity<MstFloor>()
                 .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstMember>()
+                .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstOrganization>()
+                .HasQueryFilter(m => m.Status != 0);
 
             // MstIntegration
             modelBuilder.Entity<MstIntegration>(entity =>
@@ -276,6 +280,10 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(m => m.DistrictId)
                     .OnDelete(DeleteBehavior.NoAction);
+                
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);  
 
                 entity.HasIndex(m => m.PersonId);
                 entity.HasIndex(m => m.Email);

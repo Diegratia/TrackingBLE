@@ -65,7 +65,7 @@ namespace TrackingBle.Models.Domain
         public string FaceImage { get; set; }
 
         [Required]
-        public int UploadFr { get; set; } = 0; // jika sukses = 1, jika gagal = 2
+        public int UploadFr { get; set; } = 0; 
 
         [Required]
         public string UploadFrError { get; set; }
@@ -109,7 +109,7 @@ namespace TrackingBle.Models.Domain
         public DateTime UpdatedAt { get; set; }
 
         [Required]
-        public int Status { get; set; }
+        public int? Status { get; set; } = 1;
 
         public virtual MstApplication Application { get; set; }
 

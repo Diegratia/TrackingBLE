@@ -6,9 +6,19 @@ using TrackingBle.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin() 
+              .AllowAnyMethod() 
+              .AllowAnyHeader(); 
+    });
+});
 
-// Tambahkan AutoMapper ke DI
+
+
+
 builder.Services.AddAutoMapper(typeof(MstApplicationProfile));
 builder.Services.AddAutoMapper(typeof(MstIntegrationProfile));
 builder.Services.AddAutoMapper(typeof(MstAccessCctvProfile));
@@ -19,10 +29,11 @@ builder.Services.AddAutoMapper(typeof(MstBrandProfile));
 builder.Services.AddAutoMapper(typeof(MstDepartmentProfile));
 builder.Services.AddAutoMapper(typeof(MstDistrictProfile));
 builder.Services.AddAutoMapper(typeof(MstFloorProfile));
+builder.Services.AddAutoMapper(typeof(MstMemberProfile));
+builder.Services.AddAutoMapper(typeof(MstOrganizationProfile));
 
 builder.Services.AddControllers();
-// Tambahkan konfigurasi lain seperti DbContext
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 // builder.Services.AddDbContext<TrackingBleDbContext>(options =>
@@ -31,7 +42,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<TrackingBleDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleConnectionString")));
 
-// Register services with their interfaces
+
 builder.Services.AddScoped<IMstAreaService, MstAreaService>();
 builder.Services.AddScoped<IMstApplicationService, MstApplicationService>();
 builder.Services.AddScoped<IMstIntegrationService, MstIntegrationService>();
@@ -43,16 +54,20 @@ builder.Services.AddScoped<IMstBrandService, MstBrandService>();
 builder.Services.AddScoped<IMstDepartmentService, MstDepartmentService>();
 builder.Services.AddScoped<IMstDistrictService, MstDistrictService>();
 builder.Services.AddScoped<IMstFloorService, MstFloorService>();
+builder.Services.AddScoped<IMstMemberService, MstMemberService>();
+builder.Services.AddScoped<IMstOrganizationService, MstOrganizationService>();
 var app = builder.Build();
 
 
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 

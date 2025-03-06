@@ -1,23 +1,25 @@
 using AutoMapper;
-using TrackingBle.Models.Dto.MstIntegrationDto;
 using TrackingBle.Models.Domain;
+using TrackingBle.Models.Dto.MstOrganizationDto;
 
 namespace TrackingBle.MappingProfiles
 {
-    public class MstIntegrationProfile : Profile
+    public class MstOrganizationProfile : Profile
     {
-        public MstIntegrationProfile()
+        public MstOrganizationProfile()
         {
-            CreateMap<MstIntegration, MstIntegrationDto>()
-                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
-            CreateMap<MstIntegrationCreateDto, MstIntegration>()
+            CreateMap<MstOrganizationCreateDto, MstOrganization>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
-            CreateMap<MstIntegrationUpdateDto, MstIntegration>()
+
+            CreateMap<MstOrganization, MstOrganizationDto>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+
+            CreateMap<MstOrganizationUpdateDto, MstOrganization>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())

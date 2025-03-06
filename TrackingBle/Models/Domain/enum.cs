@@ -7,12 +7,12 @@ namespace TrackingBle.Models.Domain
         Medium,
         Big,
         Corporate,
-        Government // Note: SQL has "goverment", assuming typo
+        Government
     }
 
     public enum ApplicationType
     {
-        Empty, // Represents the default empty string in SQL
+        Empty, // default
         Vms,
         Smr,
         Signage,

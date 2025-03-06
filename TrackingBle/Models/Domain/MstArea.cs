@@ -57,7 +57,7 @@ namespace TrackingBle.Models.Domain
         public string UpdatedBy { get; set; }
 
         [Required]
-        public DateTime UpdatedAt { get; set; } // Tetap DateTime, sesuaikan penggunaan
+        public DateTime UpdatedAt { get; set; }
 
         [Required]
         public int? Status { get; set; } = 1;

@@ -20,8 +20,8 @@ namespace TrackingBle.Models.Domain
         public long CardId { get; set; }
 
         [Required]
-        [ForeignKey("Area")]
-        public Guid AreaId { get; set; }
+        [ForeignKey("Floorplan")]
+        public Guid FloorplanId { get; set; }
 
         [Required]
         public decimal CoordinateX { get; set; }
@@ -43,6 +43,6 @@ namespace TrackingBle.Models.Domain
 
         public virtual MstBleReader Reader { get; set; }
 
-        public virtual MstArea Area { get; set; }
+        public virtual FloorplanMaskedArea Floorplan { get; set; }
     }
 }

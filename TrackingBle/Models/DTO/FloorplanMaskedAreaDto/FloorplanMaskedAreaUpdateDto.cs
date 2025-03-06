@@ -1,7 +1,8 @@
-namespace TrackingBle.Models.Dto.MstAreaDto
+namespace TrackingBle.Models.Dto.FloorplanMaskedAreaDto
 {
-    public class MstAreaUpdateDto
+    public class FloorplanMaskedAreaUpdateDto
     {
+        public string FloorplanId { get; set;}
         public Guid FloorId { get; set; }
         public string Name { get; set; }
         public string AreaShape { get; set; }

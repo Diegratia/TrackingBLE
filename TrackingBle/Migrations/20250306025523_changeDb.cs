@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackingBle.Migrations
 {
     /// <inheritdoc />
-    public partial class ChangeDbStructure : Migration
+    public partial class changeDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,7 +19,7 @@ namespace TrackingBle.Migrations
                     Generate = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ApplicationName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    OrganizationType = table.Column<string>(type: "nvarchar(255)", nullable: false, defaultValue: "single"),
+                    OrganizationType = table.Column<string>(type: "nvarchar(255)", nullable: false, defaultValue: "Single"),
                     OrganizationAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ApplicationType = table.Column<string>(type: "nvarchar(255)", nullable: false, defaultValue: ""),
                     ApplicationRegistered = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -33,7 +33,7 @@ namespace TrackingBle.Migrations
                     ApplicationCustomPort = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     LicenseCode = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     LicenseType = table.Column<string>(type: "nvarchar(255)", nullable: false),
-                    ApplicationStatus = table.Column<int>(type: "int", nullable: false)
+                    ApplicationStatus = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
                 },
                 constraints: table =>
                 {
@@ -76,7 +76,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1)
                 },
                 constraints: table =>
                 {
@@ -98,7 +98,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -131,7 +131,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -164,7 +164,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -258,7 +258,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstBrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -296,7 +296,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstBrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -320,12 +320,13 @@ namespace TrackingBle.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "mst_area",
+                name: "floorplan_masked_area",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    FloorplanId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FloorId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     AreaShape = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -339,19 +340,19 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstFloorId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_mst_area", x => x.Id);
+                    table.PrimaryKey("PK_floorplan_masked_area", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_mst_area_mst_floor_FloorId",
+                        name: "FK_floorplan_masked_area_mst_floor_FloorId",
                         column: x => x.FloorId,
                         principalTable: "mst_floor",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_mst_area_mst_floor_MstFloorId",
+                        name: "FK_floorplan_masked_area_mst_floor_MstFloorId",
                         column: x => x.MstFloorId,
                         principalTable: "mst_floor",
                         principalColumn: "Id");
@@ -390,7 +391,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     MstDepartmentId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     MstDistrictId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
@@ -456,7 +457,7 @@ namespace TrackingBle.Migrations
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IntegrationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -499,7 +500,7 @@ namespace TrackingBle.Migrations
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false),
+                    Status = table.Column<int>(type: "int", nullable: false, defaultValue: 1),
                     MstApplicationId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
@@ -536,28 +537,28 @@ namespace TrackingBle.Migrations
                     TransTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReaderId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     CardId = table.Column<long>(type: "bigint", nullable: false),
-                    AreaId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
+                    FloorplanId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     CoordinateX = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CoordinateY = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CoordinatePxX = table.Column<long>(type: "bigint", nullable: false),
                     CoordinatePxY = table.Column<long>(type: "bigint", nullable: false),
                     AlarmStatus = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     Battery = table.Column<long>(type: "bigint", nullable: false),
-                    MstAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    FloorplanMaskedAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     MstBleReaderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tracking_transaction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_tracking_transaction_mst_area_AreaId",
-                        column: x => x.AreaId,
-                        principalTable: "mst_area",
+                        name: "FK_tracking_transaction_floorplan_masked_area_FloorplanId",
+                        column: x => x.FloorplanId,
+                        principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_tracking_transaction_mst_area_MstAreaId",
-                        column: x => x.MstAreaId,
-                        principalTable: "mst_area",
+                        name: "FK_tracking_transaction_floorplan_masked_area_FloorplanMaskedAreaId",
+                        column: x => x.FloorplanMaskedAreaId,
+                        principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_tracking_transaction_mst_ble_reader_MstBleReaderId",
@@ -578,23 +579,23 @@ namespace TrackingBle.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     Generate = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AreaId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
+                    FloorplanId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     VisitorId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
-                    MstAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    FloorplanMaskedAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     VisitorId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_visitor_blacklist_area", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_visitor_blacklist_area_mst_area_AreaId",
-                        column: x => x.AreaId,
-                        principalTable: "mst_area",
+                        name: "FK_visitor_blacklist_area_floorplan_masked_area_FloorplanId",
+                        column: x => x.FloorplanId,
+                        principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_visitor_blacklist_area_mst_area_MstAreaId",
-                        column: x => x.MstAreaId,
-                        principalTable: "mst_area",
+                        name: "FK_visitor_blacklist_area_floorplan_masked_area_FloorplanMaskedAreaId",
+                        column: x => x.FloorplanMaskedAreaId,
+                        principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_visitor_blacklist_area_visitor_VisitorId",
@@ -607,6 +608,16 @@ namespace TrackingBle.Migrations
                         principalTable: "visitor",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_floorplan_masked_area_FloorId",
+                table: "floorplan_masked_area",
+                column: "FloorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_floorplan_masked_area_MstFloorId",
+                table: "floorplan_masked_area",
+                column: "MstFloorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_mst_access_cctv_ApplicationId",
@@ -642,16 +653,6 @@ namespace TrackingBle.Migrations
                 name: "IX_mst_access_control_MstApplicationId",
                 table: "mst_access_control",
                 column: "MstApplicationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_mst_area_FloorId",
-                table: "mst_area",
-                column: "FloorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_mst_area_MstFloorId",
-                table: "mst_area",
-                column: "MstFloorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_mst_ble_reader_BrandId",
@@ -759,14 +760,14 @@ namespace TrackingBle.Migrations
                 column: "MstApplicationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tracking_transaction_AreaId",
+                name: "IX_tracking_transaction_FloorplanId",
                 table: "tracking_transaction",
-                column: "AreaId");
+                column: "FloorplanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tracking_transaction_MstAreaId",
+                name: "IX_tracking_transaction_FloorplanMaskedAreaId",
                 table: "tracking_transaction",
-                column: "MstAreaId");
+                column: "FloorplanMaskedAreaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tracking_transaction_MstBleReaderId",
@@ -799,14 +800,14 @@ namespace TrackingBle.Migrations
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_visitor_blacklist_area_AreaId",
+                name: "IX_visitor_blacklist_area_FloorplanId",
                 table: "visitor_blacklist_area",
-                column: "AreaId");
+                column: "FloorplanId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_visitor_blacklist_area_MstAreaId",
+                name: "IX_visitor_blacklist_area_FloorplanMaskedAreaId",
                 table: "visitor_blacklist_area",
-                column: "MstAreaId");
+                column: "FloorplanMaskedAreaId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_visitor_blacklist_area_VisitorId",
@@ -853,7 +854,7 @@ namespace TrackingBle.Migrations
                 name: "mst_ble_reader");
 
             migrationBuilder.DropTable(
-                name: "mst_area");
+                name: "floorplan_masked_area");
 
             migrationBuilder.DropTable(
                 name: "visitor");

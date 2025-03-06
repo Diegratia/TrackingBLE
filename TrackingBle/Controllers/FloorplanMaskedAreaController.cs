@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstAreaDto;
+using TrackingBle.Models.Dto.FloorplanMaskedAreaDto;
 using TrackingBle.Services;
 using System.Linq;
 
@@ -9,22 +9,22 @@ namespace TrackingBle.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MstAreaController : ControllerBase
+    public class FloorplanMaskedAreaController : ControllerBase
     {
-        private readonly IMstAreaService _mstAreaService;
+        private readonly IFloorplanMaskedAreaService _FloorplanMaskedAreaService;
 
-        public MstAreaController(IMstAreaService mstAreaService)
+        public FloorplanMaskedAreaController(IFloorplanMaskedAreaService FloorplanMaskedAreaService)
         {
-            _mstAreaService = mstAreaService;
+            _FloorplanMaskedAreaService = FloorplanMaskedAreaService;
         }
 
-        // GET: api/MstArea
+        // GET: api/FloorplanMaskedArea
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             try
             {
-                var areas = await _mstAreaService.GetAllAsync();
+                var areas = await _FloorplanMaskedAreaService.GetAllAsync();
                 return Ok(new
                 {
                     success = true,
@@ -45,13 +45,13 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // GET: api/MstArea/{id}
+        // GET: api/FloorplanMaskedArea/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(Guid id)
         {
             try
             {
-                var area = await _mstAreaService.GetByIdAsync(id);
+                var area = await _FloorplanMaskedAreaService.GetByIdAsync(id);
                 if (area == null)
                 {
                     return NotFound(new
@@ -82,9 +82,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // POST: api/MstArea
+        // POST: api/FloorplanMaskedArea
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MstAreaCreateDto mstAreaDto)
+        public async Task<IActionResult> Create([FromBody] FloorplanMaskedAreaCreateDto FloorplanMaskedAreaDto)
         {
             if (!ModelState.IsValid)
             {
@@ -100,7 +100,7 @@ namespace TrackingBle.Controllers
 
             try
             {
-                var createdArea = await _mstAreaService.CreateAsync(mstAreaDto);
+                var createdArea = await _FloorplanMaskedAreaService.CreateAsync(FloorplanMaskedAreaDto);
                 return StatusCode(201, new
                 {
                     success = true,
@@ -121,9 +121,9 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // PUT: api/MstArea/{id}
+        // PUT: api/FloorplanMaskedArea/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MstAreaUpdateDto mstAreaDto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] FloorplanMaskedAreaUpdateDto FloorplanMaskedAreaDto)
         {
             if (!ModelState.IsValid)
             {
@@ -139,7 +139,7 @@ namespace TrackingBle.Controllers
 
             try
             {
-                await _mstAreaService.UpdateAsync(id, mstAreaDto);
+                await _FloorplanMaskedAreaService.UpdateAsync(id, FloorplanMaskedAreaDto);
                 return Ok(new
                 {
                     success = true,
@@ -170,13 +170,13 @@ namespace TrackingBle.Controllers
             }
         }
 
-        // DELETE: api/MstArea/{id}
+        // DELETE: api/FloorplanMaskedArea/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                await _mstAreaService.DeleteAsync(id);
+                await _FloorplanMaskedAreaService.DeleteAsync(id);
                 return Ok(new
                 {
                     success = true,

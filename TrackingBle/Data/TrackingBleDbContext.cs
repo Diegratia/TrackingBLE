@@ -19,7 +19,7 @@ namespace TrackingBle.Data
         public DbSet<MstDistrict> MstDistricts { get; set; }
         public DbSet<MstMember> MstMembers { get; set; }
         public DbSet<MstFloor> MstFloors { get; set; }
-        public DbSet<MstArea> MstAreas { get; set; }
+        public DbSet<FloorplanMaskedArea> FloorplanMaskedAreas { get; set; }
         public DbSet<Visitor> Visitors { get; set; }
         public DbSet<VisitorBlacklistArea> VisitorBlacklistAreas { get; set; }
         public DbSet<MstBleReader> MstBleReaders { get; set; }
@@ -40,7 +40,7 @@ namespace TrackingBle.Data
             modelBuilder.Entity<MstDistrict>().ToTable("mst_district");
             modelBuilder.Entity<MstMember>().ToTable("mst_member");
             modelBuilder.Entity<MstFloor>().ToTable("mst_floor");
-            modelBuilder.Entity<MstArea>().ToTable("mst_area");
+            modelBuilder.Entity<FloorplanMaskedArea>().ToTable("floorplan_masked_area");
             modelBuilder.Entity<Visitor>().ToTable("visitor");
             modelBuilder.Entity<VisitorBlacklistArea>().ToTable("visitor_blacklist_area");
             modelBuilder.Entity<MstBleReader>().ToTable("mst_ble_reader");
@@ -87,7 +87,7 @@ namespace TrackingBle.Data
                 .HasQueryFilter(m => m.Status != 0);
             modelBuilder.Entity<MstAccessCctv>()
                 .HasQueryFilter(m => m.Status != 0);
-            modelBuilder.Entity<MstArea>()
+            modelBuilder.Entity<FloorplanMaskedArea>()
                 .HasQueryFilter(m => m.Status != 0);
             modelBuilder.Entity<MstBleReader>()
                 .HasQueryFilter(m => m.Status != 0);
@@ -299,8 +299,8 @@ namespace TrackingBle.Data
                     .HasDefaultValue(1);   
             });
 
-            // MstArea
-            modelBuilder.Entity<MstArea>(entity =>
+            // FloorplanMaskedArea
+            modelBuilder.Entity<FloorplanMaskedArea>(entity =>
             {
                 entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
                 entity.Property(e => e.FloorId).HasMaxLength(36).IsRequired();
@@ -355,12 +355,12 @@ namespace TrackingBle.Data
             modelBuilder.Entity<VisitorBlacklistArea>(entity =>
             {
                 entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
-                entity.Property(e => e.AreaId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.FloorplanId).HasMaxLength(36).IsRequired();
                 entity.Property(e => e.VisitorId).HasMaxLength(36).IsRequired();
 
-                entity.HasOne(v => v.Area)
+                entity.HasOne(v => v.Floorplan)
                     .WithMany()
-                    .HasForeignKey(v => v.AreaId)
+                    .HasForeignKey(v => v.FloorplanId)
                     .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(v => v.Visitor)
@@ -391,7 +391,7 @@ namespace TrackingBle.Data
             {
                 entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
                 entity.Property(e => e.ReaderId).HasMaxLength(36).IsRequired();
-                entity.Property(e => e.AreaId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.FloorplanId).HasMaxLength(36).IsRequired();
                 entity.Property(e => e.AlarmStatus)
                     .HasColumnType("nvarchar(255)")
                     .IsRequired()
@@ -405,9 +405,9 @@ namespace TrackingBle.Data
                     .HasForeignKey(t => t.ReaderId)
                     .OnDelete(DeleteBehavior.NoAction);
 
-                entity.HasOne(t => t.Area)
+                entity.HasOne(t => t.Floorplan)
                     .WithMany()
-                    .HasForeignKey(t => t.AreaId)
+                    .HasForeignKey(t => t.FloorplanId)
                     .OnDelete(DeleteBehavior.NoAction);
             });
         }

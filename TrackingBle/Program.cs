@@ -23,7 +23,7 @@ builder.Services.AddAutoMapper(typeof(MstApplicationProfile));
 builder.Services.AddAutoMapper(typeof(MstIntegrationProfile));
 builder.Services.AddAutoMapper(typeof(MstAccessCctvProfile));
 builder.Services.AddAutoMapper(typeof(MstAccessControlProfile));
-builder.Services.AddAutoMapper(typeof(MstAreaProfile));
+builder.Services.AddAutoMapper(typeof(FloorplanMaskedAreaProfile));
 builder.Services.AddAutoMapper(typeof(MstBleReaderProfile));
 builder.Services.AddAutoMapper(typeof(MstBrandProfile));
 builder.Services.AddAutoMapper(typeof(MstDepartmentProfile));
@@ -43,12 +43,12 @@ builder.Services.AddDbContext<TrackingBleDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleConnectionString")));
 
 
-builder.Services.AddScoped<IMstAreaService, MstAreaService>();
+builder.Services.AddScoped<IFloorplanMaskedAreaService, FloorplanMaskedAreaService>();
 builder.Services.AddScoped<IMstApplicationService, MstApplicationService>();
 builder.Services.AddScoped<IMstIntegrationService, MstIntegrationService>();
 builder.Services.AddScoped<IMstAccessCctvService, MstAccessCctvService>();
 builder.Services.AddScoped<IMstAccessControlService, MstAccessControlService>();
-builder.Services.AddScoped<IMstAreaService, MstAreaService>();
+builder.Services.AddScoped<IFloorplanMaskedAreaService, FloorplanMaskedAreaService>();
 builder.Services.AddScoped<IMstBleReaderService, MstBleReaderService>();
 builder.Services.AddScoped<IMstBrandService, MstBrandService>();
 builder.Services.AddScoped<IMstDepartmentService, MstDepartmentService>();

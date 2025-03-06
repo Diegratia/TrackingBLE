@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace TrackingBle.Models.Domain
 {
-    public class MstArea
+    public class FloorplanMaskedArea
     {
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -13,6 +13,9 @@ namespace TrackingBle.Models.Domain
 
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Required]
+        public string FloorplanId { get; set; }
 
         [Required]
         [ForeignKey("Floor")]

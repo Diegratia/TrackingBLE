@@ -1,21 +1,21 @@
 using AutoMapper;
-using TrackingBle.Models.Dto.MstAreaDto;
+using TrackingBle.Models.Dto.FloorplanMaskedAreaDto;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.MappingProfiles
 {
-    public class MstAreaProfile : Profile
+    public class FloorplanMaskedAreaProfile : Profile
     {
-        public MstAreaProfile()
+        public FloorplanMaskedAreaProfile()
         {
-            CreateMap<MstArea, MstAreaDto>()
+            CreateMap<FloorplanMaskedArea, FloorplanMaskedAreaDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
-            CreateMap<MstAreaCreateDto, MstArea>()
+            CreateMap<FloorplanMaskedAreaCreateDto, FloorplanMaskedArea>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Now))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.Now));
-            CreateMap<MstAreaUpdateDto, MstArea>()
+            CreateMap<FloorplanMaskedAreaUpdateDto, FloorplanMaskedArea>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())

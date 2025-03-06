@@ -22,6 +22,93 @@ namespace TrackingBle.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanMaskedArea", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AreaShape")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ColorArea")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("EngineAreaId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<Guid>("FloorId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FloorplanId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Generate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Generate"));
+
+                    b.Property<Guid?>("MstFloorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("PositionPxX")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PositionPxY")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RestrictedStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<long>("WideArea")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("FloorId");
+
+                    b.HasIndex("MstFloorId");
+
+                    b.ToTable("floorplan_masked_area", (string)null);
+                });
+
             modelBuilder.Entity("TrackingBle.Models.Domain.MstAccessCctv", b =>
                 {
                     b.Property<Guid>("Id")
@@ -63,8 +150,11 @@ namespace TrackingBle.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -143,8 +233,11 @@ namespace TrackingBle.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<string>("Type")
                         .IsRequired()
@@ -204,8 +297,11 @@ namespace TrackingBle.Migrations
                     b.Property<DateTime>("ApplicationRegistered")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ApplicationStatus")
-                        .HasColumnType("int");
+                    b.Property<int?>("ApplicationStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<string>("ApplicationType")
                         .IsRequired()
@@ -256,91 +352,11 @@ namespace TrackingBle.Migrations
                         .IsRequired()
                         .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(255)")
-                        .HasDefaultValue("single");
+                        .HasDefaultValue("Single");
 
                     b.HasKey("Id");
 
                     b.ToTable("mst_application", (string)null);
-                });
-
-            modelBuilder.Entity("TrackingBle.Models.Domain.MstArea", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(36)
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("AreaShape")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ColorArea")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("EngineAreaId")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<Guid>("FloorId")
-                        .HasMaxLength(36)
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Generate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Generate"));
-
-                    b.Property<Guid?>("MstFloorId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<long>("PositionPxX")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PositionPxY")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("RestrictedStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<long>("WideArea")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("FloorId");
-
-                    b.HasIndex("MstFloorId");
-
-                    b.ToTable("mst_area", (string)null);
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstBleReader", b =>
@@ -403,8 +419,11 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -441,7 +460,8 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Status")
+                    b.Property<int?>("Status")
+                        .IsRequired()
                         .HasColumnType("int");
 
                     b.Property<string>("Tag")
@@ -497,8 +517,11 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -560,8 +583,11 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -631,8 +657,11 @@ namespace TrackingBle.Migrations
                     b.Property<long>("PixelY")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -711,8 +740,11 @@ namespace TrackingBle.Migrations
                     b.Property<Guid?>("MstBrandId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -847,8 +879,11 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<string>("StatusEmployee")
                         .IsRequired()
@@ -937,8 +972,11 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -968,10 +1006,6 @@ namespace TrackingBle.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<Guid>("AreaId")
-                        .HasMaxLength(36)
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<long>("Battery")
                         .HasColumnType("bigint");
 
@@ -990,7 +1024,11 @@ namespace TrackingBle.Migrations
                     b.Property<decimal>("CoordinateY")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid?>("MstAreaId")
+                    b.Property<Guid>("FloorplanId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FloorplanMaskedAreaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("MstBleReaderId")
@@ -1005,9 +1043,9 @@ namespace TrackingBle.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AreaId");
+                    b.HasIndex("FloorplanId");
 
-                    b.HasIndex("MstAreaId");
+                    b.HasIndex("FloorplanMaskedAreaId");
 
                     b.HasIndex("MstBleReaderId");
 
@@ -1184,8 +1222,11 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AreaId")
+                    b.Property<Guid>("FloorplanId")
                         .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("FloorplanMaskedAreaId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Generate")
@@ -1193,9 +1234,6 @@ namespace TrackingBle.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
-
-                    b.Property<Guid?>("MstAreaId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("VisitorId")
                         .HasMaxLength(36)
@@ -1206,15 +1244,30 @@ namespace TrackingBle.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AreaId");
+                    b.HasIndex("FloorplanId");
 
-                    b.HasIndex("MstAreaId");
+                    b.HasIndex("FloorplanMaskedAreaId");
 
                     b.HasIndex("VisitorId");
 
                     b.HasIndex("VisitorId1");
 
                     b.ToTable("visitor_blacklist_area", (string)null);
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanMaskedArea", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.MstFloor", "Floor")
+                        .WithMany()
+                        .HasForeignKey("FloorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.MstFloor", null)
+                        .WithMany("Floorplans")
+                        .HasForeignKey("MstFloorId");
+
+                    b.Navigation("Floor");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstAccessCctv", b =>
@@ -1269,21 +1322,6 @@ namespace TrackingBle.Migrations
                     b.Navigation("Brand");
 
                     b.Navigation("Integration");
-                });
-
-            modelBuilder.Entity("TrackingBle.Models.Domain.MstArea", b =>
-                {
-                    b.HasOne("TrackingBle.Models.Domain.MstFloor", "Floor")
-                        .WithMany()
-                        .HasForeignKey("FloorId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("TrackingBle.Models.Domain.MstFloor", null)
-                        .WithMany("Areas")
-                        .HasForeignKey("MstFloorId");
-
-                    b.Navigation("Floor");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstBleReader", b =>
@@ -1422,15 +1460,15 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.TrackingTransaction", b =>
                 {
-                    b.HasOne("TrackingBle.Models.Domain.MstArea", "Area")
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "Floorplan")
                         .WithMany()
-                        .HasForeignKey("AreaId")
+                        .HasForeignKey("FloorplanId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("TrackingBle.Models.Domain.MstArea", null)
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", null)
                         .WithMany("TrackingTransactions")
-                        .HasForeignKey("MstAreaId");
+                        .HasForeignKey("FloorplanMaskedAreaId");
 
                     b.HasOne("TrackingBle.Models.Domain.MstBleReader", null)
                         .WithMany("TrackingTransactions")
@@ -1442,7 +1480,7 @@ namespace TrackingBle.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Area");
+                    b.Navigation("Floorplan");
 
                     b.Navigation("Reader");
                 });
@@ -1464,15 +1502,15 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.VisitorBlacklistArea", b =>
                 {
-                    b.HasOne("TrackingBle.Models.Domain.MstArea", "Area")
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "Floorplan")
                         .WithMany()
-                        .HasForeignKey("AreaId")
+                        .HasForeignKey("FloorplanId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("TrackingBle.Models.Domain.MstArea", null)
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", null)
                         .WithMany("BlacklistAreas")
-                        .HasForeignKey("MstAreaId");
+                        .HasForeignKey("FloorplanMaskedAreaId");
 
                     b.HasOne("TrackingBle.Models.Domain.Visitor", "Visitor")
                         .WithMany()
@@ -1484,9 +1522,16 @@ namespace TrackingBle.Migrations
                         .WithMany("BlacklistAreas")
                         .HasForeignKey("VisitorId1");
 
-                    b.Navigation("Area");
+                    b.Navigation("Floorplan");
 
                     b.Navigation("Visitor");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanMaskedArea", b =>
+                {
+                    b.Navigation("BlacklistAreas");
+
+                    b.Navigation("TrackingTransactions");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstApplication", b =>
@@ -1506,13 +1551,6 @@ namespace TrackingBle.Migrations
                     b.Navigation("Organizations");
 
                     b.Navigation("Visitors");
-                });
-
-            modelBuilder.Entity("TrackingBle.Models.Domain.MstArea", b =>
-                {
-                    b.Navigation("BlacklistAreas");
-
-                    b.Navigation("TrackingTransactions");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstBleReader", b =>
@@ -1539,7 +1577,7 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstFloor", b =>
                 {
-                    b.Navigation("Areas");
+                    b.Navigation("Floorplans");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstOrganization", b =>

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data; 
 using TrackingBle.MappingProfiles;
 using TrackingBle.Services;
+using TrackingBle.Seeding;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -58,7 +59,12 @@ builder.Services.AddScoped<IMstMemberService, MstMemberService>();
 builder.Services.AddScoped<IMstOrganizationService, MstOrganizationService>();
 var app = builder.Build();
 
-
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<TrackingBleDbContext>();
+    context.Database.Migrate();
+    DatabaseSeeder.Seed(context);
+}
 
 
 if (app.Environment.IsDevelopment())
@@ -68,6 +74,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors();
+
+app.UseRouting();
 
 app.UseHttpsRedirection();
 

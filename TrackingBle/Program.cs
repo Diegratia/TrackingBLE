@@ -34,6 +34,7 @@ builder.Services.AddAutoMapper(typeof(MstMemberProfile));
 builder.Services.AddAutoMapper(typeof(MstOrganizationProfile));
 builder.Services.AddAutoMapper(typeof(TrackingTransactionProfile));
 builder.Services.AddAutoMapper(typeof(VisitorBlacklistAreaProfile));
+builder.Services.AddAutoMapper(typeof(VisitorProfile));
 
 builder.Services.AddControllers();
 
@@ -61,6 +62,7 @@ builder.Services.AddScoped<IMstMemberService, MstMemberService>();
 builder.Services.AddScoped<IMstOrganizationService, MstOrganizationService>();
 builder.Services.AddScoped<ITrackingTransactionService, TrackingTransactionService>();
 builder.Services.AddScoped<IVisitorBlacklistAreaService, VisitorBlacklistAreaService>();
+builder.Services.AddScoped<IVisitorService, VisitorService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())

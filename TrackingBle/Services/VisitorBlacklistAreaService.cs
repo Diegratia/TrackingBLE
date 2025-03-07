@@ -57,7 +57,7 @@ namespace TrackingBle.Services
             return _mapper.Map<IEnumerable<VisitorBlacklistAreaDto>>(blacklistAreas);
         }
 
-        public async Task UpdateVisitorBlacklistAreaAsync(Guid id, VisitorBlacklistAreaCreateDto dto)
+        public async Task UpdateVisitorBlacklistAreaAsync(Guid id, VisitorBlacklistAreaUpdateDto dto)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 

@@ -132,7 +132,7 @@ namespace TrackingBle.Controllers
 
         // PUT: api/VisitorBlacklistArea/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] VisitorBlacklistAreaCreateDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromBody] VisitorBlacklistAreaUpdateDto dto)
         {
             if (!ModelState.IsValid)
             {

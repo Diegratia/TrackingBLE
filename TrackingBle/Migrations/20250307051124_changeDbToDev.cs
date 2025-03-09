@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackingBle.Migrations
 {
     /// <inheritdoc />
-    public partial class changeDb : Migration
+    public partial class changeDbToDev : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

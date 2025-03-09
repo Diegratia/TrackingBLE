@@ -15,7 +15,7 @@ namespace TrackingBle.MappingProfiles
         {
             CreateMap<VisitorCreateDto, Visitor>();
             CreateMap<VisitorUpdateDto, Visitor>();
-            CreateMap<VisitorDto, Visitor>();
+            CreateMap<Visitor, VisitorDto>();
                
         }
         

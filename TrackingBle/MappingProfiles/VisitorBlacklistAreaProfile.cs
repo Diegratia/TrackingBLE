@@ -15,7 +15,7 @@ namespace TrackingBle.MappingProfiles
         {
             CreateMap<VisitorBlacklistAreaCreateDto, VisitorBlacklistArea>();
             CreateMap<VisitorBlacklistAreaUpdateDto, VisitorBlacklistArea>();
-            CreateMap<VisitorBlacklistAreaDto, VisitorBlacklistArea>();
+            CreateMap<VisitorBlacklistArea, VisitorBlacklistAreaDto>();
                
         }
         

@@ -41,9 +41,9 @@ namespace TrackingBle.Services
             organization.Id = Guid.NewGuid();
             organization.Status = 1; 
             organization.CreatedBy = ""; 
-            organization.CreatedAt = DateTime.Now;
+            organization.CreatedAt = DateTime.UtcNow;
             organization.UpdatedBy = ""; 
-            organization.UpdatedAt = DateTime.Now;
+            organization.UpdatedAt = DateTime.UtcNow;
 
             _context.MstOrganizations.Add(organization);
             await _context.SaveChangesAsync();
@@ -78,7 +78,7 @@ namespace TrackingBle.Services
 
             organization.Status = 0;
             organization.UpdatedBy = ""; 
-            organization.UpdatedAt = DateTime.Now;
+            organization.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
         }

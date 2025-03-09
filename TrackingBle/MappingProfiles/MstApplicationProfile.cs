@@ -14,14 +14,12 @@ namespace TrackingBle.MappingProfiles
             CreateMap<MstApplicationCreateDto, MstApplication>()
               .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
-                .ForMember(dest => dest.ApplicationRegistered, opt => opt.MapFrom(src => DateTime.Now))
-                .ForMember(dest => dest.ApplicationExpired, opt => opt.MapFrom(src => DateTime.Now));
+                .ForMember(dest => dest.ApplicationRegistered, opt => opt.MapFrom(src => DateTime.UtcNow));
 
             CreateMap<MstApplicationUpdateDto, MstApplication>()
               .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
-                .ForMember(dest => dest.ApplicationRegistered, opt => opt.Ignore())
-                .ForMember(dest => dest.ApplicationExpired, opt => opt.MapFrom(src => DateTime.Now));
+                .ForMember(dest => dest.ApplicationRegistered, opt => opt.Ignore());
 
         }
     }

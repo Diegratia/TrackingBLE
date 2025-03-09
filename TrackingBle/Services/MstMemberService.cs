@@ -41,9 +41,9 @@ namespace TrackingBle.Services
             member.Id = Guid.NewGuid();
             member.Status = 1; 
             member.CreatedBy = ""; 
-            member.CreatedAt = DateTime.Now;
+            member.CreatedAt = DateTime.UtcNow;
             member.UpdatedBy = ""; // bisa ganti dgn logic auth
-            member.UpdatedAt = DateTime.Now;
+            member.UpdatedAt = DateTime.UtcNow;
 
             _context.MstMembers.Add(member);
             await _context.SaveChangesAsync();
@@ -78,7 +78,7 @@ namespace TrackingBle.Services
 
             member.Status = 0; 
             member.UpdatedBy = ""; 
-            member.UpdatedAt = DateTime.Now;
+            member.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
         }

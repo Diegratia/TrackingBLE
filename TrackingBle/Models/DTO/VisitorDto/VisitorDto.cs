@@ -39,7 +39,7 @@ namespace TrackingBle.Models.Dto.VisitorDto
         public string ReasonDeny { get; set; }
         public string ReasonBlock { get; set; }
         public string ReasonUnblock { get; set; }
-        public VisitorStatus Status { get; set; }
+        public string Status { get; set; }
 
 
     }

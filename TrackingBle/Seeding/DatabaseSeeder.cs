@@ -277,7 +277,7 @@ namespace TrackingBle.Seeding
                     .RuleFor(m => m.FaceImage, f => $"https://example.com/faces/{f.Random.Word()}.jpg")
                     .RuleFor(m => m.UploadFr, f => f.Random.Int(0, 2))
                     .RuleFor(m => m.UploadFrError, f => f.Random.Bool() ? "" : "Upload failed")
-                    .RuleFor(m => m.BirthDate, f => f.Date.Past(30, DateTime.Now.AddYears(-18)))
+                    .RuleFor(m => m.BirthDate, f => f.Date.Past(30, DateTime.UtcNow.AddYears(-18)))
                     .RuleFor(m => m.JoinDate, f => f.Date.Past(2))
                     .RuleFor(m => m.ExitDate, f => f.Date.Future(10))
                     .RuleFor(m => m.HeadMember1, f => f.Name.FullName())

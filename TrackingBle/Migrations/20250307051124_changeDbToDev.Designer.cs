@@ -12,8 +12,8 @@ using TrackingBle.Data;
 namespace TrackingBle.Migrations
 {
     [DbContext(typeof(TrackingBleDbContext))]
-    [Migration("20250306025523_changeDb")]
-    partial class changeDb
+    [Migration("20250307051124_changeDbToDev")]
+    partial class changeDbToDev
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

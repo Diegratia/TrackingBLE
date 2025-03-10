@@ -10,7 +10,7 @@ namespace TrackingBle.Services
         Task<MstFloorDto> GetByIdAsync(Guid id);
         Task<IEnumerable<MstFloorDto>> GetAllAsync();
         Task<MstFloorDto> CreateAsync(MstFloorCreateDto createDto);
-        Task UpdateAsync(Guid id, MstFloorUpdateDto updateDto);
+        Task<MstFloorDto> UpdateAsync(Guid id, MstFloorUpdateDto updateDto);
         Task DeleteAsync(Guid id);
     }
 }

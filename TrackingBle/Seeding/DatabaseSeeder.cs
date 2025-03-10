@@ -57,7 +57,7 @@ namespace TrackingBle.Seeding
                 var floorFaker = new Faker<MstFloor>()
                     .RuleFor(f => f.Id, f => Guid.NewGuid())
                     .RuleFor(f => f.BuildingId, f => "BLD-" + f.Random.Number(100, 999))
-                    .RuleFor(f => f.Name, f => f.Random.Number(1, 10)) 
+                    .RuleFor(f => f.Name, f => f.Address.StreetName())
                     .RuleFor(f => f.FloorImage, f => $"https://example.com/floorplans/{f.Random.Word()}.png")
                     .RuleFor(f => f.PixelX, f => f.Random.Long(1280, 1920))
                     .RuleFor(f => f.PixelY, f => f.Random.Long(720, 1080))

@@ -7,7 +7,7 @@ namespace TrackingBle.Models.Dto.MstFloorDto
         public int Generate { get; set; }
         public Guid Id { get; set; }
         public string BuildingId { get; set; }
-        public long Name { get; set; }
+        public string Name { get; set; }
         public string FloorImage { get; set; }
         public long PixelX { get; set; }
         public long PixelY { get; set; }

@@ -117,7 +117,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<TrackingBleDbContext>();
     context.Database.Migrate();
-    DatabaseSeeder.Seed(context);
+    // DatabaseSeeder.Seed(context);
 }
 
 if (app.Environment.IsDevelopment())
@@ -130,6 +130,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseStaticFiles(); 
 app.UseCors("AllowAll");
 
 app.UseRouting();

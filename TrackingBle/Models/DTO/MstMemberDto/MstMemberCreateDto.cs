@@ -16,12 +16,8 @@ namespace TrackingBle.Models.Dto.MstMemberDto
         public string Email { get; set; }
         public string Gender { get; set; } // Enum sebagai string
         public string Address { get; set; }
-        public string FaceImage { get; set; }
-        public int UploadFr { get; set; } = 0; // Default 0
-        public string UploadFrError { get; set; }
-        public DateTime BirthDate { get; set; }
-        public DateTime JoinDate { get; set; }
-        public DateTime ExitDate { get; set; }
+        public IFormFile FaceImage { get; set; }
+        public DateOnly BirthDate { get; set; }
         public string HeadMember1 { get; set; }
         public string HeadMember2 { get; set; }
         public Guid ApplicationId { get; set; }

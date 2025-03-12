@@ -53,7 +53,7 @@ namespace TrackingBle.Data
                 entity.Property(e => e.OrganizationType)
                     .HasColumnType("nvarchar(255)")
                     .IsRequired()
-                    .HasDefaultValue(OrganizationType.Single); // Gunakan enum langsung
+                    .HasDefaultValue(OrganizationType.Single); 
                     // .HasConversion(
                     //     v => v.ToString().ToLower(), // Simpan ke DB sebagai "single"
                     //     v => (OrganizationType)Enum.Parse(typeof(OrganizationType), v, true)

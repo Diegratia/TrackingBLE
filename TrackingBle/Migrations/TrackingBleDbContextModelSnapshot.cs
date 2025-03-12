@@ -648,8 +648,9 @@ namespace TrackingBle.Migrations
                     b.Property<decimal>("MeterPerPx")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<long>("Name")
-                        .HasColumnType("bigint");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("PixelX")
                         .HasColumnType("bigint");
@@ -779,8 +780,8 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime>("BirthDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("BirthDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("BleCardNumber")
                         .IsRequired()
@@ -813,8 +814,8 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateTime>("ExitDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("ExitDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("FaceImage")
                         .IsRequired()
@@ -845,8 +846,8 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<DateTime>("JoinDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("JoinDate")
+                        .HasColumnType("date");
 
                     b.Property<Guid?>("MstApplicationId")
                         .HasColumnType("uniqueidentifier");

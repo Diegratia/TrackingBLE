@@ -91,35 +91,35 @@ namespace TrackingBle.Models.Domain
 
         [Required]
         [StringLength(255)]
-        public string CheckinBy { get; set; }
+        public string CheckinBy { get; set; } = "";
 
         [Required]
         [StringLength(255)]
-        public string CheckoutBy { get; set; }
+        public string CheckoutBy { get; set; } = "";
 
         [Required]
         [StringLength(255)]
-        public string DenyBy { get; set; }
+        public string DenyBy { get; set; } = "";
 
         [Required]
         [StringLength(255)]
-        public string BlockBy { get; set; }
+        public string BlockBy { get; set; } = "";
 
         [Required]
         [StringLength(255)]
-        public string UnblockBy { get; set; }
+        public string UnblockBy { get; set; } ="";
 
         [Required]
         [StringLength(255)]
-        public string ReasonDeny { get; set; }
+        public string ReasonDeny { get; set; } = "";
 
         [Required]
         [StringLength(255)]
-        public string ReasonBlock { get; set; }
+        public string ReasonBlock { get; set; } = "";
 
         [Required]
         [StringLength(255)]
-        public string ReasonUnblock { get; set; }
+        public string ReasonUnblock { get; set; } = "";
 
         [Required]
         public VisitorStatus Status { get; set; }

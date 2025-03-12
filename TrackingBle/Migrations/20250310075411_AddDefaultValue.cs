@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackingBle.Migrations
 {
     /// <inheritdoc />
-    public partial class changeDb : Migration
+    public partial class AddDefaultValue : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,7 +64,7 @@ namespace TrackingBle.Migrations
                     Generate = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BuildingId = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    Name = table.Column<long>(type: "bigint", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FloorImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PixelX = table.Column<long>(type: "bigint", nullable: false),
                     PixelY = table.Column<long>(type: "bigint", nullable: false),
@@ -380,9 +380,9 @@ namespace TrackingBle.Migrations
                     FaceImage = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UploadFr = table.Column<int>(type: "int", nullable: false),
                     UploadFrError = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BirthDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    JoinDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ExitDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    BirthDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    JoinDate = table.Column<DateOnly>(type: "date", nullable: false),
+                    ExitDate = table.Column<DateOnly>(type: "date", nullable: false),
                     HeadMember1 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     HeadMember2 = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     ApplicationId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),

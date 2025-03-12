@@ -18,7 +18,7 @@ namespace TrackingBle.Models.Domain
         public string BuildingId { get; set; }
 
       
-        public long Name { get; set; } 
+        public string Name { get; set; } 
 
 
         public string FloorImage { get; set; }

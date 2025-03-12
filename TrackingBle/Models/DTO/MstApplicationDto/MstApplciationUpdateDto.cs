@@ -5,11 +5,11 @@ namespace TrackingBle.Models.Dto.MstApplicationDto
     public class MstApplicationUpdateDto
     {
         public string ApplicationName { get; set; }
-        public OrganizationType OrganizationType { get; set; }
+        public string OrganizationType { get; set; }
         public string OrganizationAddress { get; set; }
-        public ApplicationType ApplicationType { get; set; }
+        public string ApplicationType { get; set; }
         // public DateTime ApplicationRegistered { get; set; }
-        // public DateTime ApplicationExpired { get; set; }
+        public DateTime ApplicationExpired { get; set; }
         public string HostName { get; set; }
         public string HostPhone { get; set; }
         public string HostEmail { get; set; }
@@ -18,6 +18,6 @@ namespace TrackingBle.Models.Dto.MstApplicationDto
         public string ApplicationCustomDomain { get; set; }
         public string ApplicationCustomPort { get; set; }
         public string LicenseCode { get; set; }
-        public LicenseType LicenseType { get; set; }
+        public string LicenseType { get; set; }
     }
 }

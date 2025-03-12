@@ -19,9 +19,9 @@ namespace TrackingBle.Controllers
 
         // POST: api/Visitor
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] VisitorCreateDto dto)
+        public async Task<IActionResult> Create([FromForm] VisitorCreateDto visitorDto)
         {
-            if (!ModelState.IsValid)
+             if (!ModelState.IsValid || (visitorDto.FaceImage != null && visitorDto.FaceImage.Length == 0))
             {
                 var errors = ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage);
                 return BadRequest(new
@@ -35,7 +35,7 @@ namespace TrackingBle.Controllers
 
             try
             {
-                var createdVisitor = await _visitorService.CreateVisitorAsync(dto);
+                var createdVisitor = await _visitorService.CreateVisitorAsync(visitorDto);
                 return StatusCode(201, new
                 {
                     success = true,
@@ -132,9 +132,9 @@ namespace TrackingBle.Controllers
 
         // PUT: api/VisitorBlacklistArea/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] VisitorUpdateDto dto)
+        public async Task<IActionResult> Update(Guid id, [FromForm] VisitorUpdateDto visitorDto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || (visitorDto.FaceImage != null && visitorDto.FaceImage.Length == 0))
             {
                 var errors = ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage);
                 return BadRequest(new
@@ -148,7 +148,7 @@ namespace TrackingBle.Controllers
 
             try
             {
-                await _visitorService.UpdateVisitorAsync(id, dto);
+                await _visitorService.UpdateVisitorAsync(id, visitorDto);
                 return Ok(new
                 {
                     success = true,

@@ -10,7 +10,7 @@ namespace TrackingBle.Models.Dto.FloorplanMaskedAreaDto
         
         public string AreaShape { get; set; }
         public string ColorArea { get; set; }
-        public RestrictedStatus RestrictedStatus { get; set; }
+        public string RestrictedStatus { get; set; }
         public string EngineAreaId { get; set; }
         public long WideArea { get; set; }
         public long PositionPxX { get; set; }

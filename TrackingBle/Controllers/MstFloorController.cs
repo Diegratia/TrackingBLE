@@ -81,9 +81,9 @@ namespace TrackingBle.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MstFloorCreateDto mstFloorDto)
-        {
-            if (!ModelState.IsValid)
+        public async Task<IActionResult> Create([FromForm] MstFloorCreateDto mstFloorDto)
+        {   
+            if (!ModelState.IsValid || (mstFloorDto.FloorImage != null && mstFloorDto.FloorImage.Length == 0))
             {
                 var errors = ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage);
                 return BadRequest(new
@@ -119,9 +119,9 @@ namespace TrackingBle.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MstFloorUpdateDto mstFloorDto)
+        public async Task<IActionResult> Update(Guid id, [FromForm] MstFloorUpdateDto mstFloorDto)
         {
-            if (!ModelState.IsValid)
+           if (!ModelState.IsValid || (mstFloorDto.FloorImage != null && mstFloorDto.FloorImage.Length == 0))
             {
                 var errors = ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage);
                 return BadRequest(new
@@ -135,13 +135,13 @@ namespace TrackingBle.Controllers
 
             try
             {
-                await _mstFloorService.UpdateAsync(id, mstFloorDto);
+                var updatedFloor = await _mstFloorService.UpdateAsync(id, mstFloorDto);
                 return Ok(new
                 {
                     success = true,
                     msg = "Floor updated successfully",
-                    collection = new { data = (object)null },
-                    code = 204
+                    collection = new { data = updatedFloor },
+                    code = 200 
                 });
             }
             catch (KeyNotFoundException)

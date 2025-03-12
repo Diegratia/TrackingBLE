@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.FloorplanMaskedAreaDto;
+using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
 
 namespace TrackingBle.Services
 {

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.VisitorBlacklistAreaDto;
+using TrackingBle.Models.Dto.VisitorBlacklistAreaDtos;
 
 namespace TrackingBle.Services
 {

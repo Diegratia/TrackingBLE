@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.VisitorBlacklistAreaDto;
+using TrackingBle.Models.Dto.VisitorBlacklistAreaDtos;
 using TrackingBle.Services;
 
 namespace TrackingBle.Controllers

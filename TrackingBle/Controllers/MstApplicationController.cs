@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstApplicationDto;
+using TrackingBle.Models.Dto.MstApplicationDtos;
 using TrackingBle.Services;
 
 namespace TrackingBle.Controllers

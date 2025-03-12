@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
-using TrackingBle.Models.Dto.FloorplanMaskedAreaDto;
+using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.Services

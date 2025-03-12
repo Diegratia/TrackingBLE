@@ -1,4 +1,4 @@
-using TrackingBle.Models.Dto.MstIntegrationDto;
+using TrackingBle.Models.Dto.MstIntegrationDtos;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

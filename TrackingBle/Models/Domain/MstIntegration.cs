@@ -21,6 +21,8 @@ namespace TrackingBle.Models.Domain
         [ForeignKey("Brand")]  
         public Guid BrandId { get; set; }
 
+        public MstBrand BrandData { get; set; }
+
         [Required]
         public IntegrationType IntegrationType { get; set; }
 
@@ -66,6 +68,8 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int? Status { get; set; } = 1;
 
+        //relasi dari mstIntegration terhadap domain dibawah ini
+        //relasi one to .. terhadap domain dibawah ini
         public virtual MstBrand Brand { get; set; }
 
         public virtual MstApplication Application { get; set; }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.VisitorBlacklistAreaDto;
+using TrackingBle.Models.Dto.VisitorBlacklistAreaDtos;
 
 namespace TrackingBle.MappingProfiles 
 {

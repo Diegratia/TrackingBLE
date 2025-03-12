@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.VisitorDto;
+using TrackingBle.Models.Dto.VisitorDtos;
 using TrackingBle.Services;
 
 namespace TrackingBle.Controllers

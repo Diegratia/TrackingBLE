@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstBleReaderDto;
+using TrackingBle.Models.Dto.MstBleReaderDtos;
 
 namespace TrackingBle.Services
 {
@@ -55,7 +55,7 @@ namespace TrackingBle.Services
             bleReader.UpdatedBy = "";
 
             _mapper.Map(updateDto, bleReader);
-            _context.MstBleReaders.Update(bleReader);
+            // _context.MstBleReaders.Update(bleReader);
             await _context.SaveChangesAsync();
         }
 

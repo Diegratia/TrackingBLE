@@ -1,6 +1,6 @@
 using AutoMapper;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstDistrictDto;
+using TrackingBle.Models.Dto.MstDistrictDtos;
 
 namespace TrackingBle.MappingProfiles
 {

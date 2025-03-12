@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstMemberDto;
+using TrackingBle.Models.Dto.MstMemberDtos;
 
 namespace TrackingBle.Services
 {
@@ -153,12 +153,13 @@ namespace TrackingBle.Services
                 member.FaceImage = null;
             }
 
-            _mapper.Map(updateDto, member);
+            
             member.UpdatedBy = ""; 
             member.UpdatedAt = DateTime.UtcNow;
 
             member.BirthDate = updateDto.BirthDate; 
 
+            _mapper.Map(updateDto, member);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstMemberDto>(member);
             

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.VisitorBlacklistAreaDto;
+using TrackingBle.Models.Dto.VisitorBlacklistAreaDtos;
 
 namespace TrackingBle.Services
 {

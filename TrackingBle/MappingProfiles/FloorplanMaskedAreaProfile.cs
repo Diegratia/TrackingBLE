@@ -1,5 +1,5 @@
 using AutoMapper;
-using TrackingBle.Models.Dto.FloorplanMaskedAreaDto;
+using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.MappingProfiles

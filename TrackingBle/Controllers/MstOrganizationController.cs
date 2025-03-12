@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstOrganizationDto;
+using TrackingBle.Models.Dto.MstOrganizationDtos;
 using TrackingBle.Services;
 
 namespace TrackingBle.Controllers

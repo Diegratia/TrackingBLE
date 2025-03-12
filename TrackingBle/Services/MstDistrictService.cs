@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstDistrictDto;
+using TrackingBle.Models.Dto.MstDistrictDtos;
 
 namespace TrackingBle.Services
 {
@@ -53,7 +53,7 @@ namespace TrackingBle.Services
             district.UpdatedBy = "";
             _mapper.Map(updateDto, district);
 
-            _context.MstDistricts.Update(district);
+            // _context.MstDistricts.Update(district);
             await _context.SaveChangesAsync();
         }
 

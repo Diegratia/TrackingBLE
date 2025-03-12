@@ -6,7 +6,7 @@ using AutoMapper; // Tambahkan namespace AutoMapper
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstApplicationDto;
+using TrackingBle.Models.Dto.MstApplicationDtos;
 
 namespace TrackingBle.Services
 {

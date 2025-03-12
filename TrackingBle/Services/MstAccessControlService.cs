@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
-using TrackingBle.Models.Dto.MstAccessControlDto;
+using TrackingBle.Models.Dto.MstAccessControlDtos;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.Services
@@ -55,7 +55,7 @@ namespace TrackingBle.Services
             accessControl.UpdatedBy = "";
 
             _mapper.Map(updateDto, accessControl);
-            _context.MstAccessControls.Update(accessControl);
+            // _context.MstAccessControls.Update(accessControl);
             await _context.SaveChangesAsync();
         }
 

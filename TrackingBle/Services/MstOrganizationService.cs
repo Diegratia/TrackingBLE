@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstOrganizationDto;
+using TrackingBle.Models.Dto.MstOrganizationDtos;
 
 namespace TrackingBle.Services
 {
@@ -61,9 +61,11 @@ namespace TrackingBle.Services
                 throw new KeyNotFoundException($"Organization with ID {id} not found or has been deleted.");
             }
 
-            _mapper.Map(dto, organization);
+          
             organization.UpdatedBy = ""; 
             organization.UpdatedAt = DateTime.UtcNow;
+            
+              _mapper.Map(dto, organization);
 
             await _context.SaveChangesAsync();
         }

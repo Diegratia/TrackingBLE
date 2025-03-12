@@ -1,7 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data;
-using TrackingBle.Models.Dto.MstIntegrationDto;
+using TrackingBle.Models.Dto.MstIntegrationDtos;
 using TrackingBle.Models.Domain;
 using System;
 using System.Collections.Generic;
@@ -35,16 +35,23 @@ namespace TrackingBle.Services
 
         public async Task<MstIntegrationDto> CreateAsync(MstIntegrationCreateDto createDto)
         {
-        
+            var brand = await _context.MstBrands.FirstOrDefaultAsync(b => b.Id == createDto.BrandId);
+            if (brand == null)
+                throw new ArgumentException($"Brand with ID {createDto.BrandId} not found.");
 
             var integration = _mapper.Map<MstIntegration>(createDto);
-                // Set default "System" 
+            // Set default "System" 
             integration.Status = 1;
             integration.CreatedBy ??= "System";
             integration.UpdatedBy ??= "System";
+            integration.BrandData = brand; // Simpan seluruh data Brand
+
             _context.MstIntegrations.Add(integration);
             await _context.SaveChangesAsync();
-            return _mapper.Map<MstIntegrationDto>(integration);
+
+            var savedIntegration = await _context.MstIntegrations
+                .FirstOrDefaultAsync(i => i.Id == integration.Id);
+            return _mapper.Map<MstIntegrationDto>(savedIntegration); // Kembalikan dengan Brand penuh
         }
 
         public async Task UpdateAsync(Guid id, MstIntegrationUpdateDto updateDto)
@@ -53,10 +60,17 @@ namespace TrackingBle.Services
             if (integration == null)
                 throw new KeyNotFoundException("Integration not found");
 
-            integration.UpdatedBy ??= "System";
+           // Validasi dan update BrandData jika BrandId berubah
+            if (integration.BrandId != updateDto.BrandId)
+            {
+                var brand = await _context.MstBrands.FirstOrDefaultAsync(b => b.Id == updateDto.BrandId);
+                if (brand == null)
+                    throw new ArgumentException($"Brand with ID {updateDto.BrandId} not found.");
+                integration.BrandData = brand;
+            }
 
+            integration.UpdatedBy ??= "System";
             _mapper.Map(updateDto, integration);
-            _context.MstIntegrations.Update(integration);
             await _context.SaveChangesAsync();
         }
 

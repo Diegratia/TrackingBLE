@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.FloorplanMaskedAreaDto;
+using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
 using TrackingBle.Services;
 using System.Linq;
 

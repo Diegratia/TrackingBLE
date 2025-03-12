@@ -32,6 +32,9 @@ builder.Services.AddAutoMapper(typeof(MstDistrictProfile));
 builder.Services.AddAutoMapper(typeof(MstFloorProfile));
 builder.Services.AddAutoMapper(typeof(MstMemberProfile));
 builder.Services.AddAutoMapper(typeof(MstOrganizationProfile));
+builder.Services.AddAutoMapper(typeof(TrackingTransactionProfile));
+builder.Services.AddAutoMapper(typeof(VisitorBlacklistAreaProfile));
+builder.Services.AddAutoMapper(typeof(VisitorProfile));
 
 builder.Services.AddControllers();
 
@@ -57,13 +60,16 @@ builder.Services.AddScoped<IMstDistrictService, MstDistrictService>();
 builder.Services.AddScoped<IMstFloorService, MstFloorService>();
 builder.Services.AddScoped<IMstMemberService, MstMemberService>();
 builder.Services.AddScoped<IMstOrganizationService, MstOrganizationService>();
+builder.Services.AddScoped<ITrackingTransactionService, TrackingTransactionService>();
+builder.Services.AddScoped<IVisitorBlacklistAreaService, VisitorBlacklistAreaService>();
+builder.Services.AddScoped<IVisitorService, VisitorService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<TrackingBleDbContext>();
     context.Database.Migrate();
-    DatabaseSeeder.Seed(context);
+    // DatabaseSeeder.Seed(context);
 }
 
 
@@ -84,3 +90,4 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+

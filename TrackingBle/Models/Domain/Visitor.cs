@@ -56,7 +56,7 @@ namespace TrackingBle.Models.Domain
         public string UploadFrError { get; set; }
 
         [Required]
-        [ForeignKey("ApplicationId")]
+        [ForeignKey("Application")]
         public Guid ApplicationId { get; set; }
 
         [Required]

@@ -8,10 +8,10 @@ namespace TrackingBle.Services
 {
     public interface IVisitorService
     {
-        Task<VisitorDto> CreateVisitorAsync(VisitorCreateDto dto);
+        Task<VisitorDto> CreateVisitorAsync(VisitorCreateDto createDto);
         Task<VisitorDto> GetVisitorByIdAsync(Guid id);
         Task<IEnumerable<VisitorDto>> GetAllVisitorsAsync();
-        Task UpdateVisitorAsync(Guid id, VisitorUpdateDto dto);
+        Task<VisitorDto> UpdateVisitorAsync(Guid id, VisitorUpdateDto updateDto);
         Task DeleteVisitorAsync(Guid id);
     }
 }

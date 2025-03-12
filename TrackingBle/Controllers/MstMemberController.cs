@@ -83,9 +83,9 @@ namespace TrackingBle.Controllers
 
         // POST: api/MstMember
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] MstMemberCreateDto mstMemberDto)
+        public async Task<IActionResult> Create([FromForm] MstMemberCreateDto mstMemberDto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || (mstMemberDto.FaceImage != null && mstMemberDto.FaceImage.Length == 0))
             {
                 var errors = ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage);
                 return BadRequest(new
@@ -122,9 +122,9 @@ namespace TrackingBle.Controllers
 
         // PUT: api/MstMember/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] MstMemberUpdateDto mstMemberDto)
+        public async Task<IActionResult> Update(Guid id, [FromForm] MstMemberUpdateDto mstMemberDto)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || (mstMemberDto.FaceImage != null && mstMemberDto.FaceImage.Length == 0))
             {
                 var errors = ModelState.SelectMany(x => x.Value.Errors).Select(x => x.ErrorMessage);
                 return BadRequest(new

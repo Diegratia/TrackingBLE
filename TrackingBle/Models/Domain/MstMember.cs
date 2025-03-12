@@ -71,13 +71,13 @@ namespace TrackingBle.Models.Domain
         public string UploadFrError { get; set; }
 
         [Required]
-        public DateTime BirthDate { get; set; }
+        public DateOnly BirthDate { get; set; }
 
         [Required]
-        public DateTime JoinDate { get; set; }
+        public DateOnly JoinDate { get; set; }
 
         [Required]
-        public DateTime ExitDate { get; set; }
+        public DateOnly ExitDate { get; set; } = DateOnly.MaxValue; // Non-nullable, default jauh di masa depan
 
         [Required]
         [StringLength(255)]

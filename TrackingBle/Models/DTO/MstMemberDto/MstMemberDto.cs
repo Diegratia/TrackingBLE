@@ -21,9 +21,9 @@ namespace TrackingBle.Models.Dto.MstMemberDto
         public string FaceImage { get; set; }
         public int UploadFr { get; set; }
         public string UploadFrError { get; set; }
-        public DateTime BirthDate { get; set; }
-        public DateTime JoinDate { get; set; }
-        public DateTime ExitDate { get; set; }
+        public DateOnly BirthDate { get; set; }
+        public DateOnly JoinDate { get; set; }
+        public DateOnly ExitDate { get; set; }
         public string HeadMember1 { get; set; }
         public string HeadMember2 { get; set; }
         public Guid ApplicationId { get; set; }

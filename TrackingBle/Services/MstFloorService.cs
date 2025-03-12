@@ -14,7 +14,7 @@ namespace TrackingBle.Services
         private readonly TrackingBleDbContext _context;
         private readonly IMapper _mapper;
         private readonly string[] _allowedImageTypes = new[] { "image/jpeg", "image/png", "image/jpg" }; // tipe gambar
-        private const long MaxFileSize = 2 * 1024 * 1024; // maksimal 2mb
+        private const long MaxFileSize = 1 * 1024 * 1024; // maksimal 1mb
 
         public MstFloorService(TrackingBleDbContext context, IMapper mapper)
         {
@@ -48,7 +48,7 @@ namespace TrackingBle.Services
 
                     // Validasi ukuran file
                 if (createDto.FloorImage.Length > MaxFileSize)
-                    throw new ArgumentException("File size exceeds 2 MB limit.");
+                    throw new ArgumentException("File size exceeds 1 MB limit.");
 
                 // folder penyimpanan di lokal server
                 var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "FloorImages");

@@ -35,6 +35,11 @@ namespace TrackingBle.Services
 
         public async Task<MstBleReaderDto> CreateAsync(MstBleReaderCreateDto createDto)
         {
+             // Validasi BrandId
+            var brand = await _context.MstBrands.FirstOrDefaultAsync(b => b.Id == createDto.BrandId);
+            if (brand == null)
+                throw new ArgumentException($"Brand with ID {createDto.BrandId} not found.");
+
             var bleReader = _mapper.Map<MstBleReader>(createDto);
 
             bleReader.CreatedBy = "";
@@ -51,6 +56,15 @@ namespace TrackingBle.Services
             var bleReader = await _context.MstBleReaders.FindAsync(id);
             if (bleReader == null)
                 throw new KeyNotFoundException("BLE Reader not found");
+
+             if (bleReader.BrandId != updateDto.BrandId)
+            {
+                var brand = await _context.MstBrands.FirstOrDefaultAsync(b => b.Id == updateDto.BrandId);
+                if (brand == null)
+                    throw new ArgumentException($"Brand with ID {updateDto.BrandId} not found.");
+                // Tidak perlu set BrandData, cukup update BrandId
+                bleReader.BrandId = updateDto.BrandId;
+            }
 
             bleReader.UpdatedBy = "";
 

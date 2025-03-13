@@ -3,6 +3,7 @@ using TrackingBle.Models.Dto.MstIntegrationDtos;
 using TrackingBle.Models.Domain;
 using TrackingBle.Models.Dto.MstBrandDtos;
 
+
 namespace TrackingBle.MappingProfiles
 {
     public class MstIntegrationProfile : Profile
@@ -11,8 +12,7 @@ namespace TrackingBle.MappingProfiles
         {
             CreateMap<MstIntegration, MstIntegrationDto>()
                  .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
-                 .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand))
-                 .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
+                 .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => src.Brand));
             CreateMap<MstIntegrationCreateDto, MstIntegration>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())

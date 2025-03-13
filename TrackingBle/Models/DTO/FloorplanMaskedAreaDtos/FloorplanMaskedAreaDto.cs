@@ -1,3 +1,6 @@
+using TrackingBle.Models.Domain;
+using TrackingBle.Models.Dto.MstFloorDtos;
+
 namespace TrackingBle.Models.Dto.FloorplanMaskedAreaDtos
 {
     public class FloorplanMaskedAreaDto
@@ -19,6 +22,7 @@ namespace TrackingBle.Models.Dto.FloorplanMaskedAreaDtos
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? Status { get; set; }
+        public MstFloorDto Floor { get; set; }
     }
 
         public enum RestrictedStatus

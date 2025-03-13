@@ -1,5 +1,6 @@
 using AutoMapper;
 using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
+using TrackingBle.Models.Dto.MstFloorDtos;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.MappingProfiles
@@ -20,6 +21,8 @@ namespace TrackingBle.MappingProfiles
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+            CreateMap<FloorplanMaskedAreaDto, FloorplanMaskedArea>();
+            CreateMap<MstFloor, MstFloorDto>();
         }
     }
 }

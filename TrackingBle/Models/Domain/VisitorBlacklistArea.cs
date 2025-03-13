@@ -14,14 +14,14 @@ namespace TrackingBle.Models.Domain
         public Guid Id { get; set; } = Guid.NewGuid(); 
 
         [Required]
-        [ForeignKey("Floorplan")]
-        public Guid FloorplanId { get; set; }
+        [ForeignKey("FloorplanMaskedArea")]
+        public Guid FloorplanMaskedAreaId { get; set; }
 
         [Required]
         [ForeignKey("Visitor")]
         public Guid VisitorId { get; set; }
 
-        public virtual FloorplanMaskedArea Floorplan { get; set; }
+        public virtual FloorplanMaskedArea FloorplanMaskedArea { get; set; }
  
         public virtual Visitor Visitor { get; set; }
     }

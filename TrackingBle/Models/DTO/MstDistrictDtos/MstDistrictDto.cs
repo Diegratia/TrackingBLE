@@ -1,4 +1,6 @@
 using System;
+using TrackingBle.Models.Domain;
+using TrackingBle.Models.Dto.MstApplicationDtos;
 
 namespace TrackingBle.Models.Dto.MstDistrictDtos
 {
@@ -15,5 +17,6 @@ namespace TrackingBle.Models.Dto.MstDistrictDtos
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int Status { get; set; }
+        // public MstApplicationDto Application { get; set; }
     }
 }

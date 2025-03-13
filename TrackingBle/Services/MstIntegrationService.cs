@@ -24,7 +24,6 @@ namespace TrackingBle.Services
         {
            var integration = await _context.MstIntegrations
                 .Include(i => i.Brand) // Memuat Brand
-                .Include(i => i.Application) // tampilkan application
                 .FirstOrDefaultAsync(i => i.Id == id);
             return integration == null ? null : _mapper.Map<MstIntegrationDto>(integration);
         }
@@ -33,7 +32,6 @@ namespace TrackingBle.Services
         {
           var integrations = await _context.MstIntegrations
                 .Include(i => i.Brand) // Memuat Brand
-                .Include(i => i.Application) // tampilkan application
                 .ToListAsync();
             return _mapper.Map<IEnumerable<MstIntegrationDto>>(integrations);
         }
@@ -44,17 +42,16 @@ namespace TrackingBle.Services
             var brand = await _context.MstBrands.FirstOrDefaultAsync(b => b.Id == createDto.BrandId);
             if (brand == null)
                 throw new ArgumentException($"Brand with ID {createDto.BrandId} not found.");
-            //validasi untuuk id app    lication
+            //validasi untuuk id application
             var application = await _context.MstApplications.FirstOrDefaultAsync(a => a.Id == createDto.ApplicationId);
             if (application == null)
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found.");
 
             var integration = _mapper.Map<MstIntegration>(createDto);
             integration.Status = 1;
-            integration.CreatedBy ??= "System";
-            integration.UpdatedBy ??= "System";
+            integration.CreatedBy ??= "";
+            integration.UpdatedBy ??= "";
        
-
            _context.MstIntegrations.Add(integration);
             await _context.SaveChangesAsync();
 
@@ -90,7 +87,7 @@ namespace TrackingBle.Services
                 integration.ApplicationId = updateDto.ApplicationId;
             }
 
-            integration.UpdatedBy ??= "System";
+            integration.UpdatedBy ??= "";
             _mapper.Map(updateDto, integration);
             await _context.SaveChangesAsync();
         }

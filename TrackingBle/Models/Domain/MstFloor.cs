@@ -51,13 +51,11 @@ namespace TrackingBle.Models.Domain
      
         [StringLength(255)]
         public string UpdatedBy { get; set; }
-
      
         public DateTime UpdatedAt { get; set; }
-
     
         public int? Status { get; set; } = 1;
 
-        public virtual ICollection<FloorplanMaskedArea> Floorplans { get; set; } = new List<FloorplanMaskedArea>();
+        public virtual ICollection<FloorplanMaskedArea> FloorplanMaskedArea { get; set; } = new List<FloorplanMaskedArea>();
     }
 }

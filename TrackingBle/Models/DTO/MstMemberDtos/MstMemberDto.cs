@@ -1,4 +1,7 @@
 using System;
+using TrackingBle.Models.Dto.MstDistrictDtos;
+using TrackingBle.Models.Dto.MstDepartmentDtos;
+using TrackingBle.Models.Dto.MstOrganizationDtos;
 
 namespace TrackingBle.Models.Dto.MstMemberDtos
 {
@@ -33,5 +36,8 @@ namespace TrackingBle.Models.Dto.MstMemberDtos
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? Status { get; set; }
+        public MstOrganizationDto Organization { get; set;}
+        public MstDepartmentDto Department { get; set; }
+        public MstDistrictDto District { get; set; }
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackingBle.Migrations
 {
     /// <inheritdoc />
-    public partial class changeDefaultValue : Migration
+    public partial class floorplanmaskedchange : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -537,27 +537,27 @@ namespace TrackingBle.Migrations
                     TransTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ReaderId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     CardId = table.Column<long>(type: "bigint", nullable: false),
-                    FloorplanId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
+                    FloorplanMaskedAreaId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     CoordinateX = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CoordinateY = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     CoordinatePxX = table.Column<long>(type: "bigint", nullable: false),
                     CoordinatePxY = table.Column<long>(type: "bigint", nullable: false),
                     AlarmStatus = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     Battery = table.Column<long>(type: "bigint", nullable: false),
-                    FloorplanMaskedAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    FloorplanMaskedAreaId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     MstBleReaderId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tracking_transaction", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_tracking_transaction_floorplan_masked_area_FloorplanId",
-                        column: x => x.FloorplanId,
+                        name: "FK_tracking_transaction_floorplan_masked_area_FloorplanMaskedAreaId",
+                        column: x => x.FloorplanMaskedAreaId,
                         principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_tracking_transaction_floorplan_masked_area_FloorplanMaskedAreaId",
-                        column: x => x.FloorplanMaskedAreaId,
+                        name: "FK_tracking_transaction_floorplan_masked_area_FloorplanMaskedAreaId1",
+                        column: x => x.FloorplanMaskedAreaId1,
                         principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -579,22 +579,22 @@ namespace TrackingBle.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     Generate = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    FloorplanId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
+                    FloorplanMaskedAreaId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     VisitorId = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
-                    FloorplanMaskedAreaId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    FloorplanMaskedAreaId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     VisitorId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_visitor_blacklist_area", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_visitor_blacklist_area_floorplan_masked_area_FloorplanId",
-                        column: x => x.FloorplanId,
+                        name: "FK_visitor_blacklist_area_floorplan_masked_area_FloorplanMaskedAreaId",
+                        column: x => x.FloorplanMaskedAreaId,
                         principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_visitor_blacklist_area_floorplan_masked_area_FloorplanMaskedAreaId",
-                        column: x => x.FloorplanMaskedAreaId,
+                        name: "FK_visitor_blacklist_area_floorplan_masked_area_FloorplanMaskedAreaId1",
+                        column: x => x.FloorplanMaskedAreaId1,
                         principalTable: "floorplan_masked_area",
                         principalColumn: "Id");
                     table.ForeignKey(
@@ -760,14 +760,14 @@ namespace TrackingBle.Migrations
                 column: "MstApplicationId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tracking_transaction_FloorplanId",
-                table: "tracking_transaction",
-                column: "FloorplanId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_tracking_transaction_FloorplanMaskedAreaId",
                 table: "tracking_transaction",
                 column: "FloorplanMaskedAreaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tracking_transaction_FloorplanMaskedAreaId1",
+                table: "tracking_transaction",
+                column: "FloorplanMaskedAreaId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tracking_transaction_MstBleReaderId",
@@ -800,14 +800,14 @@ namespace TrackingBle.Migrations
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_visitor_blacklist_area_FloorplanId",
-                table: "visitor_blacklist_area",
-                column: "FloorplanId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_visitor_blacklist_area_FloorplanMaskedAreaId",
                 table: "visitor_blacklist_area",
                 column: "FloorplanMaskedAreaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_visitor_blacklist_area_FloorplanMaskedAreaId1",
+                table: "visitor_blacklist_area",
+                column: "FloorplanMaskedAreaId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_visitor_blacklist_area_VisitorId",

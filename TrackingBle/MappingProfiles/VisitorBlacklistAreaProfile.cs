@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using AutoMapper;
 using TrackingBle.Models.Domain;
 using TrackingBle.Models.Dto.VisitorBlacklistAreaDtos;
+using TrackingBle.Models.Dto.VisitorDtos;
+using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
 
 namespace TrackingBle.MappingProfiles 
 {
@@ -16,7 +18,9 @@ namespace TrackingBle.MappingProfiles
             CreateMap<VisitorBlacklistAreaCreateDto, VisitorBlacklistArea>();
             CreateMap<VisitorBlacklistAreaUpdateDto, VisitorBlacklistArea>();
             CreateMap<VisitorBlacklistArea, VisitorBlacklistAreaDto>();
-               
+            CreateMap<VisitorBlacklistAreaDto, VisitorBlacklistArea>();
+            CreateMap<FloorplanMaskedArea, FloorplanMaskedAreaDto>();
+            CreateMap<Visitor, VisitorDto>();
         }
         
     }

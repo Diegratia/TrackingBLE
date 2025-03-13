@@ -12,8 +12,8 @@ using TrackingBle.Data;
 namespace TrackingBle.Migrations
 {
     [DbContext(typeof(TrackingBleDbContext))]
-    [Migration("20250312060424_changeDefaultValue")]
-    partial class changeDefaultValue
+    [Migration("20250313061437_floorplanmaskedchange")]
+    partial class floorplanmaskedchange
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1028,11 +1028,11 @@ namespace TrackingBle.Migrations
                     b.Property<decimal>("CoordinateY")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<Guid>("FloorplanId")
+                    b.Property<Guid>("FloorplanMaskedAreaId")
                         .HasMaxLength(36)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FloorplanMaskedAreaId")
+                    b.Property<Guid?>("FloorplanMaskedAreaId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid?>("MstBleReaderId")
@@ -1047,9 +1047,9 @@ namespace TrackingBle.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FloorplanId");
-
                     b.HasIndex("FloorplanMaskedAreaId");
+
+                    b.HasIndex("FloorplanMaskedAreaId1");
 
                     b.HasIndex("MstBleReaderId");
 
@@ -1226,11 +1226,11 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("FloorplanId")
+                    b.Property<Guid>("FloorplanMaskedAreaId")
                         .HasMaxLength(36)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("FloorplanMaskedAreaId")
+                    b.Property<Guid?>("FloorplanMaskedAreaId1")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<long>("Generate")
@@ -1248,9 +1248,9 @@ namespace TrackingBle.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FloorplanId");
-
                     b.HasIndex("FloorplanMaskedAreaId");
+
+                    b.HasIndex("FloorplanMaskedAreaId1");
 
                     b.HasIndex("VisitorId");
 
@@ -1268,7 +1268,7 @@ namespace TrackingBle.Migrations
                         .IsRequired();
 
                     b.HasOne("TrackingBle.Models.Domain.MstFloor", null)
-                        .WithMany("Floorplans")
+                        .WithMany("FloorplanMaskedArea")
                         .HasForeignKey("MstFloorId");
 
                     b.Navigation("Floor");
@@ -1464,15 +1464,15 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.TrackingTransaction", b =>
                 {
-                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "Floorplan")
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "FloorplanMaskedArea")
                         .WithMany()
-                        .HasForeignKey("FloorplanId")
+                        .HasForeignKey("FloorplanMaskedAreaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", null)
                         .WithMany("TrackingTransactions")
-                        .HasForeignKey("FloorplanMaskedAreaId");
+                        .HasForeignKey("FloorplanMaskedAreaId1");
 
                     b.HasOne("TrackingBle.Models.Domain.MstBleReader", null)
                         .WithMany("TrackingTransactions")
@@ -1484,7 +1484,7 @@ namespace TrackingBle.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Floorplan");
+                    b.Navigation("FloorplanMaskedArea");
 
                     b.Navigation("Reader");
                 });
@@ -1506,15 +1506,15 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.VisitorBlacklistArea", b =>
                 {
-                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "Floorplan")
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "FloorplanMaskedArea")
                         .WithMany()
-                        .HasForeignKey("FloorplanId")
+                        .HasForeignKey("FloorplanMaskedAreaId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", null)
                         .WithMany("BlacklistAreas")
-                        .HasForeignKey("FloorplanMaskedAreaId");
+                        .HasForeignKey("FloorplanMaskedAreaId1");
 
                     b.HasOne("TrackingBle.Models.Domain.Visitor", "Visitor")
                         .WithMany()
@@ -1526,7 +1526,7 @@ namespace TrackingBle.Migrations
                         .WithMany("BlacklistAreas")
                         .HasForeignKey("VisitorId1");
 
-                    b.Navigation("Floorplan");
+                    b.Navigation("FloorplanMaskedArea");
 
                     b.Navigation("Visitor");
                 });
@@ -1581,7 +1581,7 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstFloor", b =>
                 {
-                    b.Navigation("Floorplans");
+                    b.Navigation("FloorplanMaskedArea");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstOrganization", b =>

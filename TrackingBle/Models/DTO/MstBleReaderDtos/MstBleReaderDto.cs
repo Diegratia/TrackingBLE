@@ -1,4 +1,5 @@
 using System;
+using TrackingBle.Models.Dto.MstBrandDtos;
 
 namespace TrackingBle.Models.Dto.MstBleReaderDtos
 {
@@ -20,5 +21,6 @@ namespace TrackingBle.Models.Dto.MstBleReaderDtos
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? Status { get; set; }
+        public MstBrandDto Brand { get; set;}
     }
 }

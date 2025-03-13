@@ -1,4 +1,5 @@
 using System;
+using TrackingBle.Models.Dto.MstApplicationDtos;
 
 namespace TrackingBle.Models.Dto.MstDepartmentDtos
 {
@@ -15,5 +16,6 @@ namespace TrackingBle.Models.Dto.MstDepartmentDtos
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? Status { get; set; }
+        public MstApplicationDto Application { get; set; }
     }
 }

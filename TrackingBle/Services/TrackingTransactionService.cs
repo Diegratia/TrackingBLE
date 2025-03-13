@@ -38,7 +38,7 @@ namespace TrackingBle.Services
         {
             var transaction = await _context.TrackingTransactions
                 .Include(t => t.Reader)
-                .Include(t => t.Floorplan)
+                .Include(t => t.FloorplanMaskedArea)
                 .FirstOrDefaultAsync(t => t.Id == id);
             return _mapper.Map<TrackingTransactionDto>(transaction);
         }
@@ -47,7 +47,7 @@ namespace TrackingBle.Services
         {
             var transactions = await _context.TrackingTransactions
                 .Include(t => t.Reader)
-                .Include(t => t.Floorplan)
+                .Include(t => t.FloorplanMaskedArea)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<TrackingTransactionDto>>(transactions);
         }

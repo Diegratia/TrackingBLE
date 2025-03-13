@@ -8,7 +8,7 @@ namespace TrackingBle.Models.Dto.VisitorBlacklistAreaDtos
     public class VisitorBlacklistAreaCreateDto
     {
 
-        public Guid FloorplanId { get; set; }
+        public Guid FloorplanMaskedAreaId { get; set; }
 
         public Guid VisitorId { get; set; }
 

@@ -1,5 +1,6 @@
 using TrackingBle.Models.Domain;
 using TrackingBle.Models.Dto.MstBrandDtos;
+using TrackingBle.Models.Dto.MstApplicationDtos;
 
 namespace TrackingBle.Models.Dto.MstIntegrationDtos
 {
@@ -8,7 +9,6 @@ namespace TrackingBle.Models.Dto.MstIntegrationDtos
         public int Generate { get; set; }
         public Guid Id { get; set; }
         public Guid BrandId { get; set; }
-        public MstBrandDto Brand { get; set; }
         public string IntegrationType { get; set; }
         public string ApiTypeAuth { get; set; }
         public string ApiUrl { get; set; }
@@ -17,10 +17,13 @@ namespace TrackingBle.Models.Dto.MstIntegrationDtos
         public string ApiKeyField { get; set; }
         public string ApiKeyValue { get; set; }
         public Guid ApplicationId { get; set; }
+      
         public string CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? Status { get; set; }
+        public MstBrandDto Brand { get; set; }
+        public MstApplicationDto Application { get; set; }
     }
 }

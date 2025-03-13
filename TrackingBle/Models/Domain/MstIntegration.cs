@@ -21,8 +21,6 @@ namespace TrackingBle.Models.Domain
         [ForeignKey("Brand")]  
         public Guid BrandId { get; set; }
 
-        public MstBrand BrandData { get; set; }
-
         [Required]
         public IntegrationType IntegrationType { get; set; }
 

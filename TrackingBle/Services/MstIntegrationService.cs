@@ -22,36 +22,48 @@ namespace TrackingBle.Services
 
         public async Task<MstIntegrationDto> GetByIdAsync(Guid id)
         {
-            var integration = await _context.MstIntegrations
+           var integration = await _context.MstIntegrations
+                .Include(i => i.Brand) // Memuat Brand
+                .Include(i => i.Application) // tampilkan application
                 .FirstOrDefaultAsync(i => i.Id == id);
             return integration == null ? null : _mapper.Map<MstIntegrationDto>(integration);
         }
 
         public async Task<IEnumerable<MstIntegrationDto>> GetAllAsync()
         {
-            var integrations = await _context.MstIntegrations.ToListAsync();
+          var integrations = await _context.MstIntegrations
+                .Include(i => i.Brand) // Memuat Brand
+                .Include(i => i.Application) // tampilkan application
+                .ToListAsync();
             return _mapper.Map<IEnumerable<MstIntegrationDto>>(integrations);
         }
 
         public async Task<MstIntegrationDto> CreateAsync(MstIntegrationCreateDto createDto)
         {
+           // Validasi BrandId
             var brand = await _context.MstBrands.FirstOrDefaultAsync(b => b.Id == createDto.BrandId);
             if (brand == null)
                 throw new ArgumentException($"Brand with ID {createDto.BrandId} not found.");
+            //validasi untuuk id app    lication
+            var application = await _context.MstApplications.FirstOrDefaultAsync(a => a.Id == createDto.ApplicationId);
+            if (application == null)
+                throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found.");
 
             var integration = _mapper.Map<MstIntegration>(createDto);
-            // Set default "System" 
             integration.Status = 1;
             integration.CreatedBy ??= "System";
             integration.UpdatedBy ??= "System";
-            integration.BrandData = brand; // Simpan seluruh data Brand
+       
 
-            _context.MstIntegrations.Add(integration);
+           _context.MstIntegrations.Add(integration);
             await _context.SaveChangesAsync();
 
+            // Muat kembali dengan brand dan applicaiton untuk DTO
             var savedIntegration = await _context.MstIntegrations
+                .Include(i => i.Brand)
+                .Include(i => i.Application)
                 .FirstOrDefaultAsync(i => i.Id == integration.Id);
-            return _mapper.Map<MstIntegrationDto>(savedIntegration); // Kembalikan dengan Brand penuh
+            return _mapper.Map<MstIntegrationDto>(savedIntegration);    
         }
 
         public async Task UpdateAsync(Guid id, MstIntegrationUpdateDto updateDto)
@@ -60,13 +72,22 @@ namespace TrackingBle.Services
             if (integration == null)
                 throw new KeyNotFoundException("Integration not found");
 
-           // Validasi dan update BrandData jika BrandId berubah
+          // Validasi BrandId jika berubah
             if (integration.BrandId != updateDto.BrandId)
             {
                 var brand = await _context.MstBrands.FirstOrDefaultAsync(b => b.Id == updateDto.BrandId);
                 if (brand == null)
                     throw new ArgumentException($"Brand with ID {updateDto.BrandId} not found.");
-                integration.BrandData = brand;
+                // Tidak perlu set BrandData, cukup update BrandId
+                integration.BrandId = updateDto.BrandId;
+            }
+
+            if (integration.ApplicationId != updateDto.ApplicationId)
+            {
+                var application = await _context.MstApplications.FirstOrDefaultAsync(b => b.Id == updateDto.ApplicationId);
+                if (application == null)
+                    throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found.");
+                integration.ApplicationId = updateDto.ApplicationId;
             }
 
             integration.UpdatedBy ??= "System";

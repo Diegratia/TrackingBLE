@@ -24,6 +24,10 @@ namespace TrackingBle.Data
         public DbSet<VisitorBlacklistArea> VisitorBlacklistAreas { get; set; }
         public DbSet<MstBleReader> MstBleReaders { get; set; }
         public DbSet<TrackingTransaction> TrackingTransactions { get; set; }
+        public DbSet<AlarmRecordTracking> AlarmRecordTrackings { get; set; }
+        public DbSet<MstFloorplan> MstFloorplans { get; set; }
+        public DbSet<MstBuilding> MstBuildings { get; set; }
+        public DbSet<FloorplanDevice> FloorplanDevices { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +49,10 @@ namespace TrackingBle.Data
             modelBuilder.Entity<VisitorBlacklistArea>().ToTable("visitor_blacklist_area");
             modelBuilder.Entity<MstBleReader>().ToTable("mst_ble_reader");
             modelBuilder.Entity<TrackingTransaction>().ToTable("tracking_transaction");
+            modelBuilder.Entity<AlarmRecordTracking>().ToTable("alarm_record_tracking"); 
+            modelBuilder.Entity<MstFloorplan>().ToTable("mst_floorplan"); 
+            modelBuilder.Entity<MstBuilding>().ToTable("mst_building"); 
+
 
             // MstApplication
         modelBuilder.Entity<MstApplication>(entity =>
@@ -103,6 +111,8 @@ namespace TrackingBle.Data
                 .HasQueryFilter(m => m.Status != 0);
             modelBuilder.Entity<MstOrganization>()
                 .HasQueryFilter(m => m.Status != 0);
+            modelBuilder.Entity<MstFloorplan>()
+                .HasQueryFilter(m => m.Status != 0);  
 
             // MstIntegration
             modelBuilder.Entity<MstIntegration>(entity =>
@@ -293,10 +303,15 @@ namespace TrackingBle.Data
             modelBuilder.Entity<MstFloor>(entity =>
             {
                 entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
-                entity.Property(e => e.BuildingId).HasMaxLength(255);
+                entity.Property(e => e.BuildingId).HasMaxLength(36);
                 entity.Property(m => m.Status)
                     .IsRequired()
-                    .HasDefaultValue(1);   
+                    .HasDefaultValue(1); 
+                    
+                entity.HasOne(m => m.Building)
+                    .WithMany()
+                    .HasForeignKey(m => m.BuildingId)
+                    .OnDelete(DeleteBehavior.NoAction);                
             });
 
             // FloorplanMaskedArea
@@ -409,6 +424,131 @@ namespace TrackingBle.Data
                     .WithMany()
                     .HasForeignKey(t => t.FloorplanMaskedAreaId)
                     .OnDelete(DeleteBehavior.NoAction);
+            });
+
+            //AlarmRecordTracking
+            modelBuilder.Entity<AlarmRecordTracking>(entity =>
+            {
+                entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.VisitorId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.ReaderId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.FloorplanMaskedAreaId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.ApplicationId).HasMaxLength(36).IsRequired();
+
+                entity.Property(e => e.Alarm)
+                    .HasColumnName("alarm_record_status")
+                    .HasColumnType("nvarchar(255)")
+                    .IsRequired()
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => (AlarmRecordStatus)Enum.Parse(typeof(AlarmRecordStatus), v, true)
+                    );
+
+                entity.Property(e => e.Action)
+                    .HasColumnType("nvarchar(255)")
+                    .IsRequired()
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => (ActionStatus)Enum.Parse(typeof(ActionStatus), v, true)
+                    );
+
+                // Relasi one-to-one dengan Visitor
+                entity.HasOne(a => a.Visitor)
+                    .WithOne(v => v.AlarmRecordTracking)
+                    .HasForeignKey<AlarmRecordTracking>(a => a.VisitorId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                // Relasi one-to-one dengan MstBleReader
+                entity.HasOne(a => a.Reader)
+                    .WithOne(r => r.AlarmRecordTracking)
+                    .HasForeignKey<AlarmRecordTracking>(a => a.ReaderId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                // Relasi one-to-one dengan FloorplanMaskedArea
+                entity.HasOne(a => a.FloorplanMaskedArea)
+                    .WithOne(f => f.AlarmRecordTracking)
+                    .HasForeignKey<AlarmRecordTracking>(a => a.FloorplanMaskedAreaId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                // Relasi one-to-one dengan MstApplication
+                entity.HasOne(a => a.Application)
+                    .WithOne(m => m.AlarmRecordTracking)
+                    .HasForeignKey<AlarmRecordTracking>(a => a.ApplicationId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasIndex(a => a.Generate)
+                    .IsUnique()
+                    .HasDatabaseName("alarm_record_tracking__generate_unique");
+            });
+
+            // FloorplanDevice
+            modelBuilder.Entity<FloorplanDevice>(entity =>
+            {
+                entity.ToTable("floorplan_device");
+                entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.Name).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.Type).HasConversion(v => v.ToString().ToLower(), v => (DeviceType)Enum.Parse(typeof(DeviceType), v, true));
+                entity.Property(e => e.FloorplanId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.AccessCctvId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.ReaderId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.AccessControlId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.FloorplanMaskedAreaId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.ApplicationId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.CreatedBy).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.UpdatedBy).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.DeviceStatus).HasConversion(v => v.ToString().ToLower(), v => (DeviceStatus)Enum.Parse(typeof(DeviceStatus), v, true));
+                entity.Property(e => e.Status).IsRequired();
+
+                entity.HasOne(d => d.Floorplan).WithMany(f => f.FloorplanDevices).HasForeignKey(d => d.FloorplanId).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(d => d.AccessCctv).WithMany().HasForeignKey(d => d.AccessCctvId).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(d => d.Reader).WithMany().HasForeignKey(d => d.ReaderId).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(d => d.AccessControl).WithMany().HasForeignKey(d => d.AccessControlId).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(d => d.FloorplanMaskedArea).WithMany().HasForeignKey(d => d.FloorplanMaskedAreaId).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(d => d.Application).WithMany().HasForeignKey(d => d.ApplicationId).OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasIndex(d => d.Generate).IsUnique();
+                entity.HasQueryFilter(d => d.Status != 0);
+            });
+
+            // MstBuilding
+            modelBuilder.Entity<MstBuilding>(entity =>
+            {
+                entity.ToTable("mst_building");
+                entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.Name).IsRequired();
+                entity.Property(e => e.Image).IsRequired();
+                entity.Property(e => e.ApplicationId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.CreatedBy).HasMaxLength(255);
+                entity.Property(e => e.UpdatedBy).HasMaxLength(255);
+                entity.Property(e => e.Status).IsRequired().HasDefaultValue(1);
+
+                entity.HasOne(b => b.Application).WithMany().HasForeignKey(b => b.ApplicationId).OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasIndex(b => b.Generate).IsUnique();
+                entity.HasQueryFilter(b => b.Status != 0);
+            });
+
+            // MstFloorplan
+            modelBuilder.Entity<MstFloorplan>(entity =>
+            {
+                entity.ToTable("mst_floorplan");
+                entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.Name).HasMaxLength(255).IsRequired();
+                entity.Property(e => e.FloorId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.ApplicationId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.CreatedBy).HasMaxLength(255);
+                entity.Property(e => e.UpdatedBy).HasMaxLength(255);
+                entity.Property(e => e.Status).IsRequired().HasDefaultValue(1);
+
+                entity.HasOne(f => f.Floor).WithMany().HasForeignKey(f => f.FloorId).OnDelete(DeleteBehavior.NoAction);
+                entity.HasOne(f => f.Application).WithMany().HasForeignKey(f => f.ApplicationId).OnDelete(DeleteBehavior.NoAction);
+
+                entity.HasIndex(f => f.Generate).IsUnique();
+                entity.HasQueryFilter(f => f.Status != 0);
+
+                entity.Property(m => m.Status)
+                    .IsRequired()
+                    .HasDefaultValue(1);  
             });
         }
     }

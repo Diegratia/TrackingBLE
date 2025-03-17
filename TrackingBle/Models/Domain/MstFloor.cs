@@ -14,8 +14,8 @@ namespace TrackingBle.Models.Domain
         public Guid Id { get; set; } = Guid.NewGuid(); 
 
       
-        [StringLength(255)]
-        public string BuildingId { get; set; }
+        [ForeignKey("Building")]
+        public Guid BuildingId { get; set; }
 
       
         public string Name { get; set; } 
@@ -51,11 +51,15 @@ namespace TrackingBle.Models.Domain
      
         [StringLength(255)]
         public string UpdatedBy { get; set; }
+
      
         public DateTime UpdatedAt { get; set; }
     
         public int? Status { get; set; } = 1;
 
-        public virtual ICollection<FloorplanMaskedArea> FloorplanMaskedArea { get; set; } = new List<FloorplanMaskedArea>();
+        public virtual MstBuilding Building { get; set; }
+        public virtual ICollection<FloorplanMaskedArea> FloorplanMaskedAreas { get; set; } = new List<FloorplanMaskedArea>();
+        public virtual ICollection<MstFloorplan> Floorplans { get; set; } = new List<MstFloorplan>();
+       
     }
 }

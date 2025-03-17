@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
-using TrackingBle.Models.Dto.FloorplanMaskedAreaDtos;
 using TrackingBle.Models.Dto.MstFloorDtos;
 using TrackingBle.Models.Domain;
 

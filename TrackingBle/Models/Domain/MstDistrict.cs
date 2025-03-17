@@ -29,7 +29,7 @@
             public string DistrictHost { get; set; }
 
             [Required]
-            [ForeignKey("ApplicationId")]
+            [ForeignKey("Application")]
             public Guid ApplicationId { get; set; }
 
             [Required]

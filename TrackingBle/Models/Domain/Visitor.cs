@@ -126,6 +126,9 @@ namespace TrackingBle.Models.Domain
 
         public virtual MstApplication Application { get; set; }
 
+        public virtual AlarmRecordTracking AlarmRecordTracking { get; set; }
         public virtual ICollection<VisitorBlacklistArea> BlacklistAreas { get; set; } = new List<VisitorBlacklistArea>();
+        public virtual ICollection<AlarmRecordTracking> AlarmRecordTrackings { get; set; } = new List<AlarmRecordTracking>();
+        
     }
 }

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TrackingBle.Migrations
 {
     /// <inheritdoc />
-    public partial class AddNewTable : Migration
+    public partial class IntialAuth : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -191,6 +191,31 @@ namespace TrackingBle.Migrations
                         column: x => x.MstApplicationId,
                         principalTable: "mst_application",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_group",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    level_priority = table.Column<int>(type: "int", nullable: false),
+                    application_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    created_by = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    created_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    updated_by = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    updated_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    status = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_group", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_group_mst_application_application_id",
+                        column: x => x.application_id,
+                        principalTable: "mst_application",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -447,6 +472,42 @@ namespace TrackingBle.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "user",
+                columns: table => new
+                {
+                    id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 255, nullable: false),
+                    _generate = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    username = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    password = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    is_created_password = table.Column<int>(type: "int", nullable: false),
+                    email = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    is_email_confirmation = table.Column<int>(type: "int", nullable: false),
+                    email_confirmation_code = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    email_confirmation_expired_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    email_confirmation_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    last_login_at = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    status_active = table.Column<int>(type: "int", nullable: false),
+                    group_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserGroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user", x => x.id);
+                    table.ForeignKey(
+                        name: "FK_user_user_group_UserGroupId",
+                        column: x => x.UserGroupId,
+                        principalTable: "user_group",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_user_user_group_group_id",
+                        column: x => x.group_id,
+                        principalTable: "user_group",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "mst_access_cctv",
                 columns: table => new
                 {
@@ -632,7 +693,7 @@ namespace TrackingBle.Migrations
                     visitor = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     ble_reader_id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     floorplan_masked_area_id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
-                    alarm_status = table.Column<string>(type: "nvarchar(255)", nullable: false),
+                    alarm_record_status = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     action = table.Column<string>(type: "nvarchar(255)", nullable: false),
                     application_id = table.Column<Guid>(type: "uniqueidentifier", maxLength: 36, nullable: false),
                     idle_timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -1196,6 +1257,21 @@ namespace TrackingBle.Migrations
                 column: "ReaderId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_user_group_id",
+                table: "user",
+                column: "group_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_UserGroupId",
+                table: "user",
+                column: "UserGroupId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_user_group_application_id",
+                table: "user_group",
+                column: "application_id");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_visitor_ApplicationId",
                 table: "visitor",
                 column: "ApplicationId");
@@ -1252,6 +1328,9 @@ namespace TrackingBle.Migrations
                 name: "tracking_transaction");
 
             migrationBuilder.DropTable(
+                name: "user");
+
+            migrationBuilder.DropTable(
                 name: "visitor_blacklist_area");
 
             migrationBuilder.DropTable(
@@ -1271,6 +1350,9 @@ namespace TrackingBle.Migrations
 
             migrationBuilder.DropTable(
                 name: "mst_ble_reader");
+
+            migrationBuilder.DropTable(
+                name: "user_group");
 
             migrationBuilder.DropTable(
                 name: "floorplan_masked_area");

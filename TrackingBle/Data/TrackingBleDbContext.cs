@@ -28,6 +28,8 @@ namespace TrackingBle.Data
         public DbSet<MstFloorplan> MstFloorplans { get; set; }
         public DbSet<MstBuilding> MstBuildings { get; set; }
         public DbSet<FloorplanDevice> FloorplanDevices { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<UserGroup> UserGroups { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -52,6 +54,8 @@ namespace TrackingBle.Data
             modelBuilder.Entity<AlarmRecordTracking>().ToTable("alarm_record_tracking"); 
             modelBuilder.Entity<MstFloorplan>().ToTable("mst_floorplan"); 
             modelBuilder.Entity<MstBuilding>().ToTable("mst_building"); 
+            modelBuilder.Entity<User>().ToTable("user"); 
+            modelBuilder.Entity<UserGroup>().ToTable("user_group"); 
 
 
             // MstApplication
@@ -550,6 +554,16 @@ namespace TrackingBle.Data
                     .IsRequired()
                     .HasDefaultValue(1);  
             });
+
+             modelBuilder.Entity<User>()
+                .ToTable("user")
+                .HasOne(u => u.Group)
+                .WithMany()
+                .HasForeignKey(u => u.GroupId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+             modelBuilder.Entity<UserGroup>()
+                .ToTable("user_group");
         }
     }
 }

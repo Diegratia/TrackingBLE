@@ -9,11 +9,15 @@
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Azure.Core.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Azure.Identity.dll
+/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/BCrypt.Net.dll
+/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Bogus.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Humanizer.dll
+/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.AspNetCore.Cryptography.Internal.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.Bcl.AsyncInterfaces.dll
+/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.Bcl.Memory.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.CodeAnalysis.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.CodeAnalysis.CSharp.dll
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.CodeAnalysis.CSharp.Workspaces.dll
@@ -156,7 +160,3 @@
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.pdb
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.genruntimeconfig.cache
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/ref/TrackingBle.dll
-/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Bogus.dll
-/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Microsoft.AspNetCore.Authentication.JwtBearer.dll
-/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/DotNetEnv.dll
-/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/bin/Debug/net8.0/Sprache.dll

@@ -8,13 +8,17 @@ using TrackingBle.MappingProfiles;
 using TrackingBle.Services;
 using TrackingBle.Seeding;
 using Microsoft.Extensions.FileProviders;
-using DotNetEnv;
 using TrackingBle.Services.Interfaces;
+using BCrypt.Net;
+using TrackingBle.Models.Domain;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
+Console.WriteLine($"Jwt:Issuer = {builder.Configuration["Jwt:Issuer"]}");
+Console.WriteLine($"Jwt:Audience = {builder.Configuration["Jwt:Audience"]}");
+Console.WriteLine($"Jwt:Key = {builder.Configuration["Jwt:Key"]}");
 
-Env.Load();
 
 builder.Services.AddCors(options =>
 {
@@ -49,6 +53,44 @@ builder.Services.AddAutoMapper(typeof(MstBuildingProfile));
 builder.Services.AddAutoMapper(typeof(MstFloorplanProfile));
 
 builder.Services.AddControllers();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = false,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+  options.Events = new JwtBearerEvents
+{
+    OnMessageReceived = context =>
+    {
+        var accessToken = context.Request.Headers["Authorization"].ToString();
+        if (!string.IsNullOrEmpty(accessToken) && accessToken.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        {
+            context.Token = accessToken.Substring("Bearer ".Length).Trim();
+        }
+        return Task.CompletedTask;
+    },
+    OnAuthenticationFailed = context =>
+    {
+        Console.WriteLine("Authentication failed: " + context.Exception.Message);
+        Console.WriteLine("Token: " + context.Request.Headers["Authorization"]);
+        return Task.CompletedTask;
+    },
+    OnTokenValidated = context =>
+    {
+        Console.WriteLine("Token validated successfully");
+        return Task.CompletedTask;
+    }
+};
+    });
 
 
 
@@ -87,20 +129,20 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<TrackingBleDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleConnectionString")));
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-        };
-    });
+// builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//     .AddJwtBearer(options =>
+//     {
+//         options.TokenValidationParameters = new TokenValidationParameters
+//         {
+//             ValidateIssuer = true,
+//             ValidateAudience = true,
+//             ValidateLifetime = true,
+//             ValidateIssuerSigningKey = true,
+//             ValidIssuer = builder.Configuration["Jwt:Issuer"],
+//             ValidAudience = builder.Configuration["Jwt:Audience"],
+//             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+//         };
+//     });
 
 
 builder.Services.AddScoped<IFloorplanMaskedAreaService, FloorplanMaskedAreaService>();
@@ -123,14 +165,16 @@ builder.Services.AddScoped<IAlarmRecordTrackingService, AlarmRecordTrackingServi
 builder.Services.AddScoped<IFloorplanDeviceService, FloorplanDeviceService>();
 builder.Services.AddScoped<IAlarmRecordTrackingService, AlarmRecordTrackingService>();
 builder.Services.AddScoped<IMstBuildingService, MstBuildingService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<TrackingBleDbContext>();
     context.Database.Migrate();
-    DatabaseSeeder.Seed(context);
+    // DatabaseSeeder.Seed(context);
 }
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -149,14 +193,17 @@ app.UseStaticFiles(new StaticFileOptions
 });
 app.UseCors("AllowAll");
 
-app.UseRouting();
 
 app.UseHttpsRedirection();
 
+app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
+
 

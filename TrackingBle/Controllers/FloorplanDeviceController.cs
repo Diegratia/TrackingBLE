@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrackingBle.Models.Dto.FloorplanDeviceDtos;
 using TrackingBle.Services.Interfaces;
@@ -7,6 +8,7 @@ using System.Linq;
 
 namespace TrackingBle.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class FloorplanDeviceController : ControllerBase

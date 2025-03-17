@@ -52,6 +52,110 @@ namespace TrackingBle.Seeding
                 context.SaveChanges();
             }
 
+            //UserGroup (3 role: System, Primary, UserCreated)
+            if (!context.UserGroups.Any(ug => ug.Status != 0))
+            {
+                var applicationId = context.MstApplications
+                    .Where(a => a.ApplicationStatus != 0)
+                    .OrderBy(r => Guid.NewGuid())
+                    .First()
+                    .Id;
+
+                var groups = new[]
+                {
+                    new UserGroup
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "System",
+                        LevelPriority = LevelPriority.System,
+                        ApplicationId = applicationId,
+                        CreatedBy = "System",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedBy = "System",
+                        UpdatedAt = DateTime.UtcNow,
+                        Status = 1
+                    },
+                    new UserGroup
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "Primary",
+                        LevelPriority = LevelPriority.Primary,
+                        ApplicationId = applicationId,
+                        CreatedBy = "System",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedBy = "System",
+                        UpdatedAt = DateTime.UtcNow,
+                        Status = 1
+                    },
+                    new UserGroup
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "UserCreated",
+                        LevelPriority = LevelPriority.UserCreated,
+                        ApplicationId = applicationId,
+                        CreatedBy = "System",
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedBy = "System",
+                        UpdatedAt = DateTime.UtcNow,
+                        Status = 1
+                    }
+                };
+
+                context.UserGroups.AddRange(groups);
+                context.SaveChanges();
+            }
+
+            // User
+            if (!context.Users.Any(u => u.StatusActive != StatusActive.NonActive))
+            {
+                var userFaker = new Faker<User>()
+                    .RuleFor(u => u.Id, f => Guid.NewGuid())
+                    .RuleFor(u => u.Username, f => f.Internet.UserName())
+                    .RuleFor(u => u.Password, f => BCrypt.Net.BCrypt.HashPassword("Password123!"))
+                    .RuleFor(u => u.IsCreatedPassword, f => 1)
+                    .RuleFor(u => u.Email, f => f.Internet.Email())
+                    .RuleFor(u => u.IsEmailConfirmation, f => 1) // Semua user aktif sudah terkonfirmasi
+                    .RuleFor(u => u.EmailConfirmationCode, f => f.Random.AlphaNumeric(8))
+                    .RuleFor(u => u.EmailConfirmationExpiredAt, f => DateTime.UtcNow.AddDays(1))
+                    .RuleFor(u => u.EmailConfirmationAt, f => DateTime.UtcNow)
+                    .RuleFor(u => u.LastLoginAt, f => DateTime.MinValue)
+                    .RuleFor(u => u.StatusActive, f => StatusActive.Active)
+                    .RuleFor(u => u.GroupId, f => context.UserGroups
+                        .Where(ug => ug.Status != 0)
+                        .OrderBy(r => Guid.NewGuid())
+                        .First()
+                        .Id);
+
+                // Generate beberapa user biasa
+                var users = userFaker.Generate(5);
+
+                // Tambahkan superadmin secara eksplisit
+                var superadminGroup = context.UserGroups
+                    .FirstOrDefault(ug => ug.LevelPriority == LevelPriority.System && ug.Status != 0);
+                if (superadminGroup != null)
+                {
+                    var superadmin = new User
+                    {
+                        Id = Guid.NewGuid(),
+                        Username = "systemadmin",
+                        Password = BCrypt.Net.BCrypt.HashPassword("System123@"),
+                        IsCreatedPassword = 1,
+                        Email = "systemadmin@test.com",
+                        IsEmailConfirmation = 1,
+                        EmailConfirmationCode = "ABC123",
+                        EmailConfirmationExpiredAt = DateTime.UtcNow.AddDays(1),
+                        EmailConfirmationAt = DateTime.UtcNow,
+                        LastLoginAt = DateTime.MinValue,
+                        StatusActive = StatusActive.Active,
+                        GroupId = superadminGroup.Id
+                    };
+                    users.Add(superadmin);
+                }
+
+                context.Users.AddRange(users);
+                context.SaveChanges();
+            }
+
             // 3. MstBuilding (dipindah ke atas karena dependensi MstFloor)
             if (!context.MstBuildings.Any(b => b.Status != 0))
             {

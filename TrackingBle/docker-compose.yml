@@ -1,0 +1,44 @@
+services:
+  floorplanmaskedarea:
+    build:
+      context: ./src/4.FloorplanMaskedArea
+      dockerfile: Dockerfile
+    ports:
+      - "5004:5004"
+    depends_on:
+      - db
+      - mstfloor
+      - mstfloorplan
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+
+  mstfloor:
+    build:
+      context: ./src/MockServices
+      dockerfile: Dockerfile
+    ports:
+      - "5013:80"
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+
+  mstfloorplan:
+    build:
+      context: ./src/MockServices
+      dockerfile: Dockerfile
+    ports:
+      - "5014:80"
+    environment:
+      - ASPNETCORE_URLS=http://0.0.0.0:80
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password_123#
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql-data:/var/opt/mssql
+
+volumes:
+  mssql-data:

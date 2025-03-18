@@ -31,8 +31,6 @@ builder.Services.AddCors(options =>
 });
 
 
-
-
 builder.Services.AddAutoMapper(typeof(MstApplicationProfile));
 builder.Services.AddAutoMapper(typeof(MstIntegrationProfile));
 builder.Services.AddAutoMapper(typeof(MstAccessCctvProfile));

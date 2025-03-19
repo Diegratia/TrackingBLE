@@ -8,12 +8,19 @@ namespace TrackingBle.src._4FloorplanMaskedArea.MappingProfiles
     {
         public FloorplanMaskedAreaProfile()
         {
+            // Mapping dari FloorplanMaskedArea ke FloorplanMaskedAreaDto
             CreateMap<FloorplanMaskedArea, FloorplanMaskedAreaDto>()
-                .ForMember(dest => dest.RestrictedStatus, opt => opt.MapFrom(src => src.RestrictedStatus.ToString().ToLower()));
+                .ForMember(dest => dest.Generate, opt => opt.Ignore()) // Biasanya diisi manual atau dari logika lain
+                .ForMember(dest => dest.Floor, opt => opt.Ignore()) // Diisi manual via service
+                .ForMember(dest => dest.Floorplan, opt => opt.Ignore()); // Diisi manual via service
+
+            // Mapping dari FloorplanMaskedAreaCreateDto ke FloorplanMaskedArea
+            CreateMap<FloorplanMaskedAreaCreateDto, FloorplanMaskedArea>();
+
+            // Mapping dari FloorplanMaskedAreaUpdateDto ke FloorplanMaskedArea
+            // Catatan: Anda belum memberikan FloorplanMaskedAreaUpdateDto, jadi saya asumsikan mirip dengan CreateDto
             CreateMap<FloorplanMaskedAreaCreateDto, FloorplanMaskedArea>()
-                .ForMember(dest => dest.RestrictedStatus, opt => opt.MapFrom(src => Enum.Parse<RestrictedStatus>(src.RestrictedStatus, true)));
-            CreateMap<FloorplanMaskedAreaUpdateDto, FloorplanMaskedArea>()
-                .ForMember(dest => dest.RestrictedStatus, opt => opt.MapFrom(src => Enum.Parse<RestrictedStatus>(src.RestrictedStatus, true)));
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Hanya update field yang tidak null
         }
     }
 }

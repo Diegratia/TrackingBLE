@@ -27,5 +27,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="src\4.FloorplanMaskedArea\4.FloorplanMaskedArea.csproj" />
+    <ProjectReference Include="src\13.MstFloor\13.MstFloor.csproj" />
+    <ProjectReference Include="src\14.MstFloorplan\14.MstFloorplan.csproj" />
+  </ItemGroup>
 
 </Project>

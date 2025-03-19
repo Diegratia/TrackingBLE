@@ -6,3 +6,11 @@
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.MvcApplicationPartsAssemblyInfo.cs
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.MvcApplicationPartsAssemblyInfo.cache
 /Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/Debug/net8.0/TrackingBle.sourcelink.json
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.csproj.AssemblyReference.cache
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.GeneratedMSBuildEditorConfig.editorconfig
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.AssemblyInfoInputs.cache
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.AssemblyInfo.cs
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.csproj.CoreCompileInputs.cache
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.MvcApplicationPartsAssemblyInfo.cs
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.MvcApplicationPartsAssemblyInfo.cache
+D:\TrackingBLE\trackingble\obj\Debug\net8.0\TrackingBle.sourcelink.json

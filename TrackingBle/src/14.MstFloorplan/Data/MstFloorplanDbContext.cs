@@ -5,7 +5,7 @@ namespace TrackingBle.src._14MstFloorplan.Data
 {
     public class MstFloorplanDbContext : DbContext
     {
-        public MstFloorplanDbContext(DbContextOptions<MsXSXStFloorplanDbContext> options) : base(options) { }
+        public MstFloorplanDbContext(DbContextOptions<MstFloorplanDbContext> options) : base(options) { }
 
         public DbSet<MstFloorplan> MstFloorplans { get; set; }
 

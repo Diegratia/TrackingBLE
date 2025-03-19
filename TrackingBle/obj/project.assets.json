@@ -2162,6 +2162,61 @@
             "rid": "win"
           }
         }
+      },
+      "13.MstFloor/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
+          "Microsoft.EntityFrameworkCore.SqlServer": "8.0.13",
+          "Swashbuckle.AspNetCore": "6.6.2"
+        },
+        "compile": {
+          "bin/placeholder/13.MstFloor.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/13.MstFloor.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "14.MstFloorplan/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "4.FloorplanMaskedArea": "1.0.0",
+          "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
+          "Microsoft.EntityFrameworkCore.SqlServer": "8.0.13",
+          "Swashbuckle.AspNetCore": "6.6.2"
+        },
+        "compile": {
+          "bin/placeholder/14.MstFloorplan.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/14.MstFloorplan.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
+      },
+      "4.FloorplanMaskedArea/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v8.0",
+        "dependencies": {
+          "AutoMapper.Extensions.Microsoft.DependencyInjection": "12.0.1",
+          "Microsoft.EntityFrameworkCore.SqlServer": "8.0.13",
+          "Swashbuckle.AspNetCore": "6.6.2"
+        },
+        "compile": {
+          "bin/placeholder/4.FloorplanMaskedArea.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/4.FloorplanMaskedArea.dll": {}
+        },
+        "frameworkReferences": [
+          "Microsoft.AspNetCore.App"
+        ]
       }
     }
   },
@@ -5513,10 +5568,28 @@
         "system.windows.extensions.nuspec",
         "useSharedDesignerContext.txt"
       ]
+    },
+    "13.MstFloor/1.0.0": {
+      "type": "project",
+      "path": "src/13.MstFloor/13.MstFloor.csproj",
+      "msbuildProject": "src/13.MstFloor/13.MstFloor.csproj"
+    },
+    "14.MstFloorplan/1.0.0": {
+      "type": "project",
+      "path": "src/14.MstFloorplan/14.MstFloorplan.csproj",
+      "msbuildProject": "src/14.MstFloorplan/14.MstFloorplan.csproj"
+    },
+    "4.FloorplanMaskedArea/1.0.0": {
+      "type": "project",
+      "path": "src/4.FloorplanMaskedArea/4.FloorplanMaskedArea.csproj",
+      "msbuildProject": "src/4.FloorplanMaskedArea/4.FloorplanMaskedArea.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net8.0": [
+      "13.MstFloor >= 1.0.0",
+      "14.MstFloorplan >= 1.0.0",
+      "4.FloorplanMaskedArea >= 1.0.0",
       "AutoMapper.Extensions.Microsoft.DependencyInjection >= 12.0.1",
       "BCrypt.Net >= 0.1.0",
       "Bogus >= 35.6.2",
@@ -5533,30 +5606,47 @@
     ]
   },
   "packageFolders": {
-    "/Users/developerpci/.nuget/packages/": {}
+    "C:\\Users\\Diegratia\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/TrackingBle.csproj",
+      "projectUniqueName": "D:\\TrackingBLE\\trackingble\\TrackingBle.csproj",
       "projectName": "TrackingBle",
-      "projectPath": "/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/TrackingBle.csproj",
-      "packagesPath": "/Users/developerpci/.nuget/packages/",
-      "outputPath": "/Users/developerpci/Projects/D/ASP.NET/BLE-PROJECT/TrackingBLE/TrackingBle/obj/",
+      "projectPath": "D:\\TrackingBLE\\trackingble\\TrackingBle.csproj",
+      "packagesPath": "C:\\Users\\Diegratia\\.nuget\\packages\\",
+      "outputPath": "D:\\TrackingBLE\\trackingble\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "/Users/developerpci/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\Diegratia\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net8.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "D:\\TrackingBLE\\trackingble\\src\\13.MstFloor\\13.MstFloor.csproj": {
+              "projectPath": "D:\\TrackingBLE\\trackingble\\src\\13.MstFloor\\13.MstFloor.csproj"
+            },
+            "D:\\TrackingBLE\\trackingble\\src\\14.MstFloorplan\\14.MstFloorplan.csproj": {
+              "projectPath": "D:\\TrackingBLE\\trackingble\\src\\14.MstFloorplan\\14.MstFloorplan.csproj"
+            },
+            "D:\\TrackingBLE\\trackingble\\src\\4.FloorplanMaskedArea\\4.FloorplanMaskedArea.csproj": {
+              "projectPath": "D:\\TrackingBLE\\trackingble\\src\\4.FloorplanMaskedArea\\4.FloorplanMaskedArea.csproj"
+            }
+          }
         }
       },
       "warningProperties": {
@@ -5568,7 +5658,8 @@
         "enableAudit": "true",
         "auditLevel": "low",
         "auditMode": "direct"
-      }
+      },
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -5650,7 +5741,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/8.0.406/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
       }
     }
   },

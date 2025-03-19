@@ -1,7 +1,6 @@
 using AutoMapper;
 using TrackingBle.src._14MstFloorplan.Models.Domain;
 using TrackingBle.src._14MstFloorplan.Models.Dto.MstFloorplanDtos;
-using TrackingBle.src._14MstFloorplan.Services;
 
 namespace TrackingBle.src._14MstFloorplan.MappingProfiles
 {
@@ -9,9 +8,17 @@ namespace TrackingBle.src._14MstFloorplan.MappingProfiles
     {
         public MstFloorplanProfile()
         {
-            CreateMap<MstFloorplan, MstFloorplanDto>();
+            // Mapping dari MstFloorplan ke MstFloorplanDto
+            CreateMap<MstFloorplan, MstFloorplanDto>()
+                .ForMember(dest => dest.Floor, opt => opt.Ignore()); // Diisi manual via service
+
+            // Mapping dari MstFloorplanCreateDto ke MstFloorplan
             CreateMap<MstFloorplanCreateDto, MstFloorplan>();
-            CreateMap<MstFloorplanUpdateDto, MstFloorplan>();
+
+            // Mapping dari MstFloorplanUpdateDto ke MstFloorplan
+            // Catatan: Anda belum memberikan MstFloorplanUpdateDto, jadi saya asumsikan mirip dengan CreateDto
+            CreateMap<MstFloorplanCreateDto, MstFloorplan>()
+                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Hanya update field yang tidak null
         }
     }
 }

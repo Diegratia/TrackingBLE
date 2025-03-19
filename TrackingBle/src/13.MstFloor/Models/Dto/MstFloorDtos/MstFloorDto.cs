@@ -21,4 +21,4 @@ namespace TrackingBle.src._13MstFloor.Models.Dto.MstFloorDtos
         public DateTime UpdatedAt { get; set; }
         public int? Status { get; set; }
     }
-}
+}   

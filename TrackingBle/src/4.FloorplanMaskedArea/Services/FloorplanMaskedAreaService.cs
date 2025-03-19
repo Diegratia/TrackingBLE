@@ -15,18 +15,18 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
     {
         private readonly FloorplanMaskedAreaDbContext _context;
         private readonly IMapper _mapper;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory; // Updated to factory
         private readonly IConfiguration _configuration;
 
         public FloorplanMaskedAreaService(
             FloorplanMaskedAreaDbContext context,
             IMapper mapper,
-            HttpClient httpClient,
+            IHttpClientFactory httpClientFactory, // Updated constructor
             IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
-            _httpClient = httpClient;
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
         }
 
@@ -55,11 +55,13 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
 
         public async Task<FloorplanMaskedAreaDto> CreateAsync(FloorplanMaskedAreaCreateDto createDto)
         {
-            var floorResponse = await _httpClient.GetAsync($"{_configuration["ServiceUrls:MstFloorService"]}/api/mstfloor/{createDto.FloorId}");
+            var floorClient = _httpClientFactory.CreateClient("MstFloorService"); // Use factory
+            var floorResponse = await floorClient.GetAsync($"/api/mstfloor/{createDto.FloorId}");
             if (!floorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floor with ID {createDto.FloorId} not found.");
 
-            var floorplanResponse = await _httpClient.GetAsync($"{_configuration["ServiceUrls:MstFloorplanService"]}/api/mstfloorplan/{createDto.FloorplanId}");
+            var floorplanClient = _httpClientFactory.CreateClient("MstFloorplanService"); // Use factory
+            var floorplanResponse = await floorplanClient.GetAsync($"/api/mstfloorplan/{createDto.FloorplanId}");
             if (!floorplanResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floorplan with ID {createDto.FloorplanId} not found.");
 
@@ -85,10 +87,14 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             if (area == null)
                 throw new KeyNotFoundException("Area not found");
 
-            // Mock validasi sementara
-            if (updateDto.FloorId == Guid.Empty)
+            var floorClient = _httpClientFactory.CreateClient("MstFloorService");
+            var floorResponse = await floorClient.GetAsync($"/api/mstfloor/{updateDto.FloorId}");
+            if (!floorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floor with ID {updateDto.FloorId} not found.");
-            if (updateDto.FloorplanId == Guid.Empty)
+
+            var floorplanClient = _httpClientFactory.CreateClient("MstFloorplanService");
+            var floorplanResponse = await floorplanClient.GetAsync($"/api/mstfloorplan/{updateDto.FloorplanId}");
+            if (!floorplanResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floorplan with ID {updateDto.FloorplanId} not found.");
 
             _mapper.Map(updateDto, area);
@@ -110,18 +116,20 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             await _context.SaveChangesAsync();
         }
 
-        private async Task<FloorDto> GetFloorAsync(Guid floorId)
+        private async Task<MstFloorDto> GetFloorAsync(Guid floorId)
         {
-            var response = await _httpClient.GetAsync($"{_configuration["ServiceUrls:MstFloorService"]}/api/mstfloor/{floorId}");
+            var client = _httpClientFactory.CreateClient("MstFloorService"); // Use factory
+            var response = await client.GetAsync($"/api/mstfloor/{floorId}");
             if (!response.IsSuccessStatusCode) return null;
-            return await response.Content.ReadFromJsonAsync<FloorDto>();
+            return await response.Content.ReadFromJsonAsync<MstFloorDto>();
         }
 
-        private async Task<FloorplanDto> GetFloorplanAsync(Guid floorplanId)
+        private async Task<MstFloorplanDto> GetFloorplanAsync(Guid floorplanId)
         {
-            var response = await _httpClient.GetAsync($"{_configuration["ServiceUrls:MstFloorplanService"]}/api/mstfloorplan/{floorplanId}");
+            var client = _httpClientFactory.CreateClient("MstFloorplanService"); // Use factory
+            var response = await client.GetAsync($"/api/mstfloorplan/{floorplanId}");
             if (!response.IsSuccessStatusCode) return null;
-            return await response.Content.ReadFromJsonAsync<FloorplanDto>();
+            return await response.Content.ReadFromJsonAsync<MstFloorplanDto>();
         }
     }
 }

@@ -1,86 +1,91 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using TrackingBle.src._14MstFloorplan.Data;
 using TrackingBle.src._14MstFloorplan.Models.Domain;
 using TrackingBle.src._14MstFloorplan.Models.Dto.MstFloorplanDtos;
-using TrackingBle.src._13MstFloor.Models.Domain;
-using TrackingBle.src._14MstFloorplan.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace TrackingBle.src._14MstFloorplan.Services
 {
-
     public class MstFloorplanService : IMstFloorplanService
     {
         private readonly MstFloorplanDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _configuration;
 
-        public MstFloorplanService(MstFloorplanDbContext context, IMapper mapper)
+        public MstFloorplanService(
+            MstFloorplanDbContext context,
+            IMapper mapper,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
+            _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<MstFloorplanDto> GetByIdAsync(Guid id)
         {
-            var floorplan = await _context.MstFloorplans
-                .Include(f => f.Floor)
-                .FirstOrDefaultAsync(f => f.Id == id && f.Status != 0);
+            var floorplan = await _context.MstFloorplans.FirstOrDefaultAsync(f => f.Id == id);
+            if (floorplan == null) return null;
 
-            return floorplan == null ? null : _mapper.Map<MstFloorplanDto>(floorplan);
+            var dto = _mapper.Map<MstFloorplanDto>(floorplan);
+            dto.Floor = await GetFloorAsync(floorplan.FloorId);
+            return dto;
         }
 
         public async Task<IEnumerable<MstFloorplanDto>> GetAllAsync()
         {
-            var floorplans = await _context.MstFloorplans
-                .Include(f => f.Floor)
-                .Where(f => f.Status != 0)
-                .ToListAsync();
-
-            return _mapper.Map<IEnumerable<MstFloorplanDto>>(floorplans);
+            var floorplans = await _context.MstFloorplans.ToListAsync();
+            var dtos = _mapper.Map<List<MstFloorplanDto>>(floorplans);
+            foreach (var dto in dtos)
+            {
+                dto.Floor = await GetFloorAsync(dto.FloorId);
+            }
+            return dtos;
         }
 
-        public async Task<MstFloorplanDto> CreateAsync(MstFloorplanCreateDto dto)
+        public async Task<MstFloorplanDto> CreateAsync(MstFloorplanCreateDto createDto)
         {
-            var floor = await _context.MstFloors.FirstOrDefaultAsync(f => f.Id == dto.FloorId);
-            if (floor == null)
-                throw new ArgumentException($"Floor with ID {dto.FloorId} not found.");
+            var floorClient = _httpClientFactory.CreateClient("MstFloorService");
+            var floorResponse = await floorClient.GetAsync($"/api/mstfloor/{createDto.FloorId}");
+            if (!floorResponse.IsSuccessStatusCode)
+                throw new ArgumentException($"Floor with ID {createDto.FloorId} not found.");
 
-            var floorplan = _mapper.Map<MstFloorplan>(dto);
-            floorplan.Id = Guid.NewGuid();
+            var floorplan = _mapper.Map<MstFloorplan>(createDto);
             floorplan.Status = 1;
+            floorplan.CreatedBy = "system";
             floorplan.CreatedAt = DateTime.UtcNow;
+            floorplan.UpdatedBy = "system";
             floorplan.UpdatedAt = DateTime.UtcNow;
-            floorplan.CreatedBy ??= "system"; // Ganti dengan autentikasi jika ada
-            floorplan.UpdatedBy ??= "system";
 
             _context.MstFloorplans.Add(floorplan);
             await _context.SaveChangesAsync();
 
-            var savedFloorplan = await _context.MstFloorplans
-                .Include(f => f.Floor)
-                .FirstOrDefaultAsync(f => f.Id == floorplan.Id);
-            return _mapper.Map<MstFloorplanDto>(savedFloorplan);
+            var dto = _mapper.Map<MstFloorplanDto>(floorplan);
+            dto.Floor = await GetFloorAsync(floorplan.FloorId);
+            return dto;
         }
 
-        public async Task UpdateAsync(Guid id, MstFloorplanUpdateDto dto)
+        public async Task UpdateAsync(Guid id, MstFloorplanUpdateDto updateDto)
         {
             var floorplan = await _context.MstFloorplans.FindAsync(id);
-            if (floorplan == null || floorplan.Status == 0)
+            if (floorplan == null)
                 throw new KeyNotFoundException("Floorplan not found");
 
-            if (floorplan.FloorId != dto.FloorId)
-            {
-                var floor = await _context.MstFloors.FirstOrDefaultAsync(f => f.Id == dto.FloorId);
-                if (floor == null)
-                    throw new ArgumentException($"Floor with ID {dto.FloorId} not found.");
-                floorplan.FloorId = dto.FloorId;
-            }
+            var floorClient = _httpClientFactory.CreateClient("MstFloorService");
+            var floorResponse = await floorClient.GetAsync($"/api/mstfloor/{updateDto.FloorId}");
+            if (!floorResponse.IsSuccessStatusCode)
+                throw new ArgumentException($"Floor with ID {updateDto.FloorId} not found.");
 
-            _mapper.Map(dto, floorplan);
-            floorplan.UpdatedBy ??= "system"; // Ganti dengan autentikasi jika ada
+            _mapper.Map(updateDto, floorplan);
+            floorplan.UpdatedBy = "system";
             floorplan.UpdatedAt = DateTime.UtcNow;
 
             _context.MstFloorplans.Update(floorplan);
@@ -90,11 +95,22 @@ namespace TrackingBle.src._14MstFloorplan.Services
         public async Task DeleteAsync(Guid id)
         {
             var floorplan = await _context.MstFloorplans.FindAsync(id);
-            if (floorplan == null || floorplan.Status == 0)
+            if (floorplan == null)
                 throw new KeyNotFoundException("Floorplan not found");
 
-            floorplan.Status = 0; // Soft delete
+            floorplan.Status = 0;
+            _context.MstFloorplans.Update(floorplan);
             await _context.SaveChangesAsync();
+        }
+
+        private async Task<MstFloorDto> GetFloorAsync(Guid floorId)
+        {
+            var client = _httpClientFactory.CreateClient("MstFloorService");
+            var response = await client.GetAsync($"/api/mstfloor/{floorId}");
+            if (!response.IsSuccessStatusCode) return null;
+
+            var floorData = await response.Content.ReadFromJsonAsync<MstFloorDto>(); // Menggunakan definisi lokal
+            return floorData;
         }
     }
 }

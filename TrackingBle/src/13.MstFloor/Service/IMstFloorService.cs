@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TrackingBle.src._13_MstFloor.Models.Dto.MstFloorDtos;
+using TrackingBle.src._13MstFloor.Models.Dto.MstFloorDtos;
 
-namespace TrackingBle.src._13MstFloor.Service
+namespace TrackingBle.src._13MstFloor.Services
 {
     public interface IMstFloorService
     {

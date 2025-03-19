@@ -2,8 +2,6 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
-using TrackingBle.src._4FloorplanMaskedArea.Models.Domain;
-using TrackingBle.src._14MstFloorplan.Models.Domain;
 
 namespace TrackingBle.src._13MstFloor.Models.Domain
 {
@@ -47,7 +45,7 @@ namespace TrackingBle.src._13MstFloor.Models.Domain
 
         public int? Status { get; set; } = 1;
 
-        public virtual ICollection<FloorplanMaskedArea> FloorplanMaskedAreas { get; set; } = new List<FloorplanMaskedArea>();
-        public virtual ICollection<MstFloorplan> Floorplans { get; set; } = new List<MstFloorplan>();
+       
+
     }
 }

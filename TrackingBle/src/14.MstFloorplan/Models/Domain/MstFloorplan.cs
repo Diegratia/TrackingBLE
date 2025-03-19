@@ -1,8 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Collections.Generic;
-using TrackingBle.src._13MstFloor.Models.Domain;
+using System.Collections.Generic; 
 
 namespace TrackingBle.src._14MstFloorplan.Models.Domain
 {
@@ -51,7 +50,6 @@ namespace TrackingBle.src._14MstFloorplan.Models.Domain
         [Column("status")]
         public int? Status { get; set; } = 1;
 
-        public virtual MstFloor Floor { get; set; }
-        // Hapus referensi ke FloorplanMaskedArea karena akan ditangani di DbContext atau layanan lain
+       
     }
 }

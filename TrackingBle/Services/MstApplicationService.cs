@@ -33,17 +33,75 @@ namespace TrackingBle.Services
             return _mapper.Map<MstApplicationDto>(application);
         }
 
-        public async Task<MstApplicationDto> CreateApplicationAsync(MstApplicationCreateDto dto)
+        // public async Task<MstApplicationDto> CreateApplicationAsync(MstApplicationCreateDto dto)
+        // {
+        //     if (dto == null) throw new ArgumentNullException(nameof(dto));
+
+        //     // Map dari DTO ke model
+        //     var application = _mapper.Map<MstApplication>(dto);
+        //     application.Id = Guid.NewGuid(); // Tetap hasilkan Id di server
+        //     application.ApplicationStatus = 1;
+
+        //     _context.MstApplications.Add(application);
+        //     await _context.SaveChangesAsync();
+
+        //     // Map kembali ke DTO untuk respons
+        //     return _mapper.Map<MstApplicationDto>(application);
+        // }
+
+                public async Task<MstApplicationDto> CreateApplicationAsync(MstApplicationCreateDto dto)
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
             // Map dari DTO ke model
             var application = _mapper.Map<MstApplication>(dto);
-            application.Id = Guid.NewGuid(); // Tetap hasilkan Id di server
+            application.Id = Guid.NewGuid();
             application.ApplicationStatus = 1;
 
             _context.MstApplications.Add(application);
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); // Simpan aplikasi terlebih dahulu
+
+            // Cari UserGroup dengan LevelPriority.Primary yang terkait dengan application ini
+            var userGroup = await _context.UserGroups
+                .FirstOrDefaultAsync(ug => ug.ApplicationId == application.Id && ug.LevelPriority == LevelPriority.Primary);
+
+          if (userGroup == null)
+    {
+        userGroup = new UserGroup
+        {
+            Id = Guid.NewGuid(),
+            Name = $"Primary Group for {application.Id}",
+            LevelPriority = LevelPriority.Primary, // Enum bernilai 1
+            ApplicationId = application.Id,
+            CreatedBy = "system",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedBy = "system",
+            UpdatedAt = DateTime.UtcNow,
+            Status = 1
+        };
+        _context.UserGroups.Add(userGroup);
+        await _context.SaveChangesAsync();
+    }
+
+            // Buat User dengan role Primary dan assign ke UserGroup yang sudah ada
+            var primaryUser = new User
+            {
+                Id = Guid.NewGuid(),
+                Username = $"primary_{application.Id}",
+                Password = "hashed_default_password", 
+                IsCreatedPassword = 0,
+                Email = $"primary_{application.Id}@example.com",
+                IsEmailConfirmation = 0,
+                EmailConfirmationCode = Guid.NewGuid().ToString(),
+                EmailConfirmationExpiredAt = DateTime.UtcNow.AddDays(7),
+                EmailConfirmationAt = DateTime.UtcNow,
+                LastLoginAt = DateTime.UtcNow,
+                StatusActive = StatusActive.Active,
+                GroupId = userGroup.Id
+            };
+
+            _context.Users.Add(primaryUser);
+            await _context.SaveChangesAsync(); // Simpan User
 
             // Map kembali ke DTO untuk respons
             return _mapper.Map<MstApplicationDto>(application);

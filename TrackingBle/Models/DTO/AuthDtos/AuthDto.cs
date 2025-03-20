@@ -18,4 +18,12 @@ namespace TrackingBle.Models.Dto.AuthDtos
         public bool IsEmailConfirmed { get; set; }
         public string StatusActive { get; set; }
     }
+
+    public class RegisterDto
+    {
+        public string Username { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public Guid GroupId { get; set; } // GroupId untuk menentukan role
+    }
 }

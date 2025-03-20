@@ -144,7 +144,9 @@ builder.Services.AddDbContext<TrackingBleDbContext>(options =>
 //         };
 //     });
 
-
+// Tambahkan IHttpContextAccessor
+builder.Services.AddHttpContextAccessor();
+ 
 builder.Services.AddScoped<IFloorplanMaskedAreaService, FloorplanMaskedAreaService>();
 builder.Services.AddScoped<IMstApplicationService, MstApplicationService>();
 builder.Services.AddScoped<IMstIntegrationService, MstIntegrationService>();

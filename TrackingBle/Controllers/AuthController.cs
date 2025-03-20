@@ -3,9 +3,11 @@ using System;
 using System.Threading.Tasks;
 using TrackingBle.Models.Dto.AuthDtos;
 using TrackingBle.Services;
+ using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.Controllers
 {
+    
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -32,6 +34,15 @@ namespace TrackingBle.Controllers
             {
                 return BadRequest(new { success = false, msg = ex.Message, collection = new { data = (object)null }, code = 400 });
             }
+        }
+
+
+        [Authorize]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto dto)
+        {
+            var result = await _authService.RegisterAsync(dto);
+            return Ok(result);
         }
     }
 }

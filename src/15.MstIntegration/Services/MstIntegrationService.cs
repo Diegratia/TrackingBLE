@@ -1,0 +1,162 @@
+using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+using TrackingBle.src._15MstIntegration.Data;
+using TrackingBle.src._15MstIntegration.Models.Domain;
+using TrackingBle.src._15MstIntegration.Models.Dto.MstIntegrationDtos;
+using TrackingBle.src.Common.Models; 
+
+namespace TrackingBle.src._15MstIntegration.Services
+{
+    public class MstIntegrationService : IMstIntegrationService
+    {
+        private readonly MstIntegrationDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public MstIntegrationService(
+            MstIntegrationDbContext context,
+            IMapper mapper,
+            IHttpClientFactory httpClientFactory)
+        {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        }
+
+        public async Task<MstIntegrationDto> GetByIdAsync(Guid id)
+        {
+            var integration = await _context.MstIntegrations.FirstOrDefaultAsync(i => i.Id == id);
+            if (integration == null)
+            {
+                Console.WriteLine($"MstIntegration with ID {id} not found in database.");
+                return null;
+            }
+
+            var dto = _mapper.Map<MstIntegrationDto>(integration);
+            dto.Brand = await GetBrandAsync(integration.BrandId);
+            return dto;
+        }
+
+        public async Task<IEnumerable<MstIntegrationDto>> GetAllAsync()
+        {
+            var integrations = await _context.MstIntegrations.ToListAsync();
+            if (!integrations.Any())
+            {
+                Console.WriteLine("No MstIntegrations found in database.");
+                return new List<MstIntegrationDto>();
+            }
+
+            var dtos = _mapper.Map<List<MstIntegrationDto>>(integrations);
+
+            foreach (var dto in dtos)
+            {
+                dto.Brand = await GetBrandAsync(dto.BrandId);
+            }
+
+            return dtos;
+        }
+
+        public async Task<MstIntegrationDto> CreateAsync(MstIntegrationCreateDto createDto)
+        {
+            if (createDto == null) throw new ArgumentNullException(nameof(createDto));
+
+            var brandClient = _httpClientFactory.CreateClient("MstBrandService");
+            var brandResponse = await brandClient.GetAsync($"api/mstbrand/{createDto.BrandId}");
+            if (!brandResponse.IsSuccessStatusCode)
+                throw new ArgumentException($"Brand with ID {createDto.BrandId} not found. Status: {brandResponse.StatusCode}");
+
+            var appClient = _httpClientFactory.CreateClient("MstApplicationService");
+            var appResponse = await appClient.GetAsync($"api/mstapplication/{createDto.ApplicationId}");
+            if (!appResponse.IsSuccessStatusCode)
+                throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
+
+            var integration = _mapper.Map<MstIntegration>(createDto);
+            integration.Id = Guid.NewGuid();
+            integration.Status = 1;
+            integration.CreatedBy = "system";
+            integration.CreatedAt = DateTime.UtcNow;
+            integration.UpdatedBy = "system";
+            integration.UpdatedAt = DateTime.UtcNow;
+
+            _context.MstIntegrations.Add(integration);
+            await _context.SaveChangesAsync();
+
+            var dto = _mapper.Map<MstIntegrationDto>(integration);
+            dto.Brand = await GetBrandAsync(integration.BrandId);
+            return dto;
+        }
+
+        public async Task UpdateAsync(Guid id, MstIntegrationUpdateDto updateDto)
+        {
+            if (updateDto == null) throw new ArgumentNullException(nameof(updateDto));
+
+            var integration = await _context.MstIntegrations.FindAsync(id);
+            if (integration == null)
+                throw new KeyNotFoundException($"MstIntegration with ID {id} not found.");
+
+            if (integration.BrandId != updateDto.BrandId)
+            {
+                var brandClient = _httpClientFactory.CreateClient("MstBrandService");
+                var brandResponse = await brandClient.GetAsync($"api/mstbrand/{updateDto.BrandId}");
+                if (!brandResponse.IsSuccessStatusCode)
+                    throw new ArgumentException($"Brand with ID {updateDto.BrandId} not found. Status: {brandResponse.StatusCode}");
+            }
+
+            if (integration.ApplicationId != updateDto.ApplicationId)
+            {
+                var appClient = _httpClientFactory.CreateClient("MstApplicationService");
+                var appResponse = await appClient.GetAsync($"api/mstapplication/{updateDto.ApplicationId}");
+                if (!appResponse.IsSuccessStatusCode)
+                    throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
+            }
+
+            _mapper.Map(updateDto, integration);
+            integration.UpdatedBy = "system";
+            integration.UpdatedAt = DateTime.UtcNow;
+
+            _context.MstIntegrations.Update(integration);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Guid id)
+        {
+            var integration = await _context.MstIntegrations.FindAsync(id);
+            if (integration == null)
+                throw new KeyNotFoundException($"MstIntegration with ID {id} not found.");
+
+            integration.Status = 0;
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task<MstBrandDto> GetBrandAsync(Guid brandId)
+        {
+            var client = _httpClientFactory.CreateClient("MstBrandService");
+            Console.WriteLine($"Calling MstBrandService at {client.BaseAddress}api/mstbrand/{brandId}");
+            var response = await client.GetAsync($"api/mstbrand/{brandId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Failed to get Brand with ID {brandId}. Status: {response.StatusCode}");
+                return null;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Brand response JSON: {json}");
+            try
+            {
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBrandDto>>(json);
+                return apiResponse?.Collection?.Data;
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializing Brand JSON: {ex.Message}. JSON: {json}");
+                return null;
+            }
+        }
+    }
+}

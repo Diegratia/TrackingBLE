@@ -1,0 +1,6 @@
+@_9.MstBrand_HostAddress = http://localhost:5009
+
+GET {{_9.MstBrand_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

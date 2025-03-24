@@ -1,0 +1,11 @@
+{
+  "profiles": {
+    "FloorplanMaskedArea": {
+      "commandName": "Project",
+      "applicationUrl": "http://localhost:5016",
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    }
+  }
+}

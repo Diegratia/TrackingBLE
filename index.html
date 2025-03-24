@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>API Aggregator</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css"
+    />
+  </head>
+  <body>
+    <div id="swagger-ui"></div>
+    <script src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+    <script>
+      window.onload = function () {
+        SwaggerUIBundle({
+          urls: [
+            {
+              url: "http://localhost:5000/api/FloorplanMaskedArea/swagger/v1/swagger.json",
+              name: "FloorplanMaskedArea",
+            },
+            {
+              url: "http://localhost:5000/api/MstFloor/swagger/v1/swagger.json",
+              name: "MstFloor",
+            },
+            {
+              url: "http://localhost:5000/api/MstFloorplan/swagger/v1/swagger.json",
+              name: "MstFloorplan",
+            },
+          ],
+          dom_id: "#swagger-ui",
+          deepLinking: true,
+          presets: [
+            SwaggerUIBundle.presets.apis,
+            SwaggerUIBundle.SwaggerUIStandalonePreset,
+          ],
+        });
+      };
+    </script>
+  </body>
+</html>

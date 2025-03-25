@@ -8,7 +8,7 @@ using System.Text;
 using TrackingBle.src._1Auth.Data;
 using TrackingBle.src._1Auth.Models.Dto.AuthDtos;
 using TrackingBle.src._1Auth.Models.Domain;
-using BCrypt.Net;
+using BCrypt.Net; // Pastikan namespace ini sudah benar
 
 namespace TrackingBle.src._1Auth.Services
 {
@@ -42,7 +42,7 @@ namespace TrackingBle.src._1Auth.Services
             var user = await _context.Users
                 .Include(u => u.Group)
                 .FirstOrDefaultAsync(u => u.Email == dto.Email);
-            if (user == null || !BCrypt.Verify(dto.Password, user.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
                 throw new Exception("Invalid email or password.");
             if (user.StatusActive != StatusActive.Active)
                 throw new Exception("Account is not active.");
@@ -94,7 +94,7 @@ namespace TrackingBle.src._1Auth.Services
                 Id = Guid.NewGuid(),
                 Username = dto.Username,
                 Email = dto.Email,
-                Password = BCrypt.HashPassword(dto.Password),
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Perbaikan di sini
                 IsCreatedPassword = 1,
                 IsEmailConfirmation = 0,
                 EmailConfirmationCode = Guid.NewGuid().ToString(),

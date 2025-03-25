@@ -12,8 +12,8 @@ namespace TrackingBle.src._16MstMember.MappingProfiles
         public MstMemberProfile()
         {
             CreateMap<MstMember, MstMemberDto>()
-                // .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()))
-                // .ForMember(dest => dest.StatusEmployee, opt => opt.MapFrom(src => src.StatusEmployee.ToString()))
+                .ForMember(dest => dest.Gender, opt => opt.MapFrom(src => src.Gender.ToString()))
+                .ForMember(dest => dest.StatusEmployee, opt => opt.MapFrom(src => src.StatusEmployee.ToString()))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
            
             CreateMap<MstMemberCreateDto, MstMember>()

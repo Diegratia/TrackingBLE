@@ -47,7 +47,8 @@ namespace TrackingBle.src._13MstFloor.Data
                       .IsRequired();
 
                 entity.Property(e => e.MeterPerPx)
-                      .IsRequired();
+                    .HasColumnType("decimal(18,2)") // Tentukan tipe kolom dengan presisi 18 dan skala 2
+                    .IsRequired();
 
                 entity.Property(e => e.EngineFloorId)
                       .IsRequired();
@@ -66,9 +67,9 @@ namespace TrackingBle.src._13MstFloor.Data
                 entity.Property(e => e.UpdatedAt)
                       .IsRequired();
 
-                entity.Property(e => e.Status)
-                      .IsRequired()
-                      .HasDefaultValue(1);
+                  entity.Property(m => m.Status)
+                        .IsRequired()
+                        .HasDefaultValue(1);   
 
                 entity.HasQueryFilter(e => e.Status != 0); // Soft delete filter
             });

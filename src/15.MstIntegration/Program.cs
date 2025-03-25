@@ -6,6 +6,7 @@ using TrackingBle.src._15MstIntegration.Data;
 using TrackingBle.src._15MstIntegration.Services;
 using TrackingBle.src._15MstIntegration.MappingProfiles;
 using DotNetEnv;
+
 try
 {
     DotNetEnv.Env.Load("../../.env");
@@ -29,19 +30,19 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MstIntegrationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
-                         "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
+                         "Server=192.168.68.175,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
 builder.Services.AddScoped<IMstIntegrationService, MstIntegrationService>();
 builder.Services.AddAutoMapper(typeof(MstIntegrationProfile));
 
 builder.Services.AddHttpClient("MstBrandService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstBrandService"]);
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstBrandService"] ?? "http://localhost:5002");
 });
 
 builder.Services.AddHttpClient("MstApplicationService", client =>
 {
-    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstApplicationService"]);
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstApplicationService"] ?? "http://localhost:5013");
 });
 
 var port = Environment.GetEnvironmentVariable("MST_INTEGRATION_PORT") ??
@@ -62,11 +63,9 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", () => "Hello from MstIntegration!");
 app.MapGet("/api/MstIntegration/health", () => "Hello from MstIntegration!");
 
 Console.WriteLine("Environment Variables Check");

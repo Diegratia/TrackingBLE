@@ -59,11 +59,11 @@ namespace TrackingBle.src._19Visitor.Services
             visitor.VisitorArrival = DateTime.UtcNow; // Default, sesuaikan jika ada input
             visitor.VisitorEnd = DateTime.MaxValue; // Default, sesuaikan jika ada input
             visitor.TimestampPreRegistration = DateTime.UtcNow;
-            visitor.TimestampCheckedIn = DateTime.MinValue;
-            visitor.TimestampCheckedOut = DateTime.MinValue;
-            visitor.TimestampDeny = DateTime.MinValue;
-            visitor.TimestampBlocked = DateTime.MinValue;
-            visitor.TimestampUnblocked = DateTime.MinValue;
+            visitor.TimestampCheckedIn = DateTime.UtcNow;
+            visitor.TimestampCheckedOut = DateTime.UtcNow;
+            visitor.TimestampDeny = DateTime.UtcNow;
+            visitor.TimestampBlocked = DateTime.UtcNow;
+            visitor.TimestampUnblocked = DateTime.UtcNow;
 
             if (createDto.FaceImage != null && createDto.FaceImage.Length > 0)
             {

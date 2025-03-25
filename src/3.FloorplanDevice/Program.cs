@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<FloorplanDeviceDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
-                         "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
+                         "Server=192.168.68.175,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
 builder.Services.AddScoped<IFloorplanDeviceService, FloorplanDeviceService>();
 builder.Services.AddAutoMapper(typeof(FloorplanDeviceProfile));
@@ -80,8 +80,8 @@ app.UseAuthorization();
 app.MapControllers();
 
 
-app.MapGet("/api/FloorplanDevice/", () => "Hello from FloorplanDevice!");
-app.MapGet("/", () => "Hello from FloorplanDevice!");
+app.MapGet("/api/FloorplanDevice/health", () => "Hello from FloorplanDevice!");
+// app.MapGet("/", () => "Hello from FloorplanDevice!");
 
 Console.WriteLine("Environment Variables Check");
 Console.WriteLine($"ASPNETCORE_ENVIRONMENT: {env}");

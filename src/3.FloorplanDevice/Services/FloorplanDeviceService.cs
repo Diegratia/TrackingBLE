@@ -20,6 +20,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public FloorplanDeviceService(
             FloorplanDeviceDbContext context,
@@ -31,6 +32,10 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+            };
         }
 
         public async Task<FloorplanDeviceDto> GetByIdAsync(Guid id)
@@ -70,7 +75,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
 
             return dtos;
         }
-
+        
         public async Task<FloorplanDeviceDto> CreateAsync(FloorplanDeviceCreateDto createDto)
         {
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
@@ -122,20 +127,26 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             device.Status = 0;
             await _context.SaveChangesAsync();
         }
-
-        private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
+private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         {
+            Console.WriteLine($"Populating relations for FloorplanDevice ID: {dto.Id}");
             dto.Floorplan = await GetFloorplanAsync(dto.FloorplanId);
+            Console.WriteLine($"Floorplan: {(dto.Floorplan != null ? "Loaded" : "Null")}");
             dto.AccessCctv = await GetAccessCctvAsync(dto.AccessCctvId);
+            Console.WriteLine($"AccessCctv: {(dto.AccessCctv != null ? "Loaded" : "Null")}");
             dto.Reader = await GetReaderAsync(dto.ReaderId);
+            Console.WriteLine($"Reader: {(dto.Reader != null ? "Loaded" : "Null")}");
             dto.AccessControl = await GetAccessControlAsync(dto.AccessControlId);
+            Console.WriteLine($"AccessControl: {(dto.AccessControl != null ? "Loaded" : "Null")}");
             dto.FloorplanMaskedArea = await GetFloorplanMaskedAreaAsync(dto.FloorplanMaskedAreaId);
+            Console.WriteLine($"FloorplanMaskedArea: {(dto.FloorplanMaskedArea != null ? "Loaded" : "Null")}");
         }
 
         private async Task<MstFloorplanDto> GetFloorplanAsync(Guid floorplanId)
         {
             var client = _httpClientFactory.CreateClient("MstFloorplanService");
-            var response = await client.GetAsync($"/api/mstfloorplans/{floorplanId}");
+            Console.WriteLine($"Fetching Floorplan with ID {floorplanId} from {client.BaseAddress}");
+            var response = await client.GetAsync($"/api/mstfloorplan/{floorplanId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Floorplan with ID {floorplanId}. Status: {response.StatusCode}");
@@ -143,22 +154,15 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            try
-            {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstFloorplanDto>>(json);
-                return apiResponse?.Collection?.Data;
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Error deserializing Floorplan JSON: {ex.Message}. JSON: {json}");
-                return null;
-            }
+            Console.WriteLine($"Floorplan Response: {json}");
+            return DeserializeSingle<MstFloorplanDto>(json, floorplanId);
         }
 
         private async Task<MstAccessCctvDto> GetAccessCctvAsync(Guid accessCctvId)
         {
             var client = _httpClientFactory.CreateClient("MstAccessCctvService");
-            var response = await client.GetAsync($"/api/mstaccesscctvs/{accessCctvId}");
+            Console.WriteLine($"Fetching AccessCctv with ID {accessCctvId} from {client.BaseAddress}");
+            var response = await client.GetAsync($"/api/mstaccesscctv/{accessCctvId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get AccessCctv with ID {accessCctvId}. Status: {response.StatusCode}");
@@ -166,22 +170,15 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            try
-            {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstAccessCctvDto>>(json);
-                return apiResponse?.Collection?.Data;
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Error deserializing AccessCctv JSON: {ex.Message}. JSON: {json}");
-                return null;
-            }
+            Console.WriteLine($"AccessCctv Response: {json}");
+            return DeserializeSingle<MstAccessCctvDto>(json, accessCctvId);
         }
 
         private async Task<MstBleReaderDto> GetReaderAsync(Guid readerId)
         {
             var client = _httpClientFactory.CreateClient("MstBleReaderService");
-            var response = await client.GetAsync($"/api/mstblereaders/{readerId}");
+            Console.WriteLine($"Fetching Reader with ID {readerId} from {client.BaseAddress}");
+            var response = await client.GetAsync($"/api/mstblereader/{readerId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Reader with ID {readerId}. Status: {response.StatusCode}");
@@ -189,22 +186,15 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            try
-            {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBleReaderDto>>(json);
-                return apiResponse?.Collection?.Data;
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Error deserializing Reader JSON: {ex.Message}. JSON: {json}");
-                return null;
-            }
+            Console.WriteLine($"Reader Response: {json}");
+            return DeserializeSingle<MstBleReaderDto>(json, readerId);
         }
 
         private async Task<MstAccessControlDto> GetAccessControlAsync(Guid accessControlId)
         {
             var client = _httpClientFactory.CreateClient("MstAccessControlService");
-            var response = await client.GetAsync($"/api/mstaccesscontrols/{accessControlId}");
+            Console.WriteLine($"Fetching AccessControl with ID {accessControlId} from {client.BaseAddress}");
+            var response = await client.GetAsync($"/api/mstaccesscontrol/{accessControlId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get AccessControl with ID {accessControlId}. Status: {response.StatusCode}");
@@ -212,22 +202,15 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            try
-            {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstAccessControlDto>>(json);
-                return apiResponse?.Collection?.Data;
-            }
-            catch (JsonException ex)
-            {
-                Console.WriteLine($"Error deserializing AccessControl JSON: {ex.Message}. JSON: {json}");
-                return null;
-            }
+            Console.WriteLine($"AccessControl Response: {json}");
+            return DeserializeSingle<MstAccessControlDto>(json, accessControlId);
         }
 
         private async Task<FloorplanMaskedAreaDto> GetFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var response = await client.GetAsync($"/api/floorplanmaskedareas/{floorplanMaskedAreaId}");
+            Console.WriteLine($"Fetching FloorplanMaskedArea with ID {floorplanMaskedAreaId} from {client.BaseAddress}");
+            var response = await client.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get FloorplanMaskedArea with ID {floorplanMaskedAreaId}. Status: {response.StatusCode}");
@@ -235,47 +218,87 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"FloorplanMaskedArea Response: {json}");
+            return DeserializeSingle<FloorplanMaskedAreaDto>(json, floorplanMaskedAreaId);
+        }
+
+        private T DeserializeSingle<T>(string json, Guid id) where T : class
+        {
+            if (string.IsNullOrEmpty(json))
+            {
+                Console.WriteLine("Received empty JSON response.");
+                return null;
+            }
+
             try
             {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<FloorplanMaskedAreaDto>>(json);
-                return apiResponse?.Collection?.Data;
+                // Deserialisasi sebagai ApiResponse<T> (data tunggal)
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<T>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    var dataId = apiResponse.Collection.Data.GetType().GetProperty("Id")?.GetValue(apiResponse.Collection.Data)?.ToString();
+                    if (dataId == id.ToString())
+                    {
+                        return apiResponse.Collection.Data;
+                    }
+                    Console.WriteLine($"ID mismatch: expected {id}, got {dataId}");
+                    return null;
+                }
+
+                // Jika gagal, coba deserialisasi langsung sebagai T
+                var directResult = JsonSerializer.Deserialize<T>(json, _jsonOptions);
+                if (directResult != null)
+                {
+                    var directId = directResult.GetType().GetProperty("Id")?.GetValue(directResult)?.ToString();
+                    if (directId == id.ToString())
+                    {
+                        return directResult;
+                    }
+                    Console.WriteLine($"ID mismatch in direct deserialization: expected {id}, got {directId}");
+                    return null;
+                }
+
+                Console.WriteLine("No valid data found in response.");
+                return null;
             }
             catch (JsonException ex)
             {
-                Console.WriteLine($"Error deserializing FloorplanMaskedArea JSON: {ex.Message}. JSON: {json}");
+                Console.WriteLine($"Error deserializing JSON: {ex.Message}. JSON: {json}");
                 return null;
             }
         }
 
+    
+
         private async Task ValidateForeignKeys(Guid floorplanId, Guid accessCctvId, Guid readerId, Guid accessControlId, Guid floorplanMaskedAreaId, Guid applicationId)
         {
             var floorplanClient = _httpClientFactory.CreateClient("MstFloorplanService");
-            var floorplanResponse = await floorplanClient.GetAsync($"/api/mstfloorplans/{floorplanId}");
+            var floorplanResponse = await floorplanClient.GetAsync($"/api/mstfloorplan/{floorplanId}");
             if (!floorplanResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floorplan with ID {floorplanId} not found. Status: {floorplanResponse.StatusCode}");
 
             var cctvClient = _httpClientFactory.CreateClient("MstAccessCctvService");
-            var cctvResponse = await cctvClient.GetAsync($"/api/mstaccesscctvs/{accessCctvId}");
+            var cctvResponse = await cctvClient.GetAsync($"/api/mstaccesscctv/{accessCctvId}");
             if (!cctvResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"AccessCctv with ID {accessCctvId} not found. Status: {cctvResponse.StatusCode}");
 
             var readerClient = _httpClientFactory.CreateClient("MstBleReaderService");
-            var readerResponse = await readerClient.GetAsync($"/api/mstblereaders/{readerId}");
+            var readerResponse = await readerClient.GetAsync($"/api/mstblereader/{readerId}");
             if (!readerResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Reader with ID {readerId} not found. Status: {readerResponse.StatusCode}");
 
             var controlClient = _httpClientFactory.CreateClient("MstAccessControlService");
-            var controlResponse = await controlClient.GetAsync($"/api/mstaccesscontrols/{accessControlId}");
+            var controlResponse = await controlClient.GetAsync($"/api/mstaccesscontrol/{accessControlId}");
             if (!controlResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"AccessControl with ID {accessControlId} not found. Status: {controlResponse.StatusCode}");
 
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedareas/{floorplanMaskedAreaId}");
+            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
             if (!maskedAreaResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"FloorplanMaskedArea with ID {floorplanMaskedAreaId} not found. Status: {maskedAreaResponse.StatusCode}");
 
             var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-            var appResponse = await appClient.GetAsync($"/api/mstapplications/{applicationId}");
+            var appResponse = await appClient.GetAsync($"/api/mstapplication/{applicationId}");
             if (!appResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {applicationId} not found. Status: {appResponse.StatusCode}");
         }
@@ -285,7 +308,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             if (device.FloorplanId != updateDto.FloorplanId)
             {
                 var client = _httpClientFactory.CreateClient("MstFloorplanService");
-                var response = await client.GetAsync($"/api/mstfloorplans/{updateDto.FloorplanId}");
+                var response = await client.GetAsync($"/api/mstfloorplan/{updateDto.FloorplanId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Floorplan with ID {updateDto.FloorplanId} not found. Status: {response.StatusCode}");
             }
@@ -293,7 +316,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             if (device.AccessCctvId != updateDto.AccessCctvId)
             {
                 var client = _httpClientFactory.CreateClient("MstAccessCctvService");
-                var response = await client.GetAsync($"/api/mstaccesscctvs/{updateDto.AccessCctvId}");
+                var response = await client.GetAsync($"/api/mstaccesscctv/{updateDto.AccessCctvId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"AccessCctv with ID {updateDto.AccessCctvId} not found. Status: {response.StatusCode}");
             }
@@ -301,7 +324,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             if (device.ReaderId != updateDto.ReaderId)
             {
                 var client = _httpClientFactory.CreateClient("MstBleReaderService");
-                var response = await client.GetAsync($"/api/mstblereaders/{updateDto.ReaderId}");
+                var response = await client.GetAsync($"/api/mstblereader/{updateDto.ReaderId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Reader with ID {updateDto.ReaderId} not found. Status: {response.StatusCode}");
             }
@@ -309,7 +332,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             if (device.AccessControlId != updateDto.AccessControlId)
             {
                 var client = _httpClientFactory.CreateClient("MstAccessControlService");
-                var response = await client.GetAsync($"/api/mstaccesscontrols/{updateDto.AccessControlId}");
+                var response = await client.GetAsync($"/api/mstaccesscontrol/{updateDto.AccessControlId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"AccessControl with ID {updateDto.AccessControlId} not found. Status: {response.StatusCode}");
             }
@@ -317,7 +340,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             if (device.FloorplanMaskedAreaId != updateDto.FloorplanMaskedAreaId)
             {
                 var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-                var response = await client.GetAsync($"/api/floorplanmaskedareas/{updateDto.FloorplanMaskedAreaId}");
+                var response = await client.GetAsync($"/api/floorplanmaskedarea/{updateDto.FloorplanMaskedAreaId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"FloorplanMaskedArea with ID {updateDto.FloorplanMaskedAreaId} not found. Status: {response.StatusCode}");
             }
@@ -325,7 +348,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             if (device.ApplicationId != updateDto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplications/{updateDto.ApplicationId}");
+                var response = await client.GetAsync($"/api/mstapplication/{updateDto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {response.StatusCode}");
             }

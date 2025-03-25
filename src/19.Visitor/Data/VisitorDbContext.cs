@@ -30,8 +30,13 @@ namespace TrackingBle.src._19Visitor.Data
                 entity.Property(e => e.Name).HasColumnName("Name").HasMaxLength(255).IsRequired();
                 entity.Property(e => e.Phone).HasColumnName("Phone").HasMaxLength(255).IsRequired();
                 entity.Property(e => e.Email).HasColumnName("Email").HasMaxLength(255).IsRequired();
-                entity.Property(e => e.Gender).HasColumnName("Gender").IsRequired()
-                    .HasConversion(v => v.ToString().ToLower(), v => (Gender)Enum.Parse(typeof(Gender), v, true));
+                  entity.Property(e => e.Gender)
+                    .HasColumnType("nvarchar(255)")
+                    .IsRequired()
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => (Gender)Enum.Parse(typeof(Gender), v, true)
+                    );
                 entity.Property(e => e.Address).HasColumnName("Address").IsRequired();
                 entity.Property(e => e.FaceImage).HasColumnName("FaceImage").IsRequired();
                 entity.Property(e => e.UploadFr).HasColumnName("UploadFr").IsRequired();
@@ -55,8 +60,15 @@ namespace TrackingBle.src._19Visitor.Data
                 entity.Property(e => e.ReasonDeny).HasColumnName("ReasonDeny").HasMaxLength(255).IsRequired();
                 entity.Property(e => e.ReasonBlock).HasColumnName("ReasonBlock").HasMaxLength(255).IsRequired();
                 entity.Property(e => e.ReasonUnblock).HasColumnName("ReasonUnblock").HasMaxLength(255).IsRequired();
-                entity.Property(e => e.Status).HasColumnName("Status").IsRequired()
-                    .HasConversion(v => v.ToString().ToLower(), v => (VisitorStatus)Enum.Parse(typeof(VisitorStatus), v, true));
+                  entity.Property(e => e.Status)
+                    .HasColumnType("nvarchar(255)")
+                    .IsRequired()
+                    .HasConversion(
+                        v => v.ToString().ToLower(),
+                        v => (VisitorStatus)Enum.Parse(typeof(VisitorStatus), v, true)
+                    );
+                entity.HasIndex(v => v.PersonId);
+                entity.HasIndex(v => v.Email);
             });
         }
     }

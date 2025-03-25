@@ -3,7 +3,7 @@
     {
         public class MstFloorCreateDto
         {
-            public string BuildingId { get; set; }
+            public Guid BuildingId { get; set; }
             public string Name { get; set; }
             public IFormFile FloorImage { get; set; }
             public long PixelX { get; set; }

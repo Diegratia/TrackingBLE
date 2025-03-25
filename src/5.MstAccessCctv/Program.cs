@@ -22,7 +22,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MstAccessCctvDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
-                         "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
+                         "Server=192.168.68.175,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
 builder.Services.AddScoped<IMstAccessCctvService, MstAccessCctvService>();
 builder.Services.AddAutoMapper(typeof(MstAccessCctvProfile));
@@ -58,7 +58,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", () => "Hello from MstAccessCctv!");
+app.MapGet("/", () => "Hello from MstAccessCctv!"); 
 app.MapGet("/api/MstAccessCctv/health", () => "Hello from MstAccessCctv!");
 
 Console.WriteLine("Environment Variables Check");

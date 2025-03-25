@@ -84,7 +84,7 @@ namespace TrackingBle.src._3FloorplanDevice.Models.Dto.FloorplanDeviceDtos
         public string UpdatedBy { get; set; }
         public DateTime UpdatedAt { get; set; }
         public int? Status { get; set; }
-        public MstBrandDto Brand { get; set;}
+        // public MstBrandDto Brand { get; set;}
     }
 
       public class MstBrandDto

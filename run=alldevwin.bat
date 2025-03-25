@@ -2,7 +2,6 @@
 echo Stopping existing dotnet processes...
 taskkill /IM dotnet.exe /F
 
-:: Tunggu beberapa detik agar semua proses mati
 timeout /t 2 /nobreak >nul
 
 echo Building TrackingBle solution...

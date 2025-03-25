@@ -77,7 +77,6 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Models.Dto.VisitorBlacklistAre
             public string UpdatedBy { get; set; }
             public DateTime UpdatedAt { get; set; }
             public int? Status { get; set; }
-            // public MstFloorDto Floor { get; set; }
-            // public MstFloorplanDto Floorplan { get; set; }
+          
         }
 }

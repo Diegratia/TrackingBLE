@@ -8,6 +8,7 @@ using TrackingBle.src._16MstMember.Models.Domain;
 using TrackingBle.src._16MstMember.Models.Dto.MstMemberDtos;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace TrackingBle.src._16MstMember.Services
 {
@@ -17,6 +18,7 @@ namespace TrackingBle.src._16MstMember.Services
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly JsonSerializerOptions _jsonOptions;
         private readonly string[] _allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
         private const long MaxFileSize = 5 * 1024 * 1024; // 5 MB
 
@@ -30,6 +32,10 @@ namespace TrackingBle.src._16MstMember.Services
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+            };
         }
 
         public async Task<IEnumerable<MstMemberDto>> GetAllMembersAsync()
@@ -75,7 +81,7 @@ namespace TrackingBle.src._16MstMember.Services
             member.Status = 1;
             member.CreatedAt = DateTime.UtcNow;
             member.UpdatedAt = DateTime.UtcNow;
-            member.CreatedBy = "system"; // Ganti dengan logika auth nanti
+            member.CreatedBy = "system";
             member.UpdatedBy = "system";
             member.JoinDate = DateOnly.FromDateTime(DateTime.UtcNow);
             member.ExitDate = DateOnly.MaxValue;
@@ -179,7 +185,7 @@ namespace TrackingBle.src._16MstMember.Services
             }
 
             _mapper.Map(updateDto, member);
-            member.UpdatedBy = "system"; // Ganti dengan logika auth nanti
+            member.UpdatedBy = "system";
             member.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -198,7 +204,7 @@ namespace TrackingBle.src._16MstMember.Services
                 throw new KeyNotFoundException($"Member with ID {id} not found or already deleted.");
 
             member.Status = 0;
-            member.UpdatedBy = "system"; // Ganti dengan logika auth nanti
+            member.UpdatedBy = "system";
             member.UpdatedAt = DateTime.UtcNow;
             member.ExitDate = DateOnly.FromDateTime(DateTime.UtcNow);
 
@@ -208,54 +214,147 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
+            Console.WriteLine($"Validating Application with ID {applicationId} at {client.BaseAddress}/api/mstapplication/{applicationId}");
             var response = await client.GetAsync($"/api/mstapplication/{applicationId}");
             if (!response.IsSuccessStatusCode)
-                throw new ArgumentException($"Application with ID {applicationId} not found.");
+                throw new ArgumentException($"Application with ID {applicationId} not found. Status: {response.StatusCode}");
         }
 
         private async Task ValidateOrganizationAsync(Guid organizationId)
         {
             var client = _httpClientFactory.CreateClient("MstOrganizationService");
+            Console.WriteLine($"Validating Organization with ID {organizationId} at {client.BaseAddress}/api/mstorganization/{organizationId}");
             var response = await client.GetAsync($"/api/mstorganization/{organizationId}");
             if (!response.IsSuccessStatusCode)
-                throw new ArgumentException($"Organization with ID {organizationId} not found.");
+                throw new ArgumentException($"Organization with ID {organizationId} not found. Status: {response.StatusCode}");
         }
 
         private async Task ValidateDepartmentAsync(Guid departmentId)
         {
             var client = _httpClientFactory.CreateClient("MstDepartmentService");
+            Console.WriteLine($"Validating Department with ID {departmentId} at {client.BaseAddress}/api/mstdepartment/{departmentId}");
             var response = await client.GetAsync($"/api/mstdepartment/{departmentId}");
             if (!response.IsSuccessStatusCode)
-                throw new ArgumentException($"Department with ID {departmentId} not found.");
+                throw new ArgumentException($"Department with ID {departmentId} not found. Status: {response.StatusCode}");
         }
 
         private async Task ValidateDistrictAsync(Guid districtId)
         {
             var client = _httpClientFactory.CreateClient("MstDistrictService");
+            Console.WriteLine($"Validating District with ID {districtId} at {client.BaseAddress}/api/mstdistrict/{districtId}");
             var response = await client.GetAsync($"/api/mstdistrict/{districtId}");
             if (!response.IsSuccessStatusCode)
-                throw new ArgumentException($"District with ID {districtId} not found.");
+                throw new ArgumentException($"District with ID {districtId} not found. Status: {response.StatusCode}");
         }
 
         private async Task<MstOrganizationDto> GetOrganizationAsync(Guid organizationId)
         {
             var client = _httpClientFactory.CreateClient("MstOrganizationService");
+            Console.WriteLine($"Fetching Organization with ID {organizationId} from {client.BaseAddress}/api/mstorganization/{organizationId}");
             var response = await client.GetAsync($"/api/mstorganization/{organizationId}");
-            return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<MstOrganizationDto>() : null;
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Failed to get Organization with ID {organizationId}. Status: {response.StatusCode}");
+                return null;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Organization response JSON: {json}");
+            try
+            {
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstOrganizationDto>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    Console.WriteLine($"Successfully deserialized Organization with ID {organizationId}");
+                    return apiResponse.Collection.Data;
+                }
+
+                Console.WriteLine($"No valid data found in Organization response for ID {organizationId}");
+                return null;
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializing Organization JSON: {ex.Message}. JSON: {json}");
+                throw; // Lempar exception untuk debugging
+            }
         }
 
         private async Task<MstDepartmentDto> GetDepartmentAsync(Guid departmentId)
         {
             var client = _httpClientFactory.CreateClient("MstDepartmentService");
+            Console.WriteLine($"Fetching Department with ID {departmentId} from {client.BaseAddress}/api/mstdepartment/{departmentId}");
             var response = await client.GetAsync($"/api/mstdepartment/{departmentId}");
-            return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<MstDepartmentDto>() : null;
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Failed to get Department with ID {departmentId}. Status: {response.StatusCode}");
+                return null;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Department response JSON: {json}");
+            try
+            {
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstDepartmentDto>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    Console.WriteLine($"Successfully deserialized Department with ID {departmentId}");
+                    return apiResponse.Collection.Data;
+                }
+
+                Console.WriteLine($"No valid data found in Department response for ID {departmentId}");
+                return null;
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializing Department JSON: {ex.Message}. JSON: {json}");
+                throw; // Lempar exception untuk debugging
+            }
         }
 
         private async Task<MstDistrictDto> GetDistrictAsync(Guid districtId)
         {
             var client = _httpClientFactory.CreateClient("MstDistrictService");
+            Console.WriteLine($"Fetching District with ID {districtId} from {client.BaseAddress}/api/mstdistrict/{districtId}");
             var response = await client.GetAsync($"/api/mstdistrict/{districtId}");
-            return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<MstDistrictDto>() : null;
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Failed to get District with ID {districtId}. Status: {response.StatusCode}");
+                return null;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"District response JSON: {json}");
+            try
+            {
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstDistrictDto>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    Console.WriteLine($"Successfully deserialized District with ID {districtId}");
+                    return apiResponse.Collection.Data;
+                }
+
+                Console.WriteLine($"No valid data found in District response for ID {districtId}");
+                return null;
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializing District JSON: {ex.Message}. JSON: {json}");
+                throw; // Lempar exception untuk debugging
+            }
         }
+    }
+
+    // Definisi kelas wrapper untuk respons API
+    public class ApiResponse<T>
+    {
+        public bool Success { get; set; }
+        public string Msg { get; set; }
+        public CollectionData<T> Collection { get; set; }
+        public int Code { get; set; } // Ubah dari string ke int agar sesuai dengan respons
+    }
+
+    public class CollectionData<T>
+    {
+        public T Data { get; set; }
     }
 }

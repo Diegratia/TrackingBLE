@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using TrackingBle.src._15MstIntegration.Data;
 using TrackingBle.src._15MstIntegration.Models.Domain;
 using TrackingBle.src._15MstIntegration.Models.Dto.MstIntegrationDtos;
-using TrackingBle.src.Common.Models; 
+using TrackingBle.src.Common.Models;
 
 namespace TrackingBle.src._15MstIntegration.Services
 {
@@ -18,6 +18,7 @@ namespace TrackingBle.src._15MstIntegration.Services
         private readonly MstIntegrationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public MstIntegrationService(
             MstIntegrationDbContext context,
@@ -27,6 +28,10 @@ namespace TrackingBle.src._15MstIntegration.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+            };
         }
 
         public async Task<MstIntegrationDto> GetByIdAsync(Guid id)
@@ -52,6 +57,7 @@ namespace TrackingBle.src._15MstIntegration.Services
                 return new List<MstIntegrationDto>();
             }
 
+            Console.WriteLine($"Found {integrations.Count} MstIntegrations in database.");
             var dtos = _mapper.Map<List<MstIntegrationDto>>(integrations);
 
             foreach (var dto in dtos)
@@ -67,11 +73,13 @@ namespace TrackingBle.src._15MstIntegration.Services
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
             var brandClient = _httpClientFactory.CreateClient("MstBrandService");
+            Console.WriteLine($"Validating Brand with ID {createDto.BrandId} at {brandClient.BaseAddress}api/mstbrand/{createDto.BrandId}");
             var brandResponse = await brandClient.GetAsync($"api/mstbrand/{createDto.BrandId}");
             if (!brandResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Brand with ID {createDto.BrandId} not found. Status: {brandResponse.StatusCode}");
 
             var appClient = _httpClientFactory.CreateClient("MstApplicationService");
+            Console.WriteLine($"Validating Application with ID {createDto.ApplicationId} at {appClient.BaseAddress}api/mstapplication/{createDto.ApplicationId}");
             var appResponse = await appClient.GetAsync($"api/mstapplication/{createDto.ApplicationId}");
             if (!appResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
@@ -103,6 +111,7 @@ namespace TrackingBle.src._15MstIntegration.Services
             if (integration.BrandId != updateDto.BrandId)
             {
                 var brandClient = _httpClientFactory.CreateClient("MstBrandService");
+                Console.WriteLine($"Validating Brand with ID {updateDto.BrandId} at {brandClient.BaseAddress}api/mstbrand/{updateDto.BrandId}");
                 var brandResponse = await brandClient.GetAsync($"api/mstbrand/{updateDto.BrandId}");
                 if (!brandResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Brand with ID {updateDto.BrandId} not found. Status: {brandResponse.StatusCode}");
@@ -111,6 +120,7 @@ namespace TrackingBle.src._15MstIntegration.Services
             if (integration.ApplicationId != updateDto.ApplicationId)
             {
                 var appClient = _httpClientFactory.CreateClient("MstApplicationService");
+                Console.WriteLine($"Validating Application with ID {updateDto.ApplicationId} at {appClient.BaseAddress}api/mstapplication/{updateDto.ApplicationId}");
                 var appResponse = await appClient.GetAsync($"api/mstapplication/{updateDto.ApplicationId}");
                 if (!appResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
@@ -149,8 +159,15 @@ namespace TrackingBle.src._15MstIntegration.Services
             Console.WriteLine($"Brand response JSON: {json}");
             try
             {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBrandDto>>(json);
-                return apiResponse?.Collection?.Data;
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBrandDto>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    Console.WriteLine($"Successfully deserialized Brand with ID {brandId}");
+                    return apiResponse.Collection.Data;
+                }
+
+                Console.WriteLine($"No valid data found in Brand response for ID {brandId}");
+                return null;
             }
             catch (JsonException ex)
             {

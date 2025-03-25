@@ -14,8 +14,10 @@ namespace TrackingBle.src._20VisitorBlacklistArea.MappingProfiles
 
         public VisitorBlacklistAreaProfile()
         {
-            CreateMap<VisitorBlacklistAreaCreateDto, VisitorBlacklistArea>();
-            CreateMap<VisitorBlacklistAreaUpdateDto, VisitorBlacklistArea>();
+            CreateMap<VisitorBlacklistAreaCreateDto, VisitorBlacklistArea>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
+            CreateMap<VisitorBlacklistAreaUpdateDto, VisitorBlacklistArea>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore());
             CreateMap<VisitorBlacklistArea, VisitorBlacklistAreaDto>()
                 .ForMember(dest => dest.FloorplanMaskedArea, opt => opt.Ignore())
                 .ForMember(dest => dest.Visitor, opt => opt.Ignore());

@@ -30,14 +30,23 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MstFloorDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ?? 
-                         "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
+                         "Server=192.168.68.175,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
 builder.Services.AddScoped<IMstFloorService, MstFloorService>();
 builder.Services.AddAutoMapper(typeof(MstFloorProfile));
 
+// Konfigurasi HttpClient untuk layanan eksternal
 builder.Services.AddHttpClient("MstFloorplanService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstFloorplanService"] ?? "http://localhost:5014");
+});
+builder.Services.AddHttpClient("BuildingService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:BuildingService"] ?? "http://localhost:5010");
+});
+builder.Services.AddHttpClient("FloorplanMaskedAreaService", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:FloorplanMaskedAreaService"] ?? "http://localhost:5004");
 });
 
 var port = Environment.GetEnvironmentVariable("MST_FLOOR_PORT") ?? 
@@ -58,7 +67,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-
 app.UseAuthorization();
 app.MapControllers();
 
@@ -75,6 +83,8 @@ Console.WriteLine($"Current Environment: {app.Environment.EnvironmentName}");
 Console.WriteLine($"Is Development: {app.Environment.IsDevelopment()}");
 Console.WriteLine($"Connection String: {builder.Configuration.GetConnectionString("TrackingBleDbConnection")}");
 Console.WriteLine($"MstFloorplanService URL: {builder.Configuration["ServiceUrls:MstFloorplanService"]}");
+Console.WriteLine($"BuildingService URL: {builder.Configuration["ServiceUrls:BuildingService"]}");
+Console.WriteLine($"FloorplanMaskedAreaService URL: {builder.Configuration["ServiceUrls:FloorplanMaskedAreaService"]}");
 Console.WriteLine("==================================");
 Console.WriteLine($"Starting on http://{host}:{port} in {env} environment...");
 

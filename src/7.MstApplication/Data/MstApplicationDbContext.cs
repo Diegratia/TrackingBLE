@@ -29,20 +29,24 @@ namespace TrackingBle.src._7MstApplication.Data
                     .IsRequired();
 
                 entity.Property(e => e.OrganizationType)
+                    .HasColumnType("nvarchar(255)")
                     .IsRequired()
-                    .HasConversion(
-                        v => v.ToString().ToLower(),
-                        v => (OrganizationType)Enum.Parse(typeof(OrganizationType), v, true)
-                    );
+                    .HasDefaultValue(OrganizationType.Single); 
+                    // .HasConversion(
+                    //     v => v.ToString().ToLower(), // Simpan ke DB sebagai "single"
+                    //     v => (OrganizationType)Enum.Parse(typeof(OrganizationType), v, true)
+                    // );
 
                 entity.Property(e => e.OrganizationAddress)
                     .IsRequired();
 
                 entity.Property(e => e.ApplicationType)
+                    .HasColumnType("nvarchar(255)")
                     .IsRequired()
+                    .HasDefaultValue(ApplicationType.Empty)
                     .HasConversion(
-                        v => v.ToString().ToLower(),
-                        v => (ApplicationType)Enum.Parse(typeof(ApplicationType), v, true)
+                        v => v == ApplicationType.Empty ? "" : v.ToString().ToLower(),
+                        v => string.IsNullOrEmpty(v) ? ApplicationType.Empty : (ApplicationType)Enum.Parse(typeof(ApplicationType), v, true)
                     );
 
                 entity.Property(e => e.ApplicationRegistered)
@@ -83,7 +87,8 @@ namespace TrackingBle.src._7MstApplication.Data
                     .HasMaxLength(255)
                     .IsRequired();
 
-                entity.Property(e => e.LicenseType)
+               entity.Property(e => e.LicenseType)
+                    .HasColumnType("nvarchar(255)")
                     .IsRequired()
                     .HasConversion(
                         v => v.ToString().ToLower(),
@@ -91,7 +96,8 @@ namespace TrackingBle.src._7MstApplication.Data
                     );
 
                 entity.Property(e => e.ApplicationStatus)
-                    .IsRequired();
+                    .IsRequired()
+                    .HasDefaultValue(1);   
 
                 entity.ToTable("mst_application");
                 entity.HasKey(e => e.Id);

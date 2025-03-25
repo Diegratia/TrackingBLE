@@ -18,6 +18,7 @@ namespace TrackingBle.src._6MstAccessControl.Services
         private readonly MstAccessControlDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly JsonSerializerOptions _jsonOptions;
 
         public MstAccessControlService(
             MstAccessControlDbContext context,
@@ -27,6 +28,10 @@ namespace TrackingBle.src._6MstAccessControl.Services
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+            };
         }
 
         public async Task<MstAccessControlDto> GetByIdAsync(Guid id)
@@ -75,7 +80,7 @@ namespace TrackingBle.src._6MstAccessControl.Services
                 throw new ArgumentException($"Brand with ID {createDto.ControllerBrandId} not found. Status: {brandResponse.StatusCode}");
 
             var integrationClient = _httpClientFactory.CreateClient("MstIntegrationService");
-            var integrationResponse = await integrationClient.GetAsync($"api/mstintegrations/{createDto.IntegrationId}");
+            var integrationResponse = await integrationClient.GetAsync($"api/mstintegration/{createDto.IntegrationId}");
             if (!integrationResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Integration with ID {createDto.IntegrationId} not found. Status: {integrationResponse.StatusCode}");
 
@@ -120,7 +125,7 @@ namespace TrackingBle.src._6MstAccessControl.Services
             if (accessControl.IntegrationId != updateDto.IntegrationId)
             {
                 var integrationClient = _httpClientFactory.CreateClient("MstIntegrationService");
-                var integrationResponse = await integrationClient.GetAsync($"api/mstintegrations/{updateDto.IntegrationId}");
+                var integrationResponse = await integrationClient.GetAsync($"api/mstintegration/{updateDto.IntegrationId}");
                 if (!integrationResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Integration with ID {updateDto.IntegrationId} not found. Status: {integrationResponse.StatusCode}");
             }
@@ -166,8 +171,15 @@ namespace TrackingBle.src._6MstAccessControl.Services
             Console.WriteLine($"Brand response JSON: {json}");
             try
             {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBrandDto>>(json);
-                return apiResponse?.Collection?.Data;
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBrandDto>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    Console.WriteLine($"Successfully deserialized Brand with ID {brandId}");
+                    return apiResponse.Collection.Data;
+                }
+
+                Console.WriteLine($"No valid data found in Brand response for ID {brandId}");
+                return null;
             }
             catch (JsonException ex)
             {
@@ -179,8 +191,8 @@ namespace TrackingBle.src._6MstAccessControl.Services
         private async Task<MstIntegrationDto> GetIntegrationAsync(Guid integrationId)
         {
             var client = _httpClientFactory.CreateClient("MstIntegrationService");
-            Console.WriteLine($"Calling MstIntegrationService at {client.BaseAddress}api/mstintegrations/{integrationId}");
-            var response = await client.GetAsync($"api/mstintegrations/{integrationId}");
+            Console.WriteLine($"Calling MstIntegrationService at {client.BaseAddress}api/mstintegration/{integrationId}");
+            var response = await client.GetAsync($"api/mstintegration/{integrationId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Integration with ID {integrationId}. Status: {response.StatusCode}");
@@ -191,8 +203,15 @@ namespace TrackingBle.src._6MstAccessControl.Services
             Console.WriteLine($"Integration response JSON: {json}");
             try
             {
-                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstIntegrationDto>>(json);
-                return apiResponse?.Collection?.Data;
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstIntegrationDto>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    Console.WriteLine($"Successfully deserialized Integration with ID {integrationId}");
+                    return apiResponse.Collection.Data;
+                }
+
+                Console.WriteLine($"No valid data found in Integration response for ID {integrationId}");
+                return null;
             }
             catch (JsonException ex)
             {

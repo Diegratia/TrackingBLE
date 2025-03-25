@@ -8,20 +8,24 @@ namespace TrackingBle.src._13MstFloor.MappingProfiles
     {
         public MstFloorProfile()
         {
-            // Mapping dari MstFloor ke MstFloorDto
             CreateMap<MstFloor, MstFloorDto>()
-                .ForMember(dest => dest.Generate, opt => opt.MapFrom(src => src.Generate))
-                .ForMember(dest => dest.FloorImage, opt => opt.MapFrom(src => src.FloorImage ?? "")); // Default ke "" jika null
-
-            // Mapping dari MstFloorCreateDto ke MstFloor
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status))
+                .ForMember(dest => dest.Building, opt => opt.Ignore());
             CreateMap<MstFloorCreateDto, MstFloor>()
-                .ForMember(dest => dest.FloorImage, opt => opt.Ignore()); // Diisi manual di service setelah upload
-
-            // Mapping dari MstFloorUpdateDto ke MstFloor
-            // Catatan: Anda belum memberikan MstFloorUpdateDto, jadi saya asumsikan mirip dengan CreateDto
-            CreateMap<MstFloorCreateDto, MstFloor>()
-                .ForMember(dest => dest.FloorImage, opt => opt.Ignore()) // Diisi manual di service setelah upload
-                .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); // Hanya update field yang tidak null
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.UtcNow)) 
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.FloorImage, opt => opt.Ignore());
+            CreateMap<MstFloorUpdateDto, MstFloor>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+                .ForMember(dest => dest.Generate, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedBy, opt => opt.Ignore())
+                .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.FloorImage, opt => opt.Ignore());
+                
         }
     }
 }

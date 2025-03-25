@@ -1,0 +1,3 @@
+@echo off
+echo Stopping existing dotnet processes...
+taskkill /IM dotnet.exe /F

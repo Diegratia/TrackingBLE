@@ -134,7 +134,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task<VisitorDto> GetVisitorAsync(Guid visitorId)
         {
             var client = _httpClientFactory.CreateClient("VisitorService");
-            var response = await client.GetAsync($"/api/visitors/{visitorId}");
+            var response = await client.GetAsync($"/api/visitor/{visitorId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Visitor with ID {visitorId}. Status: {response.StatusCode}");
@@ -148,7 +148,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task<MstBleReaderDto> GetReaderAsync(Guid readerId)
         {
             var client = _httpClientFactory.CreateClient("MstBleReaderService");
-            var response = await client.GetAsync($"/api/mstblereaders/{readerId}");
+            var response = await client.GetAsync($"/api/mstblereader/{readerId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Reader with ID {readerId}. Status: {response.StatusCode}");
@@ -162,7 +162,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task<FloorplanMaskedAreaDto> GetFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var response = await client.GetAsync($"/api/floorplanmaskedareas/{floorplanMaskedAreaId}");
+            var response = await client.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get FloorplanMaskedArea with ID {floorplanMaskedAreaId}. Status: {response.StatusCode}");
@@ -176,22 +176,22 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task ValidateForeignKeys(Guid visitorId, Guid readerId, Guid floorplanMaskedAreaId, Guid applicationId)
         {
             var visitorClient = _httpClientFactory.CreateClient("VisitorService");
-            var visitorResponse = await visitorClient.GetAsync($"/api/visitors/{visitorId}");
+            var visitorResponse = await visitorClient.GetAsync($"/api/visitor/{visitorId}");
             if (!visitorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Visitor with ID {visitorId} not found. Status: {visitorResponse.StatusCode}");
 
             var readerClient = _httpClientFactory.CreateClient("MstBleReaderService");
-            var readerResponse = await readerClient.GetAsync($"/api/mstblereaders/{readerId}");
+            var readerResponse = await readerClient.GetAsync($"/api/mstblereader/{readerId}");
             if (!readerResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Reader with ID {readerId} not found. Status: {readerResponse.StatusCode}");
 
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedareas/{floorplanMaskedAreaId}");
+            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
             if (!maskedAreaResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"FloorplanMaskedArea with ID {floorplanMaskedAreaId} not found. Status: {maskedAreaResponse.StatusCode}");
 
             var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-            var appResponse = await appClient.GetAsync($"/api/mstapplications/{applicationId}");
+            var appResponse = await appClient.GetAsync($"/api/mstapplication/{applicationId}");
             if (!appResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {applicationId} not found. Status: {appResponse.StatusCode}");
         }
@@ -201,7 +201,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.VisitorId != updateDto.VisitorId)
             {
                 var client = _httpClientFactory.CreateClient("VisitorService");
-                var response = await client.GetAsync($"/api/visitors/{updateDto.VisitorId}");
+                var response = await client.GetAsync($"/api/visitor/{updateDto.VisitorId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Visitor with ID {updateDto.VisitorId} not found. Status: {response.StatusCode}");
             }
@@ -209,7 +209,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.ReaderId != updateDto.ReaderId)
             {
                 var client = _httpClientFactory.CreateClient("MstBleReaderService");
-                var response = await client.GetAsync($"/api/mstblereaders/{updateDto.ReaderId}");
+                var response = await client.GetAsync($"/api/mstblereader/{updateDto.ReaderId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Reader with ID {updateDto.ReaderId} not found. Status: {response.StatusCode}");
             }
@@ -217,7 +217,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.FloorplanMaskedAreaId != updateDto.FloorplanMaskedAreaId)
             {
                 var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-                var response = await client.GetAsync($"/api/floorplanmaskedareas/{updateDto.FloorplanMaskedAreaId}");
+                var response = await client.GetAsync($"/api/floorplanmaskedarea/{updateDto.FloorplanMaskedAreaId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"FloorplanMaskedArea with ID {updateDto.FloorplanMaskedAreaId} not found. Status: {response.StatusCode}");
             }
@@ -225,7 +225,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.ApplicationId != updateDto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplications/{updateDto.ApplicationId}");
+                var response = await client.GetAsync($"/api/mstapplication/{updateDto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {response.StatusCode}");
             }

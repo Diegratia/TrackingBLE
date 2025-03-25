@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using TrackingBle.src._13MstFloor.Data;
 using TrackingBle.src._13MstFloor.Models.Domain;
@@ -16,7 +17,8 @@ namespace TrackingBle.src._13MstFloor.Services
         private readonly MstFloorDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly string[] _allowedImageTypes = new[] { "image/jpeg", "image/png", "image/jpg" }; // Tipe gambar
+        private readonly JsonSerializerOptions _jsonOptions;
+        private readonly string[] _allowedImageTypes = new[] { "image/jpeg", "image/png", "image/jpg" };
         private const long MaxFileSize = 1 * 1024 * 1024; // Maksimal 1MB
 
         public MstFloorService(
@@ -27,50 +29,77 @@ namespace TrackingBle.src._13MstFloor.Services
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _jsonOptions = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+            };
         }
 
         public async Task<MstFloorDto> GetByIdAsync(Guid id)
         {
             var floor = await _context.MstFloors.FirstOrDefaultAsync(f => f.Id == id);
-            return floor == null ? null : _mapper.Map<MstFloorDto>(floor);
+            if (floor == null)
+            {
+                Console.WriteLine($"MstFloor with ID {id} not found in database.");
+                return null;
+            }
+
+            var dto = _mapper.Map<MstFloorDto>(floor);
+            dto.Building = await GetBuildingAsync(floor.BuildingId);
+            Console.WriteLine($"Building for Floor ID {id}: {(dto.Building != null ? "Loaded" : "Null")}");
+            return dto;
         }
 
         public async Task<IEnumerable<MstFloorDto>> GetAllAsync()
         {
             var floors = await _context.MstFloors.ToListAsync();
-            return _mapper.Map<IEnumerable<MstFloorDto>>(floors);
+            if (!floors.Any())
+            {
+                Console.WriteLine("No MstFloors found in database.");
+                return new List<MstFloorDto>();
+            }
+
+            Console.WriteLine($"Found {floors.Count} MstFloors in database.");
+            var dtos = _mapper.Map<List<MstFloorDto>>(floors);
+
+            foreach (var dto in dtos)
+            {
+                dto.Building = await GetBuildingAsync(dto.BuildingId);
+                Console.WriteLine($"Building for Floor ID {dto.Id}: {(dto.Building != null ? "Loaded" : "Null")}");
+            }
+
+            return dtos;
         }
 
         public async Task<MstFloorDto> CreateAsync(MstFloorCreateDto createDto)
         {
             // Validasi BuildingId via HTTP
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
-            var buildingResponse = await buildingClient.GetAsync($"/api/building/{createDto.BuildingId}");
+            Console.WriteLine($"Validating Building with ID {createDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{createDto.BuildingId}");
+            var buildingResponse = await buildingClient.GetAsync($"/api/mstbuilding/{createDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Failed to validate Building with ID {createDto.BuildingId}. Status: {buildingResponse.StatusCode}");
                 throw new ArgumentException($"Building with ID {createDto.BuildingId} not found.");
+            }
 
             var floor = _mapper.Map<MstFloor>(createDto);
 
             // Upload gambar
             if (createDto.FloorImage != null && createDto.FloorImage.Length > 0)
             {
-                // Validasi tipe file
                 if (!_allowedImageTypes.Contains(createDto.FloorImage.ContentType))
                     throw new ArgumentException("Only image files (jpg, png, jpeg) are allowed.");
 
-                // Validasi ukuran file
                 if (createDto.FloorImage.Length > MaxFileSize)
                     throw new ArgumentException("File size exceeds 1 MB limit.");
 
-                // Folder penyimpanan di lokal server
                 var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "FloorImages");
                 Directory.CreateDirectory(uploadDir);
 
-                // Buat nama file unik
                 var fileName = $"{Guid.NewGuid()}_{createDto.FloorImage.FileName}";
                 var filePath = Path.Combine(uploadDir, fileName);
 
-                // Simpan file ke lokal
                 using (var stream = new FileStream(filePath, FileMode.Create))
                 {
                     await createDto.FloorImage.CopyToAsync(stream);
@@ -87,7 +116,10 @@ namespace TrackingBle.src._13MstFloor.Services
 
             _context.MstFloors.Add(floor);
             await _context.SaveChangesAsync();
-            return _mapper.Map<MstFloorDto>(floor);
+
+            var dto = _mapper.Map<MstFloorDto>(floor);
+            dto.Building = await GetBuildingAsync(floor.BuildingId);
+            return dto;
         }
 
         public async Task<MstFloorDto> UpdateAsync(Guid id, MstFloorUpdateDto updateDto)
@@ -96,28 +128,26 @@ namespace TrackingBle.src._13MstFloor.Services
             if (floor == null)
                 throw new KeyNotFoundException("Floor not found");
 
-            // Validasi BuildingId via HTTP
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
-            var buildingResponse = await buildingClient.GetAsync($"/api/building/{updateDto.BuildingId}");
+            Console.WriteLine($"Validating Building with ID {updateDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{updateDto.BuildingId}");
+            var buildingResponse = await buildingClient.GetAsync($"/api/mstbuilding/{updateDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Failed to validate Building with ID {updateDto.BuildingId}. Status: {buildingResponse.StatusCode}");
                 throw new ArgumentException($"Building with ID {updateDto.BuildingId} not found.");
+            }
 
-            // Tangani update gambar jika ada
             if (updateDto.FloorImage != null && updateDto.FloorImage.Length > 0)
             {
-                // Validasi tipe file
                 if (!_allowedImageTypes.Contains(updateDto.FloorImage.ContentType))
                     throw new ArgumentException("Only image files (jpg, png, jpeg) are allowed.");
 
-                // Validasi ukuran file
                 if (updateDto.FloorImage.Length > MaxFileSize)
                     throw new ArgumentException("File size exceeds 1 MB limit.");
 
-                // Folder penyimpanan di lokal server
                 var uploadDir = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "FloorImages");
                 Directory.CreateDirectory(uploadDir);
 
-                // Hapus file lama jika ada
                 if (!string.IsNullOrEmpty(floor.FloorImage))
                 {
                     var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), floor.FloorImage.TrimStart('/'));
@@ -125,7 +155,6 @@ namespace TrackingBle.src._13MstFloor.Services
                         File.Delete(oldFilePath);
                 }
 
-                // Simpan file baru
                 var fileName = $"{Guid.NewGuid()}_{updateDto.FloorImage.FileName}";
                 var filePath = Path.Combine(uploadDir, fileName);
 
@@ -137,14 +166,16 @@ namespace TrackingBle.src._13MstFloor.Services
                 floor.FloorImage = $"/Uploads/FloorImages/{fileName}";
             }
 
-            // Update data lain
             _mapper.Map(updateDto, floor);
             floor.UpdatedBy = "system";
             floor.UpdatedAt = DateTime.UtcNow;
 
             _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();
-            return _mapper.Map<MstFloorDto>(floor);
+
+            var dto = _mapper.Map<MstFloorDto>(floor);
+            dto.Building = await GetBuildingAsync(floor.BuildingId);
+            return dto;
         }
 
         public async Task DeleteAsync(Guid id)
@@ -153,8 +184,8 @@ namespace TrackingBle.src._13MstFloor.Services
             if (floor == null)
                 throw new KeyNotFoundException("Floor not found");
 
-            // Cek apakah ada FloorplanMaskedArea yang masih aktif
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
+            Console.WriteLine($"Checking FloorplanMaskedAreas for Floor ID {id} at {maskedAreaClient.BaseAddress}/api/floorplanmaskedarea/byfloor/{id}");
             var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/byfloor/{id}");
             if (maskedAreaResponse.IsSuccessStatusCode)
             {
@@ -167,7 +198,49 @@ namespace TrackingBle.src._13MstFloor.Services
             _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();
         }
+
+        private async Task<MstBuildingDto> GetBuildingAsync(Guid buildingId)
+        {
+            var client = _httpClientFactory.CreateClient("BuildingService");
+            Console.WriteLine($"Fetching Building with ID {buildingId} from {client.BaseAddress}/api/mstbuilding/{buildingId}");
+            var response = await client.GetAsync($"/api/mstbuilding/{buildingId}");
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Failed to get Building with ID {buildingId}. Status: {response.StatusCode}");
+                return null;
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Building response JSON: {json}");
+            try
+            {
+                var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBuildingDto>>(json, _jsonOptions);
+                if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
+                {
+                    Console.WriteLine($"Successfully deserialized Building with ID {buildingId}");
+                    return apiResponse.Collection.Data;
+                }
+
+                Console.WriteLine($"No valid data found in Building response for ID {buildingId}");
+                return null;
+            }
+            catch (JsonException ex)
+            {
+                Console.WriteLine($"Error deserializing Building JSON: {ex.Message}. JSON: {json}");
+                return null;
+            }
+        }
     }
 
+    public class ApiResponse<T>
+    {
+        public bool Success { get; set; }
+        public string Msg { get; set; }
+        public CollectionData<T> Collection { get; set; }
+    }
 
+    public class CollectionData<T>
+    {
+        public T Data { get; set; }
+    }
 }

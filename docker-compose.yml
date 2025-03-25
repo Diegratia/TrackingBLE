@@ -166,7 +166,7 @@ services:
   mst-district:
     build:
       context: .
-      dockerfile: src/11.MstDistrict/Dockerfile
+      dockerfile: src/12.MstDistrict/Dockerfile
     ports:
       - "5012:5012"
     depends_on:

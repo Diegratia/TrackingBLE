@@ -8,7 +8,7 @@ using System.Text;
 using TrackingBle.src._1Auth.Data;
 using TrackingBle.src._1Auth.Models.Dto.AuthDtos;
 using TrackingBle.src._1Auth.Models.Domain;
-using BCrypt.Net; // Pastikan namespace ini sudah benar
+using BCrypt.Net;
 
 namespace TrackingBle.src._1Auth.Services
 {
@@ -41,13 +41,13 @@ namespace TrackingBle.src._1Auth.Services
         {
             var user = await _context.Users
                 .Include(u => u.Group)
-                .FirstOrDefaultAsync(u => u.Email == dto.Email);
+                .FirstOrDefaultAsync(u => u.Username.ToLower() == dto.Username.ToLower()); // Case-insensitive
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
-                throw new Exception("Invalid email or password.");
+                throw new Exception("Invalid username or password.");
             if (user.StatusActive != StatusActive.Active)
                 throw new Exception("Account is not active.");
-            if (user.IsEmailConfirmation == 0)
-                throw new Exception("Email not confirmed.");
+            // if (user.IsEmailConfirmation == 0)
+            //     throw new Exception("Email not confirmed.");
 
             user.LastLoginAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
@@ -67,7 +67,7 @@ namespace TrackingBle.src._1Auth.Services
 
         public async Task<AuthResponseDto> RegisterAsync(RegisterDto dto)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == dto.Email))
+            if (await _context.Users.AnyAsync(u => u.Email.ToLower() == dto.Email.ToLower()))
                 throw new Exception("Email is already registered.");
 
             var currentUserId = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
@@ -92,9 +92,9 @@ namespace TrackingBle.src._1Auth.Services
             var newUser = new User
             {
                 Id = Guid.NewGuid(),
-                Username = dto.Username,
-                Email = dto.Email,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password), // Perbaikan di sini
+                Username = dto.Username.ToLower(), 
+                Email = dto.Email.ToLower(), 
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
                 IsCreatedPassword = 1,
                 IsEmailConfirmation = 0,
                 EmailConfirmationCode = Guid.NewGuid().ToString(),

@@ -11,7 +11,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header Authorization $http_authorization; 
         }
 
         location /api/FloorplanDevice/ {
@@ -20,7 +19,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/FloorplanMaskedArea/ {
@@ -29,7 +27,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;    
         }
 
         location /api/MstAccessCctv/ {
@@ -38,7 +35,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstAccessControl/ {
@@ -47,7 +43,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstApplication/ {
@@ -56,7 +51,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstBrand/ {
@@ -65,7 +59,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstBleReader/ {
@@ -74,7 +67,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstBuilding/ {
@@ -83,7 +75,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstDepartment/ {
@@ -92,7 +83,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstDistrict/ {
@@ -101,7 +91,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstFloor/ {
@@ -110,7 +99,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstFloorplan/ {
@@ -119,7 +107,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstIntegration/ {
@@ -128,7 +115,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstMember/ {
@@ -137,7 +123,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/MstOrganization/ {
@@ -146,7 +131,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/TrackingTransaction/ {
@@ -155,7 +139,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/Visitor/ {
@@ -164,7 +147,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/VisitorBlacklistArea/ {
@@ -173,7 +155,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
 
         location /api/AlarmRecordTracking/ {
@@ -182,7 +163,6 @@ http {
             proxy_set_header X-Real-IP $remote_addr;
             proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
             proxy_set_header X-Forwarded-Proto $scheme;
-            # proxy_set_header Authorization $http_authorization;
         }
     }
 }

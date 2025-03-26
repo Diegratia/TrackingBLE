@@ -6,6 +6,7 @@ using System.Text;
 using TrackingBle.src._1Auth.Data;
 using TrackingBle.src._1Auth.MappingProfiles;
 using TrackingBle.src._1Auth.Services;
+using TrackingBle.src._1Auth.Seeding;
 using DotNetEnv;
 
 try
@@ -19,6 +20,16 @@ catch (Exception ex)
 }
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
@@ -97,10 +108,25 @@ builder.WebHost.UseUrls($"http://{host}:{port}");
 
 var app = builder.Build();
 
+// Jalankan migrasi dan seeding saat startup
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-    context.Database.Migrate();
+    try
+    {
+        Console.WriteLine("Applying migrations...");
+        context.Database.Migrate(); 
+        Console.WriteLine("Migrations applied successfully.");
+
+        Console.WriteLine("Seeding database...");
+        DatabaseSeeder.Seed(context);
+        Console.WriteLine("Database seeded successfully.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error during migration or seeding: {ex.Message}");
+        throw; 
+    }
 }
 
 if (app.Environment.IsDevelopment())
@@ -113,6 +139,7 @@ if (app.Environment.IsDevelopment())
     });
 }
 
+app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

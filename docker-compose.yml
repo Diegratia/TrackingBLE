@@ -1,6 +1,15 @@
 version: "3.8"
 
 services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: src/1.AuthService/Dockerfile # Ganti dengan path ke Dockerfile AuthService
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./.env:../../.env
+
   floorplan-device:
     build:
       context: .
@@ -230,6 +239,7 @@ services:
     ports:
       - "5000:5000"
     depends_on:
+      - auth-service
       - floorplan-device
       - floorplan-masked-area
       - mst-accesscctv

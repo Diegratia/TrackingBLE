@@ -17,9 +17,11 @@ namespace TrackingBle.src._1Auth.Data
         {
             modelBuilder.Entity<User>(entity =>
             {
-                entity.ToTable("users");
+                entity.ToTable("user");
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Generate).ValueGeneratedOnAdd();
+                entity.Property(e => e.StatusActive)
+                   .HasColumnType("int");
                 entity.HasOne(e => e.Group)
                       .WithMany(g => g.Users)
                       .HasForeignKey(e => e.GroupId);
@@ -27,8 +29,10 @@ namespace TrackingBle.src._1Auth.Data
 
             modelBuilder.Entity<UserGroup>(entity =>
             {
-                entity.ToTable("user_groups");
+                entity.ToTable("user_group");
                 entity.HasKey(e => e.Id);
+               entity.Property(e => e.LevelPriority) // Simpan sebagai int
+                .HasColumnType("int");
             });
         }
     }

@@ -51,18 +51,18 @@ namespace TrackingBle.src._7MstApplication.Services
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-            // Buat MstApplication
+            // create mstapplication
             var application = _mapper.Map<MstApplication>(dto);
             application.Id = Guid.NewGuid();
             application.ApplicationStatus = 1;
 
             _context.MstApplications.Add(application);
 
-            // Data default untuk CreatedBy dan UpdatedBy (asumsi sementara)
-            string defaultUser = "System"; // Ganti dengan logika autentikasi jika ada
+            // data default create by
+            string defaultUser = "System"; 
             DateTime now = DateTime.UtcNow;
 
-            // Buat 4 UserGroup dengan LevelPriority = Primary
+            // create 4 user group
             var userGroups = new List<UserGroup>
             {
                 new UserGroup
@@ -117,7 +117,7 @@ namespace TrackingBle.src._7MstApplication.Services
 
             _context.UserGroups.AddRange(userGroups);
 
-            // Buat 4 User dengan UserGroup yang sesuai
+            // create 4 user
             var users = new List<User>
             {
                 new User
@@ -125,13 +125,13 @@ namespace TrackingBle.src._7MstApplication.Services
                     Id = Guid.NewGuid(),
                     Username = "TestPrimaryUser1",
                     Password = BCrypt.Net.BCrypt.HashPassword("testprimaryuser123@"),
-                    IsCreatedPassword = 1, // Asumsi sudah dibuat
-                    Email = "testprimaryuser1@example.com", // Contoh email
-                    IsEmailConfirmation = 0, // Belum dikonfirmasi
-                    EmailConfirmationCode = Guid.NewGuid().ToString(), // Kode acak
-                    EmailConfirmationExpiredAt = now.AddDays(1), // Berlaku 1 hari
-                    EmailConfirmationAt = now, // Default
-                    LastLoginAt = now, // Default
+                    IsCreatedPassword = 1, 
+                    Email = "testprimaryuser1@example.com", 
+                    IsEmailConfirmation = 0, 
+                    EmailConfirmationCode = Guid.NewGuid().ToString(), 
+                    EmailConfirmationExpiredAt = now.AddDays(1), 
+                    EmailConfirmationAt = now, 
+                    LastLoginAt = now, 
                     StatusActive = StatusActive.Active,
                     GroupId = userGroups[0].Id // Admin
                 },
@@ -178,13 +178,13 @@ namespace TrackingBle.src._7MstApplication.Services
                     EmailConfirmationAt = now,
                     LastLoginAt = now,
                     StatusActive = StatusActive.Active,
-                    GroupId = userGroups[3].Id // Other Primary
+                    GroupId = userGroups[3].Id // other primary
                 }
             };
 
             _context.Users.AddRange(users);
 
-            // Simpan semua perubahan dalam satu transaksi
+            // simpan perubahan
             await _context.SaveChangesAsync();
 
             var resultDto = _mapper.Map<MstApplicationDto>(application);

@@ -1,14 +1,119 @@
-version: "3.8"
-
 services:
-  auth-service:
+  auth:
     build:
       context: .
-      dockerfile: src/1.AuthService/Dockerfile # Ganti dengan path ke Dockerfile AuthService
+      dockerfile: src/1.Auth/Dockerfile
     ports:
       - "5001:5001"
     volumes:
-      - ./.env:../../.env
+      - ./.env:/app/.env
+
+  floorplan-device:
+    build:
+      context: .
+      dockerfile: src/3.FloorplanDevice/Dockerfile
+    ports:
+      - "5003:5003"
+    depends_on:
+      - mst-floorplan
+      - mst-accesscctv
+      - mst-blereader
+      - mst-accesscontrol
+      - floorplan-masked-area
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  floorplan-masked-area:
+    build:
+      context: .
+      dockerfile: src/4.FloorplanMaskedArea/Dockerfile
+    ports:
+      - "5004:5004"
+    depends_on:
+      - mst-floor
+      - mst-floorplan
+    volumes:
+      - ./.env:/app/.env
+
+  mst-floor:
+    build:
+      context: .
+      dockerfile: src/13.MstFloor/Dockerfile
+    ports:
+      - "5013:5013"
+    volumes:
+      - ./Uploads/FloorImages:/app/Uploads/FloorImages
+      - ./.env:/app/.env
+
+  mst-floorplan:
+    build:
+      context: .
+      dockerfile: src/14.MstFloorplan/Dockerfile
+    ports:
+      - "5014:5014"
+    depends_on:
+      - mst-floor
+    volumes:
+      - ./.env:/app/.env
+
+  mst-integration:
+    build:
+      context: .
+      dockerfile: src/15.MstIntegration/Dockerfile
+    ports:
+      - "5015:5015"
+    depends_on:
+      - mst-brand
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  mst-accesscontrol:
+    build:
+      context: .
+      dockerfile: src/6.MstAccessControl/Dockerfile
+    ports:
+      - "5006:5006"
+    depends_on:
+      - mst-brand
+      - mst-integration
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  mst-accesscctv:
+    build:
+      context: .
+      dockerfile: src/5.MstAccessCctv/Dockerfile
+    ports:
+      - "5005:5005"
+    depends_on:
+      - mst-integration
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  mst-blereader:
+    build:
+      context: .
+      dockerfile: src/8.MstBleReader/Dockerfile
+    ports:
+      - "5008:5008"
+    depends_on:
+      - mst-brand
+    volumes:
+      - ./.env:/app/.env
+
+  mst-brand:
+    build:
+      context: .
+      dockerfile: src/9.MstBrand/Dockerfile
+    ports:
+      - "5009:5009"
+    volumes:
+      - ./.env:/app/.env
+
   mst-application:
     build:
       context: .
@@ -16,7 +121,114 @@ services:
     ports:
       - "5007:5007"
     volumes:
-      - ./.env:../../.env
+      - ./.env:/app/.env
+
+  visitor:
+    build:
+      context: .
+      dockerfile: src/19.Visitor/Dockerfile
+    ports:
+      - "5019:5019"
+    depends_on:
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  alarm-record-tracking:
+    build:
+      context: .
+      dockerfile: src/2.AlarmRecordTracking/Dockerfile
+    ports:
+      - "5002:5002"
+    depends_on:
+      - visitor
+      - mst-blereader
+      - floorplan-masked-area
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  mst-building:
+    build:
+      context: .
+      dockerfile: src/10.MstBuilding/Dockerfile
+    ports:
+      - "5010:5010"
+    depends_on:
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  mst-department:
+    build:
+      context: .
+      dockerfile: src/11.MstDepartment/Dockerfile
+    ports:
+      - "5011:5011"
+    depends_on:
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  mst-district:
+    build:
+      context: .
+      dockerfile: src/12.MstDistrict/Dockerfile
+    ports:
+      - "5012:5012"
+    depends_on:
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  mst-member:
+    build:
+      context: .
+      dockerfile: src/16.MstMember/Dockerfile
+    ports:
+      - "5016:5016"
+    depends_on:
+      - mst-application
+      - mst-organization
+      - mst-department
+      - mst-district
+    volumes:
+      - ./.env:/app/.env
+
+  mst-organization:
+    build:
+      context: .
+      dockerfile: src/17.MstOrganization/Dockerfile
+    ports:
+      - "5017:5017"
+    depends_on:
+      - mst-application
+    volumes:
+      - ./.env:/app/.env
+
+  tracking-transaction:
+    build:
+      context: .
+      dockerfile: src/18.TrackingTransaction/Dockerfile
+    ports:
+      - "5018:5018"
+    depends_on:
+      - mst-blereader
+      - floorplan-masked-area
+    volumes:
+      - ./.env:/app/.env
+
+  visitor-blacklist-area:
+    build:
+      context: .
+      dockerfile: src/20.VisitorBlacklistArea/Dockerfile
+    ports:
+      - "5020:5020"
+    depends_on:
+      - floorplan-masked-area
+      - visitor
+    volumes:
+      - ./.env:/app/.env
 
   nginx:
     build:
@@ -25,7 +237,7 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - auth-service
+      - auth
       - floorplan-device
       - floorplan-masked-area
       - mst-accesscctv
@@ -45,4 +257,4 @@ services:
       - visitor-blacklist-area
       - alarm-record-tracking
     volumes:
-      - ./.env:../../.env
+      - ./.env:/app/.env

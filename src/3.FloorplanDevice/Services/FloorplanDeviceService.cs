@@ -34,7 +34,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
             _jsonOptions = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+                PropertyNameCaseInsensitive = true 
             };
         }
 
@@ -146,7 +146,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         {
             var client = _httpClientFactory.CreateClient("MstFloorplanService");
             Console.WriteLine($"Fetching Floorplan with ID {floorplanId} from {client.BaseAddress}");
-            var response = await client.GetAsync($"/api/mstfloorplan/{floorplanId}");
+            var response = await client.GetAsync($"/{floorplanId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Floorplan with ID {floorplanId}. Status: {response.StatusCode}");
@@ -162,7 +162,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         {
             var client = _httpClientFactory.CreateClient("MstAccessCctvService");
             Console.WriteLine($"Fetching AccessCctv with ID {accessCctvId} from {client.BaseAddress}");
-            var response = await client.GetAsync($"/api/mstaccesscctv/{accessCctvId}");
+            var response = await client.GetAsync($"/{accessCctvId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get AccessCctv with ID {accessCctvId}. Status: {response.StatusCode}");
@@ -178,7 +178,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         {
             var client = _httpClientFactory.CreateClient("MstBleReaderService");
             Console.WriteLine($"Fetching Reader with ID {readerId} from {client.BaseAddress}");
-            var response = await client.GetAsync($"/api/mstblereader/{readerId}");
+            var response = await client.GetAsync($"/{readerId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Reader with ID {readerId}. Status: {response.StatusCode}");
@@ -194,7 +194,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         {
             var client = _httpClientFactory.CreateClient("MstAccessControlService");
             Console.WriteLine($"Fetching AccessControl with ID {accessControlId} from {client.BaseAddress}");
-            var response = await client.GetAsync($"/api/mstaccesscontrol/{accessControlId}");
+            var response = await client.GetAsync($"/{accessControlId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get AccessControl with ID {accessControlId}. Status: {response.StatusCode}");
@@ -210,7 +210,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
             Console.WriteLine($"Fetching FloorplanMaskedArea with ID {floorplanMaskedAreaId} from {client.BaseAddress}");
-            var response = await client.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
+            var response = await client.GetAsync($"/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get FloorplanMaskedArea with ID {floorplanMaskedAreaId}. Status: {response.StatusCode}");
@@ -273,32 +273,32 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         private async Task ValidateForeignKeys(Guid floorplanId, Guid accessCctvId, Guid readerId, Guid accessControlId, Guid floorplanMaskedAreaId, Guid applicationId)
         {
             var floorplanClient = _httpClientFactory.CreateClient("MstFloorplanService");
-            var floorplanResponse = await floorplanClient.GetAsync($"/api/mstfloorplan/{floorplanId}");
+            var floorplanResponse = await floorplanClient.GetAsync($"/{floorplanId}");
             if (!floorplanResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floorplan with ID {floorplanId} not found. Status: {floorplanResponse.StatusCode}");
 
             var cctvClient = _httpClientFactory.CreateClient("MstAccessCctvService");
-            var cctvResponse = await cctvClient.GetAsync($"/api/mstaccesscctv/{accessCctvId}");
+            var cctvResponse = await cctvClient.GetAsync($"/{accessCctvId}");
             if (!cctvResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"AccessCctv with ID {accessCctvId} not found. Status: {cctvResponse.StatusCode}");
 
             var readerClient = _httpClientFactory.CreateClient("MstBleReaderService");
-            var readerResponse = await readerClient.GetAsync($"/api/mstblereader/{readerId}");
+            var readerResponse = await readerClient.GetAsync($"/{readerId}");
             if (!readerResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Reader with ID {readerId} not found. Status: {readerResponse.StatusCode}");
 
             var controlClient = _httpClientFactory.CreateClient("MstAccessControlService");
-            var controlResponse = await controlClient.GetAsync($"/api/mstaccesscontrol/{accessControlId}");
+            var controlResponse = await controlClient.GetAsync($"/{accessControlId}");
             if (!controlResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"AccessControl with ID {accessControlId} not found. Status: {controlResponse.StatusCode}");
 
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
+            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/{floorplanMaskedAreaId}");
             if (!maskedAreaResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"FloorplanMaskedArea with ID {floorplanMaskedAreaId} not found. Status: {maskedAreaResponse.StatusCode}");
 
             var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-            var appResponse = await appClient.GetAsync($"/api/mstapplication/{applicationId}");
+            var appResponse = await appClient.GetAsync($"/{applicationId}");
             if (!appResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {applicationId} not found. Status: {appResponse.StatusCode}");
         }
@@ -308,7 +308,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             if (device.FloorplanId != updateDto.FloorplanId)
             {
                 var client = _httpClientFactory.CreateClient("MstFloorplanService");
-                var response = await client.GetAsync($"/api/mstfloorplan/{updateDto.FloorplanId}");
+                var response = await client.GetAsync($"/{updateDto.FloorplanId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Floorplan with ID {updateDto.FloorplanId} not found. Status: {response.StatusCode}");
             }
@@ -316,7 +316,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             if (device.AccessCctvId != updateDto.AccessCctvId)
             {
                 var client = _httpClientFactory.CreateClient("MstAccessCctvService");
-                var response = await client.GetAsync($"/api/mstaccesscctv/{updateDto.AccessCctvId}");
+                var response = await client.GetAsync($"/{updateDto.AccessCctvId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"AccessCctv with ID {updateDto.AccessCctvId} not found. Status: {response.StatusCode}");
             }
@@ -324,7 +324,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             if (device.ReaderId != updateDto.ReaderId)
             {
                 var client = _httpClientFactory.CreateClient("MstBleReaderService");
-                var response = await client.GetAsync($"/api/mstblereader/{updateDto.ReaderId}");
+                var response = await client.GetAsync($"/{updateDto.ReaderId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Reader with ID {updateDto.ReaderId} not found. Status: {response.StatusCode}");
             }
@@ -332,7 +332,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             if (device.AccessControlId != updateDto.AccessControlId)
             {
                 var client = _httpClientFactory.CreateClient("MstAccessControlService");
-                var response = await client.GetAsync($"/api/mstaccesscontrol/{updateDto.AccessControlId}");
+                var response = await client.GetAsync($"/{updateDto.AccessControlId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"AccessControl with ID {updateDto.AccessControlId} not found. Status: {response.StatusCode}");
             }
@@ -340,7 +340,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             if (device.FloorplanMaskedAreaId != updateDto.FloorplanMaskedAreaId)
             {
                 var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-                var response = await client.GetAsync($"/api/floorplanmaskedarea/{updateDto.FloorplanMaskedAreaId}");
+                var response = await client.GetAsync($"/{updateDto.FloorplanMaskedAreaId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"FloorplanMaskedArea with ID {updateDto.FloorplanMaskedAreaId} not found. Status: {response.StatusCode}");
             }
@@ -348,7 +348,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             if (device.ApplicationId != updateDto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplication/{updateDto.ApplicationId}");
+                var response = await client.GetAsync($"/{updateDto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {response.StatusCode}");
             }

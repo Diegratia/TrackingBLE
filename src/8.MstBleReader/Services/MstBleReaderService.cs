@@ -37,7 +37,7 @@ namespace TrackingBle.src._8MstBleReader.Services
             if (bleReader == null) return null;
 
             var dto = _mapper.Map<MstBleReaderDto>(bleReader);
-            dto.Brand = await GetBrandAsync(bleReader.BrandId); // Ambil data Brand dari service lain
+            dto.Brand = await GetBrandAsync(bleReader.BrandId); 
             return dto;
         }
 
@@ -47,16 +47,15 @@ namespace TrackingBle.src._8MstBleReader.Services
             var dtos = _mapper.Map<List<MstBleReaderDto>>(bleReaders);
             foreach (var dto in dtos)
             {
-                dto.Brand = await GetBrandAsync(dto.BrandId); // Ambil data Brand untuk setiap BleReader
+                dto.Brand = await GetBrandAsync(dto.BrandId); 
             }
             return dtos;
         }
 
         public async Task<MstBleReaderDto> CreateAsync(MstBleReaderCreateDto createDto)
         {
-            // Validasi BrandId dengan memanggil MstBrandService
             var brandClient = _httpClientFactory.CreateClient("MstBrandService");
-            var brandResponse = await brandClient.GetAsync($"/api/mstbrand/{createDto.BrandId}");
+            var brandResponse = await brandClient.GetAsync($"/{createDto.BrandId}");
             if (!brandResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Brand with ID {createDto.BrandId} not found.");
 
@@ -81,9 +80,8 @@ namespace TrackingBle.src._8MstBleReader.Services
             if (bleReader == null)
                 throw new KeyNotFoundException("BleReader not found");
 
-            // Validasi BrandId dengan memanggil MstBrandService
             var brandClient = _httpClientFactory.CreateClient("MstBrandService");
-            var brandResponse = await brandClient.GetAsync($"/api/mstbrand/{updateDto.BrandId}");
+            var brandResponse = await brandClient.GetAsync($"/{updateDto.BrandId}");
             if (!brandResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Brand with ID {updateDto.BrandId} not found.");
 
@@ -112,7 +110,7 @@ namespace TrackingBle.src._8MstBleReader.Services
         private async Task<MstBrandDto> GetBrandAsync(Guid brandId)
         {
             var client = _httpClientFactory.CreateClient("MstBrandService");
-            var response = await client.GetAsync($"/api/mstbrand/{brandId}");
+            var response = await client.GetAsync($"/{brandId}");
             if (!response.IsSuccessStatusCode) return null;
 
             var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<MstBrandDto>>();

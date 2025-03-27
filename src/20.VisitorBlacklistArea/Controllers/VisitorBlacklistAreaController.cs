@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -6,7 +7,8 @@ using TrackingBle.src._20VisitorBlacklistArea.Services;
 
 namespace TrackingBle.src._20VisitorBlacklistArea.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class VisitorBlacklistAreaController : ControllerBase
     {

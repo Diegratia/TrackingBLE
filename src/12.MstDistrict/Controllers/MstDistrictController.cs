@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._12MstDistrict.Models.Dto.MstDistrictDtos;
 using TrackingBle.src._12MstDistrict.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._12MstDistrict.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class MstDistrictController : ControllerBase
     {

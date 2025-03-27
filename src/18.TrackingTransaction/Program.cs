@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using TrackingBle.src._18TrackingTransaction.Data;
 using TrackingBle.src._18TrackingTransaction.Services;
 using TrackingBle.src._18TrackingTransaction.MappingProfiles;
@@ -9,8 +13,8 @@ using DotNetEnv;
 
 try
 {
-    DotNetEnv.Env.Load("../../.env");
-    Console.WriteLine("Successfully loaded .env file from ../../.env");
+    DotNetEnv.Env.Load("/app/.env");
+    Console.WriteLine("Successfully loaded .env file from /app/.env");
 }
 catch (Exception ex)
 {
@@ -29,6 +33,21 @@ var builder = WebApplication.CreateBuilder(args);
     });
 });
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
@@ -40,7 +59,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TrackingTransactionDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
-                         "Server=192.168.68.175,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
+                         "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
 builder.Services.AddScoped<ITrackingTransactionService, TrackingTransactionService>();
 builder.Services.AddAutoMapper(typeof(TrackingTransactionProfile));
@@ -75,11 +94,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 
-app.MapGet("/", () => "Hello from TrackingTransaction!");
+
+// app.MapGet("/", () => "Hello from TrackingTransaction!");
 app.MapGet("/api/TrackingTransaction/health", () => "Health Check");
 
 Console.WriteLine("Environment Variables Check");

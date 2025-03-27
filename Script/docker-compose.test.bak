@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  auth:
+    build:
+      context: .
+      dockerfile: src/1.Auth/Dockerfile
+    ports:
+      - "5001:5001"
+    volumes:
+      - ./.env:/app/.env
+  mst-application:
+    build:
+      context: .
+      dockerfile: src/7.MstApplication/Dockerfile
+    ports:
+      - "5007:5007"
+    volumes:
+      - ./.env:/app/.env
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "5000:5000"
+    depends_on:
+      - auth
+      - floorplan-device
+      - floorplan-masked-area
+      - mst-accesscctv
+      - mst-accesscontrol
+      - mst-application
+      - mst-brand
+      - mst-blereader
+      - mst-department
+      - mst-district
+      - mst-floor
+      - mst-floorplan
+      - mst-integration
+      - mst-member
+      - mst-organization
+      - tracking-transaction
+      - visitor
+      - visitor-blacklist-area
+      - alarm-record-tracking
+    volumes:
+      - ./.env:/app/.env

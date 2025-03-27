@@ -13,7 +13,8 @@ namespace TrackingBle.src._1Auth.Seeding
             // UserGroup (3 role: System, Primary, UserCreated)
             if (!context.UserGroups.Any(ug => ug.Status != 0))
             {
-                var applicationId = Guid.Parse("D9AF1B06-44B7-4688-9621-572EF0434B36"); // Konversi string ke Guid
+                // sementara embed guid mstapplication
+                var applicationId = Guid.Parse("D9AF1B06-44B7-4688-9621-572EF0434B36"); 
 
                 var groups = new[]
                 {

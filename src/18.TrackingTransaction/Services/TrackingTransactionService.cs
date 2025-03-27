@@ -111,21 +111,21 @@ namespace TrackingBle.src._18TrackingTransaction.Services
         private async Task<MstBleReaderDto> GetReaderAsync(Guid readerId)
         {
             var client = _httpClientFactory.CreateClient("MstBleReaderService");
-            var response = await client.GetAsync($"/api/mstblereader/{readerId}");
+            var response = await client.GetAsync($"/{readerId}");
             return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<MstBleReaderDto>() : null;
         }
 
         private async Task<FloorplanMaskedAreaDto> GetFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var response = await client.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
+            var response = await client.GetAsync($"/{floorplanMaskedAreaId}");
             return response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<FloorplanMaskedAreaDto>() : null;
         }
 
         private async Task ValidateReaderAsync(Guid readerId)
         {
             var client = _httpClientFactory.CreateClient("MstBleReaderService");
-            var response = await client.GetAsync($"/api/mstblereader/{readerId}");
+            var response = await client.GetAsync($"/{readerId}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new ArgumentException($"BLE Reader with ID {readerId} not found.");
@@ -135,7 +135,7 @@ namespace TrackingBle.src._18TrackingTransaction.Services
         private async Task ValidateFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var response = await client.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
+            var response = await client.GetAsync($"/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new ArgumentException($"FloorplanMaskedArea with ID {floorplanMaskedAreaId} not found.");

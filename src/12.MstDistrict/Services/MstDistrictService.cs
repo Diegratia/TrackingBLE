@@ -60,7 +60,7 @@ namespace TrackingBle.src._12MstDistrict.Services
         {
             // Validasi ApplicationId via HttpClient
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{createDto.ApplicationId}");
+            var response = await client.GetAsync($"/{createDto.ApplicationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found.");
 
@@ -91,7 +91,7 @@ namespace TrackingBle.src._12MstDistrict.Services
             if (district.ApplicationId != updateDto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplication/{updateDto.ApplicationId}");
+                var response = await client.GetAsync($"/{updateDto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found.");
                 district.ApplicationId = updateDto.ApplicationId;
@@ -122,7 +122,7 @@ namespace TrackingBle.src._12MstDistrict.Services
         private async Task<MstApplicationDto> GetApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{applicationId}");
+            var response = await client.GetAsync($"/{applicationId}");
             if (!response.IsSuccessStatusCode) return null;
             return await response.Content.ReadFromJsonAsync<MstApplicationDto>();
         }

@@ -76,7 +76,7 @@ namespace TrackingBle.src._13MstFloor.Services
             // Validasi BuildingId via HTTP
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
             Console.WriteLine($"Validating Building with ID {createDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{createDto.BuildingId}");
-            var buildingResponse = await buildingClient.GetAsync($"/api/mstbuilding/{createDto.BuildingId}");
+            var buildingResponse = await buildingClient.GetAsync($"/{createDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to validate Building with ID {createDto.BuildingId}. Status: {buildingResponse.StatusCode}");
@@ -130,7 +130,7 @@ namespace TrackingBle.src._13MstFloor.Services
 
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
             Console.WriteLine($"Validating Building with ID {updateDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{updateDto.BuildingId}");
-            var buildingResponse = await buildingClient.GetAsync($"/api/mstbuilding/{updateDto.BuildingId}");
+            var buildingResponse = await buildingClient.GetAsync($"/{updateDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to validate Building with ID {updateDto.BuildingId}. Status: {buildingResponse.StatusCode}");
@@ -186,7 +186,8 @@ namespace TrackingBle.src._13MstFloor.Services
 
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
             Console.WriteLine($"Checking FloorplanMaskedAreas for Floor ID {id} at {maskedAreaClient.BaseAddress}/api/floorplanmaskedarea/byfloor/{id}");
-            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/byfloor/{id}");
+            // var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/byfloor/{id}");
+            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/{id}");
             if (maskedAreaResponse.IsSuccessStatusCode)
             {
                 var maskedAreas = await maskedAreaResponse.Content.ReadFromJsonAsync<List<dynamic>>();
@@ -195,7 +196,7 @@ namespace TrackingBle.src._13MstFloor.Services
             }
 
             floor.Status = 0;
-            _context.MstFloors.Update(floor);
+            // _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();
         }
 
@@ -203,7 +204,7 @@ namespace TrackingBle.src._13MstFloor.Services
         {
             var client = _httpClientFactory.CreateClient("BuildingService");
             Console.WriteLine($"Fetching Building with ID {buildingId} from {client.BaseAddress}/api/mstbuilding/{buildingId}");
-            var response = await client.GetAsync($"/api/mstbuilding/{buildingId}");
+            var response = await client.GetAsync($"/{buildingId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Building with ID {buildingId}. Status: {response.StatusCode}");

@@ -41,11 +41,12 @@ namespace TrackingBle.src._1Auth.Services
         {
             var user = await _context.Users
                 .Include(u => u.Group)
-                .FirstOrDefaultAsync(u => u.Username.ToLower() == dto.Username.ToLower()); // Case-insensitive
+                .FirstOrDefaultAsync(u => u.Username.ToLower() == dto.Username.ToLower()); 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
                 throw new Exception("Invalid username or password.");
             if (user.StatusActive != StatusActive.Active)
                 throw new Exception("Account is not active.");
+                // aktifkan untuk validasi email konfirmasi
             // if (user.IsEmailConfirmation == 0)
             //     throw new Exception("Email not confirmed.");
 
@@ -143,7 +144,7 @@ namespace TrackingBle.src._1Auth.Services
                 issuer: _configuration["Jwt:Issuer"],
                 audience: _configuration["Jwt:Audience"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(1),
+                expires: DateTime.UtcNow.AddHours(3),
                 signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

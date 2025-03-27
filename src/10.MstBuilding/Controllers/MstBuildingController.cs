@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._10MstBuilding.Models.Dto.MstBuildingDtos;
 using TrackingBle.src._10MstBuilding.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._10MstBuilding.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class MstBuildingController : ControllerBase
     {

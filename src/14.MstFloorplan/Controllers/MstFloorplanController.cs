@@ -4,10 +4,12 @@
     using TrackingBle.src._14MstFloorplan.Models.Dto.MstFloorplanDtos;
     using TrackingBle.src._14MstFloorplan.Services;
     using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
-    namespace TrackingBle.src._14MstFloorplan.Controllers
+namespace TrackingBle.src._14MstFloorplan.Controllers
     {
-        [Route("api/[controller]")]
+        [Authorize]
+        [Route("/")]
         [ApiController]
         public class MstFloorplanController : ControllerBase
         {

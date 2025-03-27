@@ -110,7 +110,7 @@ namespace TrackingBle.src._17MstOrganization.Services
         private async Task ValidateApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{applicationId}");
+            var response = await client.GetAsync($"/{applicationId}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new ArgumentException($"Application with ID {applicationId} not found.");

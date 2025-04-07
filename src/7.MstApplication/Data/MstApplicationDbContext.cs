@@ -16,7 +16,7 @@ namespace TrackingBle.src._7MstApplication.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Konfigurasi MstApplication (tetap sama)
+            
             modelBuilder.Entity<MstApplication>(entity =>
             {
                 entity.Property(e => e.Generate)

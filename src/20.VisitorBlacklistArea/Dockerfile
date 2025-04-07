@@ -3,7 +3,7 @@ WORKDIR /app
 
 
 COPY *.csproj ./
-COPY ../Common/ ./Common/
+COPY src/Common/ ./Common/
 RUN dotnet restore
 
 

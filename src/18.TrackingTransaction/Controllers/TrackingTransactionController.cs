@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using TrackingBle.src._18TrackingTransaction.Models.Dto.TrackingTransactionDtos;
 using TrackingBle.src._18TrackingTransaction.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._18TrackingTransaction.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class TrackingTransactionController : ControllerBase
     {

@@ -11,7 +11,7 @@ using TrackingBle.src._7MstApplication.Services;
 using TrackingBle.src._7MstApplication.MappingProfiles;
 using DotNetEnv;
 
-DotNetEnv.Env.Load("../../.env");
+DotNetEnv.Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -77,7 +77,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<MstApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
-                         "Server=192.168.68.175,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
+                         "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
 builder.Services.AddScoped<IMstApplicationService, MstApplicationService>();
 builder.Services.AddAutoMapper(typeof(MstApplicationProfile));
@@ -104,7 +104,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", () => "Hello from MstApplication!");
+// app.MapGet("/", () => "Hello from MstApplication!");
 app.MapGet("/api/MstApplication/health", () => "Hello from MstApplication!");
 
 Console.WriteLine("Environment Variables Check");

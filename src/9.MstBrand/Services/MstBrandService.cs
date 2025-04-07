@@ -23,7 +23,7 @@ namespace TrackingBle.src._9MstBrand.Services
         public async Task<MstBrandDto> GetByIdAsync(Guid id)
         {
             var brand = await _context.MstBrands
-                .FirstOrDefaultAsync(b => b.Id == id && b.Status != 0); // Filter status aktif
+                .FirstOrDefaultAsync(b => b.Id == id && b.Status != 0); 
             if (brand == null)
             {
                 Console.WriteLine($"Brand with ID {id} not found or inactive.");
@@ -36,7 +36,7 @@ namespace TrackingBle.src._9MstBrand.Services
         public async Task<IEnumerable<MstBrandDto>> GetAllAsync()
         {
             var brands = await _context.MstBrands
-                .Where(b => b.Status != 0) // Hanya ambil yang aktif
+                .Where(b => b.Status != 0) 
                 .ToListAsync();
             Console.WriteLine($"Retrieved {brands.Count} brands.");
             return _mapper.Map<IEnumerable<MstBrandDto>>(brands);
@@ -45,8 +45,8 @@ namespace TrackingBle.src._9MstBrand.Services
         public async Task<MstBrandDto> CreateAsync(MstBrandCreateDto createDto)
         {
             var brand = _mapper.Map<MstBrand>(createDto);
-            brand.Status = 1; // Default status aktif
-            brand.Id = Guid.NewGuid(); // Pastikan ID baru
+            brand.Status = 1; 
+            brand.Id = Guid.NewGuid(); 
 
             _context.MstBrands.Add(brand);
             await _context.SaveChangesAsync();
@@ -80,7 +80,7 @@ namespace TrackingBle.src._9MstBrand.Services
                 throw new KeyNotFoundException("Brand not found");
             }
 
-            brand.Status = 0; // Soft delete
+            brand.Status = 0; 
             await _context.SaveChangesAsync();
             Console.WriteLine($"Brand with ID {id} marked as inactive.");
         }

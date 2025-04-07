@@ -34,7 +34,7 @@ namespace TrackingBle.src._16MstMember.Services
             _configuration = configuration;
             _jsonOptions = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+                PropertyNameCaseInsensitive = true 
             };
         }
 
@@ -70,7 +70,7 @@ namespace TrackingBle.src._16MstMember.Services
         {
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
-            // Validasi IDs via HttpClient
+            // validasi Id lewat http 
             await ValidateApplicationAsync(createDto.ApplicationId);
             await ValidateOrganizationAsync(createDto.OrganizationId);
             await ValidateDepartmentAsync(createDto.DepartmentId);
@@ -214,8 +214,8 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            Console.WriteLine($"Validating Application with ID {applicationId} at {client.BaseAddress}/api/mstapplication/{applicationId}");
-            var response = await client.GetAsync($"/api/mstapplication/{applicationId}");
+            Console.WriteLine($"Validating Application with ID {applicationId} at {client.BaseAddress}/{applicationId}");
+            var response = await client.GetAsync($"/{applicationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {applicationId} not found. Status: {response.StatusCode}");
         }
@@ -223,8 +223,8 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateOrganizationAsync(Guid organizationId)
         {
             var client = _httpClientFactory.CreateClient("MstOrganizationService");
-            Console.WriteLine($"Validating Organization with ID {organizationId} at {client.BaseAddress}/api/mstorganization/{organizationId}");
-            var response = await client.GetAsync($"/api/mstorganization/{organizationId}");
+            Console.WriteLine($"Validating Organization with ID {organizationId} at {client.BaseAddress}/{organizationId}");
+            var response = await client.GetAsync($"/{organizationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Organization with ID {organizationId} not found. Status: {response.StatusCode}");
         }
@@ -232,8 +232,8 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateDepartmentAsync(Guid departmentId)
         {
             var client = _httpClientFactory.CreateClient("MstDepartmentService");
-            Console.WriteLine($"Validating Department with ID {departmentId} at {client.BaseAddress}/api/mstdepartment/{departmentId}");
-            var response = await client.GetAsync($"/api/mstdepartment/{departmentId}");
+            Console.WriteLine($"Validating Department with ID {departmentId} at {client.BaseAddress}/{departmentId}");
+            var response = await client.GetAsync($"/{departmentId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Department with ID {departmentId} not found. Status: {response.StatusCode}");
         }
@@ -241,8 +241,8 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateDistrictAsync(Guid districtId)
         {
             var client = _httpClientFactory.CreateClient("MstDistrictService");
-            Console.WriteLine($"Validating District with ID {districtId} at {client.BaseAddress}/api/mstdistrict/{districtId}");
-            var response = await client.GetAsync($"/api/mstdistrict/{districtId}");
+            Console.WriteLine($"Validating District with ID {districtId} at {client.BaseAddress}/{districtId}");
+            var response = await client.GetAsync($"/{districtId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"District with ID {districtId} not found. Status: {response.StatusCode}");
         }
@@ -250,8 +250,8 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task<MstOrganizationDto> GetOrganizationAsync(Guid organizationId)
         {
             var client = _httpClientFactory.CreateClient("MstOrganizationService");
-            Console.WriteLine($"Fetching Organization with ID {organizationId} from {client.BaseAddress}/api/mstorganization/{organizationId}");
-            var response = await client.GetAsync($"/api/mstorganization/{organizationId}");
+            Console.WriteLine($"Fetching Organization with ID {organizationId} from {client.BaseAddress}/{organizationId}");
+            var response = await client.GetAsync($"/{organizationId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Organization with ID {organizationId}. Status: {response.StatusCode}");
@@ -275,15 +275,15 @@ namespace TrackingBle.src._16MstMember.Services
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error deserializing Organization JSON: {ex.Message}. JSON: {json}");
-                throw; // Lempar exception untuk debugging
+                throw; 
             }
         }
 
         private async Task<MstDepartmentDto> GetDepartmentAsync(Guid departmentId)
         {
             var client = _httpClientFactory.CreateClient("MstDepartmentService");
-            Console.WriteLine($"Fetching Department with ID {departmentId} from {client.BaseAddress}/api/mstdepartment/{departmentId}");
-            var response = await client.GetAsync($"/api/mstdepartment/{departmentId}");
+            Console.WriteLine($"Fetching Department with ID {departmentId} from {client.BaseAddress}/{departmentId}");
+            var response = await client.GetAsync($"/{departmentId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Department with ID {departmentId}. Status: {response.StatusCode}");
@@ -307,15 +307,15 @@ namespace TrackingBle.src._16MstMember.Services
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error deserializing Department JSON: {ex.Message}. JSON: {json}");
-                throw; // Lempar exception untuk debugging
+                throw; 
             }
         }
 
         private async Task<MstDistrictDto> GetDistrictAsync(Guid districtId)
         {
             var client = _httpClientFactory.CreateClient("MstDistrictService");
-            Console.WriteLine($"Fetching District with ID {districtId} from {client.BaseAddress}/api/mstdistrict/{districtId}");
-            var response = await client.GetAsync($"/api/mstdistrict/{districtId}");
+            Console.WriteLine($"Fetching District with ID {districtId} from {client.BaseAddress}/{districtId}");
+            var response = await client.GetAsync($"/{districtId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get District with ID {districtId}. Status: {response.StatusCode}");
@@ -339,18 +339,18 @@ namespace TrackingBle.src._16MstMember.Services
             catch (JsonException ex)
             {
                 Console.WriteLine($"Error deserializing District JSON: {ex.Message}. JSON: {json}");
-                throw; // Lempar exception untuk debugging
+                throw; 
             }
         }
     }
 
-    // Definisi kelas wrapper untuk respons API
+    // wrapper untuk respons API
     public class ApiResponse<T>
     {
         public bool Success { get; set; }
         public string Msg { get; set; }
         public CollectionData<T> Collection { get; set; }
-        public int Code { get; set; } // Ubah dari string ke int agar sesuai dengan respons
+        public int Code { get; set; } 
     }
 
     public class CollectionData<T>

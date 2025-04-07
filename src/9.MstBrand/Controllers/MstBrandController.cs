@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace TrackingBle.src._9MstBrand.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class MstBrandController : ControllerBase
     {

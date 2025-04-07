@@ -28,7 +28,7 @@ namespace TrackingBle.src._5MstAccessCctv.Models.Dto.MstAccessCctvDtos
         public string ApiAuthPasswd { get; set; }
         public string ApiKeyField { get; set; }
         public string ApiKeyValue { get; set; }
-        public Guid ApplicationId { get; set; } // Tetap ada sebagai Guid
+        public Guid ApplicationId { get; set; } 
         public string CreatedBy { get; set; }
         public DateTime CreatedAt { get; set; }
         public string UpdatedBy { get; set; }

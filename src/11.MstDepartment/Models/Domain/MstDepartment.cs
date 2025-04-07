@@ -9,7 +9,7 @@ namespace TrackingBle.src._11MstDepartment.Models.Domain
     {
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Generate { get; set; } // Diubah ke int
+        public int Generate { get; set; } 
 
         [Key]
         public Guid Id { get; set; } = Guid.NewGuid();

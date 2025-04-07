@@ -8,7 +8,7 @@ using TrackingBle.src._7MstApplication.Services;
 namespace TrackingBle.src._7MstApplication.Controllers
 {
     [Authorize(Roles = "System")]
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class MstApplicationController : ControllerBase
     {

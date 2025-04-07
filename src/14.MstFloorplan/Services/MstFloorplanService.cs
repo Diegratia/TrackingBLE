@@ -55,7 +55,7 @@ namespace TrackingBle.src._14MstFloorplan.Services
         public async Task<MstFloorplanDto> CreateAsync(MstFloorplanCreateDto createDto)
         {
             var floorClient = _httpClientFactory.CreateClient("MstFloorService");
-            var floorResponse = await floorClient.GetAsync($"/api/mstfloor/{createDto.FloorId}");
+            var floorResponse = await floorClient.GetAsync($"/{createDto.FloorId}");
             if (!floorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floor with ID {createDto.FloorId} not found.");
 
@@ -81,7 +81,7 @@ namespace TrackingBle.src._14MstFloorplan.Services
                 throw new KeyNotFoundException("Floorplan not found");
 
             var floorClient = _httpClientFactory.CreateClient("MstFloorService");
-            var floorResponse = await floorClient.GetAsync($"/api/mstfloor/{updateDto.FloorId}");
+            var floorResponse = await floorClient.GetAsync($"/{updateDto.FloorId}");
             if (!floorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floor with ID {updateDto.FloorId} not found.");
 
@@ -107,7 +107,7 @@ namespace TrackingBle.src._14MstFloorplan.Services
         private async Task<MstFloorDto> GetFloorAsync(Guid floorId)
         {
             var client = _httpClientFactory.CreateClient("MstFloorService");
-            var response = await client.GetAsync($"/api/mstfloor/{floorId}");
+            var response = await client.GetAsync($"/{floorId}");
             if (!response.IsSuccessStatusCode) return null;
             var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse<MstFloorDto>>();
             return apiResponse?.Collection?.Data;

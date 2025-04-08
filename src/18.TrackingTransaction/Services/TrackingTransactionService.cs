@@ -9,6 +9,8 @@ using System.Net.Http;
 using TrackingBle.src._18TrackingTransaction.Data;
 using TrackingBle.src._18TrackingTransaction.Models.Domain;
 using TrackingBle.src._18TrackingTransaction.Models.Dto.TrackingTransactionDtos;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._18TrackingTransaction.Services
 {
@@ -17,17 +19,20 @@ namespace TrackingBle.src._18TrackingTransaction.Services
         private readonly TrackingTransactionDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
         public TrackingTransactionService(
             TrackingTransactionDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
         }
 
@@ -140,6 +145,32 @@ namespace TrackingBle.src._18TrackingTransaction.Services
             {
                 throw new ArgumentException($"FloorplanMaskedArea with ID {floorplanMaskedAreaId} not found.");
             }
+        }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

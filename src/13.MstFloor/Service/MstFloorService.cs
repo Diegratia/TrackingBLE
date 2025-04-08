@@ -113,7 +113,7 @@ namespace TrackingBle.src._13MstFloor.Services
                 floor.FloorImage = $"/Uploads/FloorImages/{fileName}";
             }
 
-            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             floor.CreatedBy = username;
             floor.CreatedAt = DateTime.UtcNow;
             floor.UpdatedBy = username;
@@ -173,7 +173,8 @@ namespace TrackingBle.src._13MstFloor.Services
             }
 
             _mapper.Map(updateDto, floor);
-            floor.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
+            
+            floor.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             floor.UpdatedAt = DateTime.UtcNow;
 
             _context.MstFloors.Update(floor);
@@ -201,6 +202,8 @@ namespace TrackingBle.src._13MstFloor.Services
                     throw new InvalidOperationException("Cannot delete Floor because it is used by active FloorplanMaskedAreas.");
             }
 
+            floor.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            floor.UpdatedAt = DateTime.UtcNow;
             floor.Status = 0;
             // _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();
@@ -250,7 +253,7 @@ namespace TrackingBle.src._13MstFloor.Services
     {
         public T Data { get; set; }
     }
-}
+
 
 public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
     {
@@ -277,3 +280,4 @@ public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
             return await base.SendAsync(request, cancellationToken);
         }
     }
+}

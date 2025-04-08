@@ -56,6 +56,8 @@ builder.Configuration
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddDbContext<TrackingTransactionDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??

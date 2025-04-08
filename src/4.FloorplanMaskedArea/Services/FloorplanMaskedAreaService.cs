@@ -10,6 +10,8 @@ using TrackingBle.src._4FloorplanMaskedArea.Models.Domain;
 using TrackingBle.src._4FloorplanMaskedArea.Models.Dto.FloorplanMaskedAreaDtos;
 using TrackingBle.src.Common.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._4FloorplanMaskedArea.Services
 {
@@ -19,17 +21,20 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory; 
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public FloorplanMaskedAreaService(
             FloorplanMaskedAreaDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory, 
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<FloorplanMaskedAreaDto> GetByIdAsync(Guid id)
@@ -72,11 +77,12 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             await ValidateForeignKeys(createDto.FloorId, createDto.FloorplanId);
 
             var area = _mapper.Map<FloorplanMaskedArea>(createDto);
-            area.Id = Guid.NewGuid(); // Tambahkan jika Id tidak diatur di DTO
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            area.Id = Guid.NewGuid(); // atau atur di /mappingprofile juga bisa
             area.Status = 1;
-            area.CreatedBy = "system";
+            area.CreatedBy = username;
             area.CreatedAt = DateTime.UtcNow;
-            area.UpdatedBy = "system";
+            area.UpdatedBy = username;
             area.UpdatedAt = DateTime.UtcNow;
 
             _context.FloorplanMaskedAreas.Add(area);
@@ -102,7 +108,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             await ValidateForeignKeysIfChanged(area, updateDto);
 
             _mapper.Map(updateDto, area);
-            area.UpdatedBy = "system";
+            area.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             area.UpdatedAt = DateTime.UtcNow;
 
             _context.FloorplanMaskedAreas.Update(area);
@@ -117,7 +123,8 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
                 Console.WriteLine($"FloorplanMaskedArea with ID {id} not found.");
                 throw new KeyNotFoundException("Area not found");
             }
-
+            area.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            area.UpdatedAt = DateTime.UtcNow;
             area.Status = 0;
             await _context.SaveChangesAsync();
         }
@@ -218,4 +225,32 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             }
         }
     }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
+        }
+    }
+
+    
 }

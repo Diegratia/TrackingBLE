@@ -11,6 +11,8 @@ using TrackingBle.src._2AlarmRecordTracking.Models.Domain;
 using TrackingBle.src._2AlarmRecordTracking.Models.Dto.AlarmRecordTrackingDtos;
 using TrackingBle.src.Common.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._2AlarmRecordTracking.Services
 {
@@ -19,18 +21,21 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private readonly AlarmRecordTrackingDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
         public AlarmRecordTrackingService(
             AlarmRecordTrackingDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AlarmRecordTrackingDto> GetByIdAsync(Guid id)
@@ -78,6 +83,8 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             await ValidateForeignKeys(createDto.VisitorId, createDto.ReaderId, createDto.FloorplanMaskedAreaId, createDto.ApplicationId);
 
             var alarm = _mapper.Map<AlarmRecordTracking>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             alarm.Id = Guid.NewGuid();
             alarm.Timestamp = DateTime.UtcNow;
             alarm.IdleTimestamp = DateTime.UtcNow;
@@ -85,11 +92,11 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             alarm.CancelTimestamp = DateTime.MaxValue;
             alarm.WaitingTimestamp = DateTime.MaxValue;
             alarm.InvestigatedTimestamp = DateTime.MaxValue;
-            alarm.IdleBy = "System";
-            alarm.DoneBy = "System";
-            alarm.CancelBy = "System";
-            alarm.WaitingBy = "System";
-            alarm.InvestigatedBy = "System";
+            alarm.IdleBy = username;
+            alarm.DoneBy = username;
+            alarm.CancelBy = username;
+            alarm.WaitingBy = username;
+            alarm.InvestigatedBy = username;
             alarm.InvestigatedDoneAt = DateTime.MaxValue;
 
             _context.AlarmRecordTrackings.Add(alarm);
@@ -229,6 +236,31 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {response.StatusCode}");
             }
+        }
+    }
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

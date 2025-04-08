@@ -9,6 +9,8 @@ using TrackingBle.src._16MstMember.Models.Dto.MstMemberDtos;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._16MstMember.Services
 {
@@ -17,6 +19,7 @@ namespace TrackingBle.src._16MstMember.Services
         private readonly MstMemberDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
         private readonly JsonSerializerOptions _jsonOptions;
         private readonly string[] _allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
@@ -26,12 +29,14 @@ namespace TrackingBle.src._16MstMember.Services
             MstMemberDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
             _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true 
@@ -77,12 +82,14 @@ namespace TrackingBle.src._16MstMember.Services
             await ValidateDistrictAsync(createDto.DistrictId);
 
             var member = _mapper.Map<MstMember>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             member.Id = Guid.NewGuid();
             member.Status = 1;
             member.CreatedAt = DateTime.UtcNow;
             member.UpdatedAt = DateTime.UtcNow;
-            member.CreatedBy = "system";
-            member.UpdatedBy = "system";
+            member.CreatedBy = username;
+            member.UpdatedBy = username;
             member.JoinDate = DateOnly.FromDateTime(DateTime.UtcNow);
             member.ExitDate = DateOnly.MaxValue;
 
@@ -185,7 +192,7 @@ namespace TrackingBle.src._16MstMember.Services
             }
 
             _mapper.Map(updateDto, member);
-            member.UpdatedBy = "system";
+            member.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             member.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -203,10 +210,11 @@ namespace TrackingBle.src._16MstMember.Services
             if (member == null || member.Status == 0)
                 throw new KeyNotFoundException($"Member with ID {id} not found or already deleted.");
 
-            member.Status = 0;
-            member.UpdatedBy = "system";
+            
+            member.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             member.UpdatedAt = DateTime.UtcNow;
             member.ExitDate = DateOnly.FromDateTime(DateTime.UtcNow);
+            member.Status = 0;
 
             await _context.SaveChangesAsync();
         }
@@ -356,5 +364,31 @@ namespace TrackingBle.src._16MstMember.Services
     public class CollectionData<T>
     {
         public T Data { get; set; }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
+        }
     }
 }

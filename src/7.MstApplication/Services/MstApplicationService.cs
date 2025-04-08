@@ -8,6 +8,8 @@ using TrackingBle.src._7MstApplication.Data;
 using TrackingBle.src._7MstApplication.Models.Domain;
 using TrackingBle.src._7MstApplication.Models.Dto.MstApplicationDtos;
 using BCrypt.Net;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._7MstApplication.Services
 {
@@ -16,10 +18,13 @@ namespace TrackingBle.src._7MstApplication.Services
         private readonly MstApplicationDbContext _context;
         private readonly IMapper _mapper;
 
-        public MstApplicationService(MstApplicationDbContext context, IMapper mapper)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public MstApplicationService(MstApplicationDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<IEnumerable<MstApplicationDto>> GetAllApplicationsAsync()
@@ -53,13 +58,16 @@ namespace TrackingBle.src._7MstApplication.Services
 
             // create mstapplication
             var application = _mapper.Map<MstApplication>(dto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             application.Id = Guid.NewGuid();
             application.ApplicationStatus = 1;
 
             _context.MstApplications.Add(application);
 
             // data default create by
-            string defaultUser = "System"; 
+            // string defaultUser = "System"; 
+            var defaultUser = username; 
             DateTime now = DateTime.UtcNow;
 
             // create 4 user group
@@ -221,6 +229,31 @@ namespace TrackingBle.src._7MstApplication.Services
         }
     }
 
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
+        }
+    }
 }
 
 

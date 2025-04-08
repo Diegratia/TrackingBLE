@@ -10,6 +10,8 @@ using TrackingBle.src._5MstAccessCctv.Data;
 using TrackingBle.src._5MstAccessCctv.Models.Domain;
 using TrackingBle.src._5MstAccessCctv.Models.Dto.MstAccessCctvDtos;
 using TrackingBle.src.Common.Models;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._5MstAccessCctv.Services
 {
@@ -18,16 +20,19 @@ namespace TrackingBle.src._5MstAccessCctv.Services
         private readonly MstAccessCctvDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializerOptions _jsonOptions;
 
         public MstAccessCctvService(
             MstAccessCctvDbContext context,
             IMapper mapper,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true // abaikan case sensitif
@@ -83,11 +88,13 @@ namespace TrackingBle.src._5MstAccessCctv.Services
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
 
             var accessCctv = _mapper.Map<MstAccessCctv>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             accessCctv.Id = Guid.NewGuid();
             accessCctv.Status = 1;
-            accessCctv.CreatedBy = "system";
+            accessCctv.CreatedBy = username;
             accessCctv.CreatedAt = DateTime.UtcNow;
-            accessCctv.UpdatedBy = "system";
+            accessCctv.UpdatedBy = username;
             accessCctv.UpdatedAt = DateTime.UtcNow;
 
             _context.MstAccessCctvs.Add(accessCctv);
@@ -123,7 +130,8 @@ namespace TrackingBle.src._5MstAccessCctv.Services
             }
 
             _mapper.Map(updateDto, accessCctv);
-            accessCctv.UpdatedBy = "system";
+            accessCctv.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             accessCctv.UpdatedAt = DateTime.UtcNow;
 
             _context.MstAccessCctvs.Update(accessCctv);
@@ -136,6 +144,8 @@ namespace TrackingBle.src._5MstAccessCctv.Services
             if (accessCctv == null)
                 throw new KeyNotFoundException($"MstAccessCctv with ID {id} not found.");
 
+            accessCctv.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            accessCctv.UpdatedAt = DateTime.UtcNow;
             accessCctv.Status = 0;
             await _context.SaveChangesAsync();
         }
@@ -170,6 +180,32 @@ namespace TrackingBle.src._5MstAccessCctv.Services
                 Console.WriteLine($"Error deserializing Integration JSON: {ex.Message}. JSON: {json}");
                 return null;
             }
+        }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

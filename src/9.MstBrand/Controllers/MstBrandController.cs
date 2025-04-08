@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._9MstBrand.Models.Dto.MstBrandDtos;
 using TrackingBle.src._9MstBrand.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._9MstBrand.Controllers
 {
+    [Authorize]
     [Route("/")]
     [ApiController]
     public class MstBrandController : ControllerBase

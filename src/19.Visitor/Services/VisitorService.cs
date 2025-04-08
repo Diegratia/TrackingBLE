@@ -10,6 +10,8 @@ using System.Net.Http;
 using TrackingBle.src._19Visitor.Data;
 using TrackingBle.src._19Visitor.Models.Domain;
 using TrackingBle.src._19Visitor.Models.Dto.VisitorDtos;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._19Visitor.Services
 {
@@ -18,6 +20,7 @@ namespace TrackingBle.src._19Visitor.Services
         private readonly VisitorDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
         private readonly string[] _allowedImageTypes = new[] { "image/jpeg", "image/jpg", "image/png" };
@@ -27,11 +30,13 @@ namespace TrackingBle.src._19Visitor.Services
             VisitorDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
         }
 
@@ -54,6 +59,8 @@ namespace TrackingBle.src._19Visitor.Services
             await ValidateApplicationAsync(createDto.ApplicationId);
 
             var visitor = _mapper.Map<Visitor>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             visitor.Id = Guid.NewGuid();
             visitor.RegisteredDate = DateTime.UtcNow;
             visitor.VisitorArrival = DateTime.UtcNow; // disesuaikan nanti
@@ -180,6 +187,32 @@ namespace TrackingBle.src._19Visitor.Services
             {
                 throw new ArgumentException($"Application with ID {applicationId} not found.");
             }
+        }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

@@ -10,6 +10,8 @@ using TrackingBle.src._6MstAccessControl.Data;
 using TrackingBle.src._6MstAccessControl.Models.Domain;
 using TrackingBle.src._6MstAccessControl.Models.Dto.MstAccessControlDtos;
 using TrackingBle.src.Common.Models;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._6MstAccessControl.Services
 {
@@ -18,16 +20,19 @@ namespace TrackingBle.src._6MstAccessControl.Services
         private readonly MstAccessControlDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializerOptions _jsonOptions;
 
         public MstAccessControlService(
             MstAccessControlDbContext context,
             IMapper mapper,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
@@ -90,11 +95,13 @@ namespace TrackingBle.src._6MstAccessControl.Services
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
 
             var accessControl = _mapper.Map<MstAccessControl>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             accessControl.Id = Guid.NewGuid();
             accessControl.Status = 1;
-            accessControl.CreatedBy = "system";
+            accessControl.CreatedBy = username;
             accessControl.CreatedAt = DateTime.UtcNow;
-            accessControl.UpdatedBy = "system";
+            accessControl.UpdatedBy = username;
             accessControl.UpdatedAt = DateTime.UtcNow;
 
             _context.MstAccessControls.Add(accessControl);
@@ -139,7 +146,7 @@ namespace TrackingBle.src._6MstAccessControl.Services
             }
 
             _mapper.Map(updateDto, accessControl);
-            accessControl.UpdatedBy = "system";
+            accessControl.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";         
             accessControl.UpdatedAt = DateTime.UtcNow;
 
             _context.MstAccessControls.Update(accessControl);
@@ -152,6 +159,8 @@ namespace TrackingBle.src._6MstAccessControl.Services
             if (accessControl == null)
                 throw new KeyNotFoundException($"MstAccessControl with ID {id} not found.");
 
+            accessControl.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            accessControl.UpdatedAt = DateTime.UtcNow;
             accessControl.Status = 0;
             await _context.SaveChangesAsync();
         }
@@ -218,6 +227,33 @@ namespace TrackingBle.src._6MstAccessControl.Services
                 Console.WriteLine($"Error deserializing Integration JSON: {ex.Message}. JSON: {json}");
                 return null;
             }
+
+            
+        }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

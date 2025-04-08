@@ -9,6 +9,8 @@ using System.Net.Http;
 using TrackingBle.src._17MstOrganization.Data;
 using TrackingBle.src._17MstOrganization.Models.Domain;
 using TrackingBle.src._17MstOrganization.Models.Dto.MstOrganizationDtos;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._17MstOrganization.Services
 {
@@ -18,16 +20,19 @@ namespace TrackingBle.src._17MstOrganization.Services
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public MstOrganizationService(
             MstOrganizationDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
         }
 
@@ -54,11 +59,13 @@ namespace TrackingBle.src._17MstOrganization.Services
             await ValidateApplicationAsync(dto.ApplicationId);
 
             var organization = _mapper.Map<MstOrganization>(dto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             organization.Id = Guid.NewGuid();
             organization.Status = 1;
-            organization.CreatedBy = "system"; // ganti dengan info user
+            organization.CreatedBy = username; // ganti dengan info user
             organization.CreatedAt = DateTime.UtcNow;
-            organization.UpdatedBy = "system";
+            organization.UpdatedBy = username;
             organization.UpdatedAt = DateTime.UtcNow;
 
             _context.MstOrganizations.Add(organization);
@@ -85,7 +92,7 @@ namespace TrackingBle.src._17MstOrganization.Services
             }
 
             _mapper.Map(dto, organization);
-            organization.UpdatedBy = "system";
+            organization.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             organization.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -101,7 +108,7 @@ namespace TrackingBle.src._17MstOrganization.Services
             }
 
             organization.Status = 0;
-            organization.UpdatedBy = "system";
+            organization.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             organization.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -115,6 +122,32 @@ namespace TrackingBle.src._17MstOrganization.Services
             {
                 throw new ArgumentException($"Application with ID {applicationId} not found.");
             }
+        }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

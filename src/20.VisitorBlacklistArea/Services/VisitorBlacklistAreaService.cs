@@ -10,6 +10,8 @@ using TrackingBle.src._20VisitorBlacklistArea.Models.Domain;
 using TrackingBle.src._20VisitorBlacklistArea.Models.Dto.VisitorBlacklistAreaDtos;
 using TrackingBle.src._20VisitorBlacklistArea.Data;
 using TrackingBle.src.Common.Models;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._20VisitorBlacklistArea.Services
 {
@@ -18,17 +20,20 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
         private readonly VisitorBlacklistAreaDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializerOptions _jsonOptions;
 
         public VisitorBlacklistAreaService(
             VisitorBlacklistAreaDbContext context,
             IMapper mapper,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<VisitorBlacklistAreaDto> GetVisitorBlacklistAreaByIdAsync(Guid id)
@@ -208,6 +213,31 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
                 Console.WriteLine($"Error deserializing Visitor JSON: {ex.Message}. JSON: {json}");
                 return null;
             }
+        }
+    }
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

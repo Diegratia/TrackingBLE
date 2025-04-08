@@ -11,6 +11,8 @@ using TrackingBle.src._3FloorplanDevice.Models.Domain;
 using TrackingBle.src._3FloorplanDevice.Models.Dto.FloorplanDeviceDtos;
 using TrackingBle.src.Common.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._3FloorplanDevice.Services
 {
@@ -21,17 +23,20 @@ namespace TrackingBle.src._3FloorplanDevice.Services
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IConfiguration _configuration;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public FloorplanDeviceService(
             FloorplanDeviceDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true 
@@ -84,11 +89,12 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             await ValidateForeignKeys(createDto.FloorplanId, createDto.AccessCctvId, createDto.ReaderId, createDto.AccessControlId, createDto.FloorplanMaskedAreaId, createDto.ApplicationId);
 
             var device = _mapper.Map<FloorplanDevice>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             device.Id = Guid.NewGuid();
             device.Status = 1;
-            device.CreatedBy = "system";
+            device.CreatedBy = username;
             device.CreatedAt = DateTime.UtcNow;
-            device.UpdatedBy = "system";
+            device.UpdatedBy = username;
             device.UpdatedAt = DateTime.UtcNow;
 
             _context.FloorplanDevices.Add(device);
@@ -111,7 +117,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             await ValidateForeignKeysIfChanged(device, updateDto);
 
             _mapper.Map(updateDto, device);
-            device.UpdatedBy = "system";
+            device.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             device.UpdatedAt = DateTime.UtcNow;
 
             _context.FloorplanDevices.Update(device);
@@ -124,6 +130,8 @@ namespace TrackingBle.src._3FloorplanDevice.Services
             if (device == null || device.Status == 0)
                 throw new KeyNotFoundException($"FloorplanDevice with ID {id} not found.");
 
+            device.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            device.UpdatedAt = DateTime.UtcNow;
             device.Status = 0;
             await _context.SaveChangesAsync();
         }
@@ -352,6 +360,32 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {response.StatusCode}");
             }
+        }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

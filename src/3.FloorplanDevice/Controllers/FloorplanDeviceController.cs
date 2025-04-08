@@ -9,8 +9,8 @@ using System.Linq;
 namespace TrackingBle.src._3FloorplanDevice.Controllers
 {
 
-
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class FloorplanDeviceController : ControllerBase
     {

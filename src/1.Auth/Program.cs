@@ -11,8 +11,8 @@ using DotNetEnv;
 
 try
 {
-    Env.Load("../../.env");
-    Console.WriteLine("Successfully loaded .env file from ../../.env");
+    Env.Load("/app/.env");
+    Console.WriteLine("Successfully loaded .env file from /app/.env");
 }
 catch (Exception ex)
 {
@@ -67,7 +67,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddDbContext<AuthDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
-                         "Server=192.168.68.175,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
+                         "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -101,33 +101,38 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(AuthProfile));
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-var port = Environment.GetEnvironmentVariable("AUTH_PORT") ?? "5001";
+// var port = Environment.GetEnvironmentVariable("AUTH_PORT") ?? "5001";
+// var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+// var host = env == "Production" ? "0.0.0.0" : "localhost";
+// builder.WebHost.UseUrls($"http://{host}:{port}");
+
+var port = Environment.GetEnvironmentVariable("AUTH_PORT") ??
+           builder.Configuration["Ports:AuthService"] ?? "5001";
 var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 var host = env == "Production" ? "0.0.0.0" : "localhost";
 builder.WebHost.UseUrls($"http://{host}:{port}");
 
 var app = builder.Build();
 
-// Jalankan migrasi dan seeding saat startup
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
-    try
-    {
-        Console.WriteLine("Applying migrations...");
-        context.Database.Migrate(); 
-        Console.WriteLine("Migrations applied successfully.");
+// using (var scope = app.Services.CreateScope())
+// {
+//     var context = scope.ServiceProvider.GetRequiredService<AuthDbContext>();
+//     try
+//     {
+//         // Console.WriteLine("Applying migrations...");
+//         // context.Database.Migrate(); 
+//         // Console.WriteLine("Migrations applied successfully.");
 
-        Console.WriteLine("Seeding database...");
-        DatabaseSeeder.Seed(context);
-        Console.WriteLine("Database seeded successfully.");
-    }
-    catch (Exception ex)
-    {
-        Console.WriteLine($"Error during migration or seeding: {ex.Message}");
-        throw; 
-    }
-}
+//         Console.WriteLine("Seeding database...");
+//         DatabaseSeeder.Seed(context);
+//         Console.WriteLine("Database seeded successfully.");
+//     }
+//     catch (Exception ex)
+//     {
+//         Console.WriteLine($"Error during migration or seeding: {ex.Message}");
+//         throw; 
+//     }
+// }
 
 if (app.Environment.IsDevelopment())
 {
@@ -144,8 +149,20 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/api/auth/health", () => "Health Check");
-app.MapGet("/health", () => "Health Check");
+app.MapGet("/api/Auth/health", () => "Health Check");
+// app.MapGet("/health", () => "Health Check");
+
+
+Console.WriteLine("Environment Variables Check");
+Console.WriteLine($"ASPNETCORE_ENVIRONMENT: {env}");
+Console.WriteLine($"AUTH_PORT: {Environment.GetEnvironmentVariable("AUTH_PORT")}");
+Console.WriteLine($"Configured Port: {port}");
+Console.WriteLine($"Host: {host}");
+Console.WriteLine($"Application URL: http://{host}:{port}");
+Console.WriteLine($"Current Environment: {app.Environment.EnvironmentName}");
+Console.WriteLine($"Is Development: {app.Environment.IsDevelopment()}");
+Console.WriteLine($"Connection String: {builder.Configuration.GetConnectionString("TrackingBleDbConnection")}");
+Console.WriteLine($"Starting on http://{host}:{port} in {env} environment...");
 
 Console.WriteLine($"Starting on http://{host}:{port} in {env} environment...");
 Console.WriteLine($"Jwt:Issuer = {builder.Configuration["Jwt:Issuer"]}");

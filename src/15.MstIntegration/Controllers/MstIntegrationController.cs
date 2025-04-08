@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._15MstIntegration.Models.Dto.MstIntegrationDtos; // Assuming this namespace
 using TrackingBle.src._15MstIntegration.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._15MstIntegration.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class MstIntegrationController : ControllerBase
     {

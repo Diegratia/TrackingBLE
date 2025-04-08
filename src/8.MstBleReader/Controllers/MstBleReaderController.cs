@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace TrackingBle.src._8MstBleReader.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/")]
     [ApiController]
     public class MstBleReaderController : ControllerBase
     {

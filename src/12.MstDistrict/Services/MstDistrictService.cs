@@ -58,9 +58,9 @@ namespace TrackingBle.src._12MstDistrict.Services
 
         public async Task<MstDistrictDto> CreateAsync(MstDistrictCreateDto createDto)
         {
-            // Validasi ApplicationId via HttpClient
+            // Validassi ApplicationId via http
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{createDto.ApplicationId}");
+            var response = await client.GetAsync($"/{createDto.ApplicationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found.");
 
@@ -76,7 +76,6 @@ namespace TrackingBle.src._12MstDistrict.Services
             await _context.SaveChangesAsync();
 
             var dto = _mapper.Map<MstDistrictDto>(district);
-            // Uncomment jika ingin menyertakan Application via HttpClient
             // dto.Application = await GetApplicationAsync(district.ApplicationId);
             return dto;
         }
@@ -91,17 +90,17 @@ namespace TrackingBle.src._12MstDistrict.Services
             if (district.ApplicationId != updateDto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplication/{updateDto.ApplicationId}");
+                var response = await client.GetAsync($"/{updateDto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found.");
                 district.ApplicationId = updateDto.ApplicationId;
             }
 
-            // Update properti secara manual untuk hindari Generate
+            
             district.Code = updateDto.Code;
             district.Name = updateDto.Name;
             district.DistrictHost = updateDto.DistrictHost;
-            district.UpdatedBy = "system"; // Ganti dengan data login user nanti
+            district.UpdatedBy = "system"; // ganti dengan data login user nanti
             district.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -113,7 +112,7 @@ namespace TrackingBle.src._12MstDistrict.Services
             if (district == null || district.Status == 0)
                 throw new KeyNotFoundException("District not found");
 
-            district.Status = 0; // Soft delete
+            district.Status = 0;
             district.UpdatedBy = "system"; // Ganti dengan data login user nanti
             district.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
@@ -122,7 +121,7 @@ namespace TrackingBle.src._12MstDistrict.Services
         private async Task<MstApplicationDto> GetApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{applicationId}");
+            var response = await client.GetAsync($"/{applicationId}");
             if (!response.IsSuccessStatusCode) return null;
             return await response.Content.ReadFromJsonAsync<MstApplicationDto>();
         }

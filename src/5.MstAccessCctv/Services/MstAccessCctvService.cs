@@ -30,7 +30,7 @@ namespace TrackingBle.src._5MstAccessCctv.Services
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _jsonOptions = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+                PropertyNameCaseInsensitive = true // abaikan case sensitif
             };
         }
 

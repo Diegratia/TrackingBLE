@@ -49,7 +49,7 @@ namespace TrackingBle.src._10MstBuilding.Services
         {
             // Validasi ApplicationId via MstApplicationService
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{dto.ApplicationId}");
+            var response = await client.GetAsync($"/{dto.ApplicationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {dto.ApplicationId} not found.");
 
@@ -77,15 +77,15 @@ namespace TrackingBle.src._10MstBuilding.Services
             if (building.ApplicationId != dto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplication/{dto.ApplicationId}");
+                var response = await client.GetAsync($"/{dto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {dto.ApplicationId} not found.");
                 building.ApplicationId = dto.ApplicationId;
             }
 
-            // Map DTO ke entitas sebelum set audit fields
+            // Map DTO ke entitas 
             _mapper.Map(dto, building);
-            building.UpdatedBy = "system";
+            building.UpdatedBy = "system"; //ganti nanti
             building.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();

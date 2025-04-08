@@ -1,12 +1,14 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._16MstMember.Models.Dto.MstMemberDtos;
 using TrackingBle.src._16MstMember.Services;
 
 namespace TrackingBle.src._16MstMember.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class MstMemberController : ControllerBase
     {

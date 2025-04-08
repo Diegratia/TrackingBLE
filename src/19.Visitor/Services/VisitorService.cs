@@ -56,8 +56,8 @@ namespace TrackingBle.src._19Visitor.Services
             var visitor = _mapper.Map<Visitor>(createDto);
             visitor.Id = Guid.NewGuid();
             visitor.RegisteredDate = DateTime.UtcNow;
-            visitor.VisitorArrival = DateTime.UtcNow; // Default, sesuaikan jika ada input
-            visitor.VisitorEnd = DateTime.MaxValue; // Default, sesuaikan jika ada input
+            visitor.VisitorArrival = DateTime.UtcNow; // disesuaikan nanti
+            visitor.VisitorEnd = DateTime.MaxValue; // disesuaikan nanti
             visitor.TimestampPreRegistration = DateTime.UtcNow;
             visitor.TimestampCheckedIn = DateTime.UtcNow;
             visitor.TimestampCheckedOut = DateTime.UtcNow;
@@ -175,7 +175,7 @@ namespace TrackingBle.src._19Visitor.Services
         private async Task ValidateApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{applicationId}");
+            var response = await client.GetAsync($"/{applicationId}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new ArgumentException($"Application with ID {applicationId} not found.");

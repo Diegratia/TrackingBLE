@@ -34,7 +34,7 @@ namespace TrackingBle.src._6MstAccessControl.Models.Domain
 
         [Required]
         [StringLength(255)]
-        public string DoorId { get; set; } // relasi dari table?
+        public string DoorId { get; set; } 
 
         [Required]
         public string Raw { get; set; }

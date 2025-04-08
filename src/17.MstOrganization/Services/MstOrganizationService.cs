@@ -34,7 +34,7 @@ namespace TrackingBle.src._17MstOrganization.Services
         public async Task<IEnumerable<MstOrganizationDto>> GetAllOrganizationsAsync()
         {
             var organizations = await _context.MstOrganizations
-                .Where(o => o.Status != 0) // Hanya ambil yang aktif
+                .Where(o => o.Status != 0) 
                 .ToListAsync();
             return _mapper.Map<IEnumerable<MstOrganizationDto>>(organizations);
         }
@@ -56,7 +56,7 @@ namespace TrackingBle.src._17MstOrganization.Services
             var organization = _mapper.Map<MstOrganization>(dto);
             organization.Id = Guid.NewGuid();
             organization.Status = 1;
-            organization.CreatedBy = "system"; // Ganti dengan user dari context jika ada
+            organization.CreatedBy = "system"; // ganti dengan info user
             organization.CreatedAt = DateTime.UtcNow;
             organization.UpdatedBy = "system";
             organization.UpdatedAt = DateTime.UtcNow;
@@ -110,7 +110,7 @@ namespace TrackingBle.src._17MstOrganization.Services
         private async Task ValidateApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{applicationId}");
+            var response = await client.GetAsync($"/{applicationId}");
             if (!response.IsSuccessStatusCode)
             {
                 throw new ArgumentException($"Application with ID {applicationId} not found.");

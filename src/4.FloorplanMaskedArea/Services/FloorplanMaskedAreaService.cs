@@ -136,7 +136,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
         {
             var client = _httpClientFactory.CreateClient("MstFloorService");
             Console.WriteLine($"Fetching Floor with ID {floorId} from {client.BaseAddress}");
-            var response = await client.GetAsync($"/api/mstfloor/{floorId}");
+            var response = await client.GetAsync($"/{floorId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Floor with ID {floorId}. Status: {response.StatusCode}");
@@ -163,7 +163,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
         {
             var client = _httpClientFactory.CreateClient("MstFloorplanService");
             Console.WriteLine($"Fetching Floorplan with ID {floorplanId} from {client.BaseAddress}");
-            var response = await client.GetAsync($"/api/mstfloorplan/{floorplanId}");
+            var response = await client.GetAsync($"/{floorplanId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Floorplan with ID {floorplanId}. Status: {response.StatusCode}");
@@ -189,12 +189,12 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
         private async Task ValidateForeignKeys(Guid floorId, Guid floorplanId)
         {
             var floorClient = _httpClientFactory.CreateClient("MstFloorService");
-            var floorResponse = await floorClient.GetAsync($"/api/mstfloor/{floorId}");
+            var floorResponse = await floorClient.GetAsync($"/{floorId}");
             if (!floorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floor with ID {floorId} not found. Status: {floorResponse.StatusCode}");
 
             var floorplanClient = _httpClientFactory.CreateClient("MstFloorplanService");
-            var floorplanResponse = await floorplanClient.GetAsync($"/api/mstfloorplan/{floorplanId}");
+            var floorplanResponse = await floorplanClient.GetAsync($"/{floorplanId}");
             if (!floorplanResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Floorplan with ID {floorplanId} not found. Status: {floorplanResponse.StatusCode}");
         }
@@ -204,7 +204,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             if (area.FloorId != updateDto.FloorId)
             {
                 var client = _httpClientFactory.CreateClient("MstFloorService");
-                var response = await client.GetAsync($"/api/mstfloor/{updateDto.FloorId}");
+                var response = await client.GetAsync($"/{updateDto.FloorId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Floor with ID {updateDto.FloorId} not found. Status: {response.StatusCode}");
             }
@@ -212,7 +212,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             if (area.FloorplanId != updateDto.FloorplanId)
             {
                 var client = _httpClientFactory.CreateClient("MstFloorplanService");
-                var response = await client.GetAsync($"/api/mstfloorplan/{updateDto.FloorplanId}");
+                var response = await client.GetAsync($"/{updateDto.FloorplanId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Floorplan with ID {updateDto.FloorplanId} not found. Status: {response.StatusCode}");
             }

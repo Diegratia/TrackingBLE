@@ -67,9 +67,9 @@ namespace TrackingBle.src._7MstApplication.Models.Domain
 
         [Required]
         [Column("group_id")]
-        public Guid GroupId { get; set; } // Foreign key
+        public Guid GroupId { get; set; } 
 
         [ForeignKey("GroupId")]
-        public virtual UserGroup Group { get; set; } // Navigation property
+        public virtual UserGroup Group { get; set; } 
     }
 }

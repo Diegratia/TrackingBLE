@@ -10,6 +10,8 @@ using TrackingBle.src._20VisitorBlacklistArea.Models.Domain;
 using TrackingBle.src._20VisitorBlacklistArea.Models.Dto.VisitorBlacklistAreaDtos;
 using TrackingBle.src._20VisitorBlacklistArea.Data;
 using TrackingBle.src.Common.Models;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._20VisitorBlacklistArea.Services
 {
@@ -18,17 +20,20 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
         private readonly VisitorBlacklistAreaDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializerOptions _jsonOptions;
 
         public VisitorBlacklistAreaService(
             VisitorBlacklistAreaDbContext context,
             IMapper mapper,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _jsonOptions = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<VisitorBlacklistAreaDto> GetVisitorBlacklistAreaByIdAsync(Guid id)
@@ -88,12 +93,12 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
             var floorplanMaskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var floorplanResponse = await floorplanMaskedAreaClient.GetAsync($"api/floorplanmaskedarea/{createDto.FloorplanMaskedAreaId}");
+            var floorplanResponse = await floorplanMaskedAreaClient.GetAsync($"/{createDto.FloorplanMaskedAreaId}");
             if (!floorplanResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"FloorplanMaskedArea with ID {createDto.FloorplanMaskedAreaId} not found. Status: {floorplanResponse.StatusCode}");
 
             var visitorClient = _httpClientFactory.CreateClient("VisitorService");
-            var visitorResponse = await visitorClient.GetAsync($"api/visitor/{createDto.VisitorId}");
+            var visitorResponse = await visitorClient.GetAsync($"/{createDto.VisitorId}");
             if (!visitorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Visitor with ID {createDto.VisitorId} not found. Status: {visitorResponse.StatusCode}");
 
@@ -120,7 +125,7 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
             if (blacklistArea.FloorplanMaskedAreaId != updateDto.FloorplanMaskedAreaId)
             {
                 var floorplanMaskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-                var floorplanResponse = await floorplanMaskedAreaClient.GetAsync($"api/floorplanmaskedarea/{updateDto.FloorplanMaskedAreaId}");
+                var floorplanResponse = await floorplanMaskedAreaClient.GetAsync($"/{updateDto.FloorplanMaskedAreaId}");
                 if (!floorplanResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"FloorplanMaskedArea with ID {updateDto.FloorplanMaskedAreaId} not found. Status: {floorplanResponse.StatusCode}");
             }
@@ -128,7 +133,7 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
             if (blacklistArea.VisitorId != updateDto.VisitorId)
             {
                 var visitorClient = _httpClientFactory.CreateClient("VisitorService");
-                var visitorResponse = await visitorClient.GetAsync($"api/visitor/{updateDto.VisitorId}");
+                var visitorResponse = await visitorClient.GetAsync($"/{updateDto.VisitorId}");
                 if (!visitorResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Visitor with ID {updateDto.VisitorId} not found. Status: {visitorResponse.StatusCode}");
             }
@@ -151,8 +156,8 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
        private async Task<FloorplanMaskedAreaDto> GetFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            Console.WriteLine($"Calling FloorplanMaskedAreaService at {client.BaseAddress}api/floorplanmaskedarea/{floorplanMaskedAreaId}");
-            var response = await client.GetAsync($"api/floorplanmaskedarea/{floorplanMaskedAreaId}");
+            Console.WriteLine($"Calling FloorplanMaskedAreaService at {client.BaseAddress}/{floorplanMaskedAreaId}");
+            var response = await client.GetAsync($"/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get FloorplanMaskedArea with ID {floorplanMaskedAreaId}. Status: {response.StatusCode}");
@@ -182,8 +187,8 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
         private async Task<VisitorDto> GetVisitorAsync(Guid visitorId)
         {
             var client = _httpClientFactory.CreateClient("VisitorService");
-            Console.WriteLine($"Calling VisitorService at {client.BaseAddress}api/visitor/{visitorId}");
-            var response = await client.GetAsync($"api/visitor/{visitorId}");
+            Console.WriteLine($"Calling VisitorService at {client.BaseAddress}/{visitorId}");
+            var response = await client.GetAsync($"/{visitorId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Visitor with ID {visitorId}. Status: {response.StatusCode}");
@@ -208,6 +213,31 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
                 Console.WriteLine($"Error deserializing Visitor JSON: {ex.Message}. JSON: {json}");
                 return null;
             }
+        }
+    }
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

@@ -11,7 +11,7 @@ using TrackingBle.src._7MstApplication.Services;
 using TrackingBle.src._7MstApplication.MappingProfiles;
 using DotNetEnv;
 
-DotNetEnv.Env.Load("../../.env");
+DotNetEnv.Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,6 +48,8 @@ builder.Configuration
 builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddHttpContextAccessor(); 
+// builder.Services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
@@ -104,7 +106,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", () => "Hello from MstApplication!");
+// app.MapGet("/", () => "Hello from MstApplication!");
 app.MapGet("/api/MstApplication/health", () => "Hello from MstApplication!");
 
 Console.WriteLine("Environment Variables Check");

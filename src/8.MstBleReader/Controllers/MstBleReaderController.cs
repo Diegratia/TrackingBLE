@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._8MstBleReader.Models.Dto.MstBleReaderDtos;
 using TrackingBle.src._8MstBleReader.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._8MstBleReader.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class MstBleReaderController : ControllerBase
     {

@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using TrackingBle.src._13MstFloor.Data;
 using TrackingBle.src._13MstFloor.Models.Domain;
 using TrackingBle.src._13MstFloor.Models.Dto.MstFloorDtos;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._13MstFloor.Services
 {
@@ -17,21 +19,26 @@ namespace TrackingBle.src._13MstFloor.Services
         private readonly MstFloorDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializerOptions _jsonOptions;
+        private readonly IConfiguration _configuration;
         private readonly string[] _allowedImageTypes = new[] { "image/jpeg", "image/png", "image/jpg" };
         private const long MaxFileSize = 1 * 1024 * 1024; // Maksimal 1MB
 
         public MstFloorService(
             MstFloorDbContext context,
             IMapper mapper,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
+            IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
-                PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
+                PropertyNameCaseInsensitive = true // abaikan case sensitif
             };
         }
 
@@ -76,7 +83,7 @@ namespace TrackingBle.src._13MstFloor.Services
             // Validasi BuildingId via HTTP
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
             Console.WriteLine($"Validating Building with ID {createDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{createDto.BuildingId}");
-            var buildingResponse = await buildingClient.GetAsync($"/api/mstbuilding/{createDto.BuildingId}");
+            var buildingResponse = await buildingClient.GetAsync($"/{createDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to validate Building with ID {createDto.BuildingId}. Status: {buildingResponse.StatusCode}");
@@ -108,9 +115,10 @@ namespace TrackingBle.src._13MstFloor.Services
                 floor.FloorImage = $"/Uploads/FloorImages/{fileName}";
             }
 
-            floor.CreatedBy = "system";
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
+            floor.CreatedBy = username;
             floor.CreatedAt = DateTime.UtcNow;
-            floor.UpdatedBy = "system";
+            floor.UpdatedBy = username;
             floor.UpdatedAt = DateTime.UtcNow;
             floor.Status = 1;
 
@@ -130,7 +138,7 @@ namespace TrackingBle.src._13MstFloor.Services
 
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
             Console.WriteLine($"Validating Building with ID {updateDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{updateDto.BuildingId}");
-            var buildingResponse = await buildingClient.GetAsync($"/api/mstbuilding/{updateDto.BuildingId}");
+            var buildingResponse = await buildingClient.GetAsync($"/{updateDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to validate Building with ID {updateDto.BuildingId}. Status: {buildingResponse.StatusCode}");
@@ -167,7 +175,7 @@ namespace TrackingBle.src._13MstFloor.Services
             }
 
             _mapper.Map(updateDto, floor);
-            floor.UpdatedBy = "system";
+            floor.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "system";
             floor.UpdatedAt = DateTime.UtcNow;
 
             _context.MstFloors.Update(floor);
@@ -186,7 +194,8 @@ namespace TrackingBle.src._13MstFloor.Services
 
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
             Console.WriteLine($"Checking FloorplanMaskedAreas for Floor ID {id} at {maskedAreaClient.BaseAddress}/api/floorplanmaskedarea/byfloor/{id}");
-            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/byfloor/{id}");
+            // var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/byfloor/{id}");
+            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/{id}");
             if (maskedAreaResponse.IsSuccessStatusCode)
             {
                 var maskedAreas = await maskedAreaResponse.Content.ReadFromJsonAsync<List<dynamic>>();
@@ -195,7 +204,7 @@ namespace TrackingBle.src._13MstFloor.Services
             }
 
             floor.Status = 0;
-            _context.MstFloors.Update(floor);
+            // _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();
         }
 
@@ -203,7 +212,7 @@ namespace TrackingBle.src._13MstFloor.Services
         {
             var client = _httpClientFactory.CreateClient("BuildingService");
             Console.WriteLine($"Fetching Building with ID {buildingId} from {client.BaseAddress}/api/mstbuilding/{buildingId}");
-            var response = await client.GetAsync($"/api/mstbuilding/{buildingId}");
+            var response = await client.GetAsync($"/{buildingId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Building with ID {buildingId}. Status: {response.StatusCode}");
@@ -242,5 +251,32 @@ namespace TrackingBle.src._13MstFloor.Services
     public class CollectionData<T>
     {
         public T Data { get; set; }
+    }
+
+
+public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
+        }
     }
 }

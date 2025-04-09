@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using TrackingBle.src._2AlarmRecordTracking.Models.Dto.AlarmRecordTrackingDtos;
 using TrackingBle.src._2AlarmRecordTracking.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._2AlarmRecordTracking.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class AlarmRecordTrackingController : ControllerBase
     {

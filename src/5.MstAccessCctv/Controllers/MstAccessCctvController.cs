@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._5MstAccessCctv.Models.Dto.MstAccessCctvDtos;
 using TrackingBle.src._5MstAccessCctv.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._5MstAccessCctv.Controllers
 {
-    [Route("api/[controller]")]
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class MstAccessCctvController : ControllerBase
     {

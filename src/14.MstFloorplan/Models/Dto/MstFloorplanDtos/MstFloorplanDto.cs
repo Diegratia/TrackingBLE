@@ -21,7 +21,7 @@ namespace TrackingBle.src._14MstFloorplan.Models.Dto.MstFloorplanDtos
     {
         public int Generate { get; set; }
         public Guid Id { get; set; }
-        public string BuildingId { get; set; }
+        public Guid BuildingId { get; set; }
         public string Name { get; set; }
         public string FloorImage { get; set; }
         public long PixelX { get; set; }

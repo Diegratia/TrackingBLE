@@ -8,6 +8,8 @@ using TrackingBle.src._10MstBuilding.Models.Domain;
 using TrackingBle.src._10MstBuilding.Models.Dto.MstBuildingDtos;
 using System.Net.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._10MstBuilding.Services
 {
@@ -16,17 +18,20 @@ namespace TrackingBle.src._10MstBuilding.Services
         private readonly MstBuildingDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
         public MstBuildingService(
             MstBuildingDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context;
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
         }
 
@@ -49,17 +54,18 @@ namespace TrackingBle.src._10MstBuilding.Services
         {
             // Validasi ApplicationId via MstApplicationService
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            var response = await client.GetAsync($"/api/mstapplication/{dto.ApplicationId}");
+            var response = await client.GetAsync($"/{dto.ApplicationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {dto.ApplicationId} not found.");
 
             var building = _mapper.Map<MstBuilding>(dto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             building.Id = Guid.NewGuid();
             building.Status = 1;
             building.CreatedAt = DateTime.UtcNow;
             building.UpdatedAt = DateTime.UtcNow;
-            building.CreatedBy = "system";
-            building.UpdatedBy = "system";
+            building.CreatedBy = username;
+            building.UpdatedBy = username;
 
             _context.MstBuildings.Add(building);
             await _context.SaveChangesAsync();
@@ -77,15 +83,15 @@ namespace TrackingBle.src._10MstBuilding.Services
             if (building.ApplicationId != dto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplication/{dto.ApplicationId}");
+                var response = await client.GetAsync($"/{dto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {dto.ApplicationId} not found.");
                 building.ApplicationId = dto.ApplicationId;
             }
 
-            // Map DTO ke entitas sebelum set audit fields
+            // Map DTO ke entitas 
             _mapper.Map(dto, building);
-            building.UpdatedBy = "system";
+            building.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             building.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync();
@@ -98,9 +104,35 @@ namespace TrackingBle.src._10MstBuilding.Services
                 throw new KeyNotFoundException("Building not found");
 
             building.Status = 0; // Soft delete
-            building.UpdatedBy = "system";
+            building.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
             building.UpdatedAt = DateTime.UtcNow;
             await _context.SaveChangesAsync();
         }
     }
+
+    // public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    // {
+    //     private readonly IHttpContextAccessor _httpContextAccessor;
+
+    //     public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+    //     {
+    //         _httpContextAccessor = httpContextAccessor;
+    //     }
+
+    //     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+    //     {
+    //         var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+    //         if (!string.IsNullOrEmpty(token))
+    //         {
+    //             request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+    //             Console.WriteLine($"Forwarding token to request: {token}");
+    //         }
+    //         else
+    //         {
+    //             Console.WriteLine("No Authorization token found in HttpContext.");
+    //         }
+
+    //         return await base.SendAsync(request, cancellationToken);
+    //     }
+    // }
 }

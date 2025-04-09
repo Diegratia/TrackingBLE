@@ -41,7 +41,7 @@ namespace TrackingBle.src._1Auth.Services
         {
             var user = await _context.Users
                 .Include(u => u.Group)
-                .FirstOrDefaultAsync(u => u.Username.ToLower() == dto.Username.ToLower()); // Case-insensitive
+                .FirstOrDefaultAsync(u => u.Username.ToLower() == dto.Username.ToLower()); 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
                 throw new Exception("Invalid username or password.");
             if (user.StatusActive != StatusActive.Active)

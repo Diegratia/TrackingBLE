@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using TrackingBle.src._10MstBuilding.Data;
 using TrackingBle.src._10MstBuilding.Services;
 using TrackingBle.src._10MstBuilding.MappingProfiles;
@@ -9,8 +13,8 @@ using DotNetEnv;
 
 try
 {
-    DotNetEnv.Env.Load("../../.env");
-    Console.WriteLine("Successfully loaded .env file from ../../.env");
+    DotNetEnv.Env.Load("/app/.env");
+    Console.WriteLine("Successfully loaded .env file from /app/.env");
 }
 catch (Exception ex)
 {
@@ -29,14 +33,57 @@ var builder = WebApplication.CreateBuilder(args);
     });
 });
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
-
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor(); 
+// builder.Services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
+
 
 builder.Services.AddDbContext<MstBuildingDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ?? 
@@ -69,11 +116,12 @@ if (app.Environment.IsDevelopment())
 
 
 app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
 app.MapGet("/api/MstBuilding/health", () => "Hello from MstBuilding!");
-app.MapGet("/", () => "Hello from MstBuilding!");
+// app.MapGet("/", () => "Hello from MstBuilding!");
 
 Console.WriteLine("Environment Variables Check");
 Console.WriteLine($"ASPNETCORE_ENVIRONMENT: {env}");

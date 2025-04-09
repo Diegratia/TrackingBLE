@@ -4,10 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using TrackingBle.src._6MstAccessControl.Models.Dto.MstAccessControlDtos;
 using TrackingBle.src._6MstAccessControl.Services;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._6MstAccessControl.Controllers
-{
-    [Route("api/[controller]")]
+{   
+    [Authorize]
+    [Route("/")]
     [ApiController]
     public class MstAccessControlController : ControllerBase
     {

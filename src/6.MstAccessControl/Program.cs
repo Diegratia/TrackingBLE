@@ -1,13 +1,17 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using TrackingBle.src._6MstAccessControl.Data;
 using TrackingBle.src._6MstAccessControl.Services;
 using TrackingBle.src._6MstAccessControl.MappingProfiles;
 using DotNetEnv;
 
-DotNetEnv.Env.Load("../../.env");
+DotNetEnv.Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,14 +25,57 @@ var builder = WebApplication.CreateBuilder(args);
     });
 });
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddDbContext<MstAccessControlDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
@@ -37,21 +84,21 @@ builder.Services.AddDbContext<MstAccessControlDbContext>(options =>
 builder.Services.AddScoped<IMstAccessControlService, MstAccessControlService>();
 builder.Services.AddAutoMapper(typeof(MstAccessControlProfile));
 
-// Tambahkan konfigurasi HttpClient untuk layanan eksternal
+// konfigurasi http client untuk external service
 builder.Services.AddHttpClient("MstBrandService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstBrandService"] ?? "http://localhost:5009");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddHttpClient("MstIntegrationService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstIntegrationService"] ?? "http://localhost:5015");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddHttpClient("MstApplicationService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstApplicationService"] ?? "http://localhost:5007");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 var port = Environment.GetEnvironmentVariable("MST_ACCESS_CONTROL_PORT") ??
            builder.Configuration["Ports:MstAccessControlService"] ?? "5006";
@@ -72,10 +119,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-app.MapGet("/", () => "Hello from MstAccessControl!");
+// app.MapGet("/", () => "Hello from MstAccessControl!");
 app.MapGet("/api/MstAccessControl/health", () => "Hello from MstAccessControl!");
 
 

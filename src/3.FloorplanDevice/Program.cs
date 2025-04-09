@@ -1,13 +1,17 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using System.Text;
 using TrackingBle.src._3FloorplanDevice.Data;
 using TrackingBle.src._3FloorplanDevice.Services;
 using TrackingBle.src._3FloorplanDevice.MappingProfiles;
 using DotNetEnv;
 
-DotNetEnv.Env.Load("../../.env");
+DotNetEnv.Env.Load("/app/.env");
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,14 +25,57 @@ var builder = WebApplication.CreateBuilder(args);
     });
 });
 
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
+
 builder.Configuration
     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
     .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddHttpContextAccessor(); 
+builder.Services.AddTransient<HttpClientAuthorizationDelegatingHandler>();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Auth API", Version = "v1" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
 builder.Services.AddDbContext<FloorplanDeviceDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ??
@@ -41,32 +88,32 @@ builder.Services.AddAutoMapper(typeof(FloorplanDeviceProfile));
 builder.Services.AddHttpClient("MstFloorplanService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstFloorplanService"] ?? "http://localhost:5014");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddHttpClient("MstAccessCctvService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstAccessCctvService"] ?? "http://localhost:5005");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddHttpClient("MstBleReaderService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstBleReaderService"] ?? "http://localhost:5008");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddHttpClient("MstAccessControlService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstAccessControlService"] ?? "http://localhost:5006");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddHttpClient("FloorplanMaskedAreaService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:FloorplanMaskedAreaService"] ?? "http://localhost:5004");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 builder.Services.AddHttpClient("MstApplicationService", client =>
 {
     client.BaseAddress = new Uri(builder.Configuration["ServiceUrls:MstApplicationService"] ?? "http://localhost:5007");
-});
+}).AddHttpMessageHandler<HttpClientAuthorizationDelegatingHandler>();
 
 var port = Environment.GetEnvironmentVariable("FLOORPLAN_DEVICE_PORT") ??
            builder.Configuration["Ports:FloorplanDeviceService"] ?? "5003";
@@ -87,6 +134,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseCors("AllowAll");
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

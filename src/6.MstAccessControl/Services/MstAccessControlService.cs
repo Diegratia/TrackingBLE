@@ -10,6 +10,8 @@ using TrackingBle.src._6MstAccessControl.Data;
 using TrackingBle.src._6MstAccessControl.Models.Domain;
 using TrackingBle.src._6MstAccessControl.Models.Dto.MstAccessControlDtos;
 using TrackingBle.src.Common.Models;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._6MstAccessControl.Services
 {
@@ -18,16 +20,19 @@ namespace TrackingBle.src._6MstAccessControl.Services
         private readonly MstAccessControlDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly JsonSerializerOptions _jsonOptions;
 
         public MstAccessControlService(
             MstAccessControlDbContext context,
             IMapper mapper,
-            IHttpClientFactory httpClientFactory)
+            IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+            _httpContextAccessor = httpContextAccessor;
             _jsonOptions = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true // Mengabaikan perbedaan huruf besar/kecil
@@ -75,26 +80,29 @@ namespace TrackingBle.src._6MstAccessControl.Services
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
             var brandClient = _httpClientFactory.CreateClient("MstBrandService");
-            var brandResponse = await brandClient.GetAsync($"api/mstbrand/{createDto.ControllerBrandId}");
+            // var brandResponse = await brandClient.GetAsync($"api/mstbrand/{createDto.ControllerBrandId}");
+            var brandResponse = await brandClient.GetAsync($"/{createDto.ControllerBrandId}");
             if (!brandResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Brand with ID {createDto.ControllerBrandId} not found. Status: {brandResponse.StatusCode}");
 
             var integrationClient = _httpClientFactory.CreateClient("MstIntegrationService");
-            var integrationResponse = await integrationClient.GetAsync($"api/mstintegration/{createDto.IntegrationId}");
+            var integrationResponse = await integrationClient.GetAsync($"/{createDto.IntegrationId}");
             if (!integrationResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Integration with ID {createDto.IntegrationId} not found. Status: {integrationResponse.StatusCode}");
 
             var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-            var appResponse = await appClient.GetAsync($"api/mstapplication/{createDto.ApplicationId}");
+            var appResponse = await appClient.GetAsync($"/{createDto.ApplicationId}");
             if (!appResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
 
             var accessControl = _mapper.Map<MstAccessControl>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             accessControl.Id = Guid.NewGuid();
             accessControl.Status = 1;
-            accessControl.CreatedBy = "system";
+            accessControl.CreatedBy = username;
             accessControl.CreatedAt = DateTime.UtcNow;
-            accessControl.UpdatedBy = "system";
+            accessControl.UpdatedBy = username;
             accessControl.UpdatedAt = DateTime.UtcNow;
 
             _context.MstAccessControls.Add(accessControl);
@@ -117,7 +125,7 @@ namespace TrackingBle.src._6MstAccessControl.Services
             if (accessControl.ControllerBrandId != updateDto.ControllerBrandId)
             {
                 var brandClient = _httpClientFactory.CreateClient("MstBrandService");
-                var brandResponse = await brandClient.GetAsync($"api/mstbrand/{updateDto.ControllerBrandId}");
+                var brandResponse = await brandClient.GetAsync($"/{updateDto.ControllerBrandId}");
                 if (!brandResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Brand with ID {updateDto.ControllerBrandId} not found. Status: {brandResponse.StatusCode}");
             }
@@ -125,7 +133,7 @@ namespace TrackingBle.src._6MstAccessControl.Services
             if (accessControl.IntegrationId != updateDto.IntegrationId)
             {
                 var integrationClient = _httpClientFactory.CreateClient("MstIntegrationService");
-                var integrationResponse = await integrationClient.GetAsync($"api/mstintegration/{updateDto.IntegrationId}");
+                var integrationResponse = await integrationClient.GetAsync($"/{updateDto.IntegrationId}");
                 if (!integrationResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Integration with ID {updateDto.IntegrationId} not found. Status: {integrationResponse.StatusCode}");
             }
@@ -133,13 +141,13 @@ namespace TrackingBle.src._6MstAccessControl.Services
             if (accessControl.ApplicationId != updateDto.ApplicationId)
             {
                 var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-                var appResponse = await appClient.GetAsync($"api/mstapplication/{updateDto.ApplicationId}");
+                var appResponse = await appClient.GetAsync($"/{updateDto.ApplicationId}");
                 if (!appResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
             }
 
             _mapper.Map(updateDto, accessControl);
-            accessControl.UpdatedBy = "system";
+            accessControl.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";         
             accessControl.UpdatedAt = DateTime.UtcNow;
 
             _context.MstAccessControls.Update(accessControl);
@@ -152,6 +160,8 @@ namespace TrackingBle.src._6MstAccessControl.Services
             if (accessControl == null)
                 throw new KeyNotFoundException($"MstAccessControl with ID {id} not found.");
 
+            accessControl.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            accessControl.UpdatedAt = DateTime.UtcNow;
             accessControl.Status = 0;
             await _context.SaveChangesAsync();
         }
@@ -159,8 +169,8 @@ namespace TrackingBle.src._6MstAccessControl.Services
         private async Task<MstBrandDto> GetBrandAsync(Guid brandId)
         {
             var client = _httpClientFactory.CreateClient("MstBrandService");
-            Console.WriteLine($"Calling MstBrandService at {client.BaseAddress}api/mstbrand/{brandId}");
-            var response = await client.GetAsync($"api/mstbrand/{brandId}");
+            Console.WriteLine($"Calling MstBrandService at {client.BaseAddress}/{brandId}");
+            var response = await client.GetAsync($"/{brandId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Brand with ID {brandId}. Status: {response.StatusCode}");
@@ -191,8 +201,8 @@ namespace TrackingBle.src._6MstAccessControl.Services
         private async Task<MstIntegrationDto> GetIntegrationAsync(Guid integrationId)
         {
             var client = _httpClientFactory.CreateClient("MstIntegrationService");
-            Console.WriteLine($"Calling MstIntegrationService at {client.BaseAddress}api/mstintegration/{integrationId}");
-            var response = await client.GetAsync($"api/mstintegration/{integrationId}");
+            Console.WriteLine($"Calling MstIntegrationService at {client.BaseAddress}/{integrationId}");
+            var response = await client.GetAsync($"/{integrationId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Integration with ID {integrationId}. Status: {response.StatusCode}");
@@ -218,6 +228,33 @@ namespace TrackingBle.src._6MstAccessControl.Services
                 Console.WriteLine($"Error deserializing Integration JSON: {ex.Message}. JSON: {json}");
                 return null;
             }
+
+            
+        }
+    }
+
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

@@ -11,6 +11,8 @@ using TrackingBle.src._2AlarmRecordTracking.Models.Domain;
 using TrackingBle.src._2AlarmRecordTracking.Models.Dto.AlarmRecordTrackingDtos;
 using TrackingBle.src.Common.Models;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace TrackingBle.src._2AlarmRecordTracking.Services
 {
@@ -19,18 +21,21 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private readonly AlarmRecordTrackingDbContext _context;
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IConfiguration _configuration;
 
         public AlarmRecordTrackingService(
             AlarmRecordTrackingDbContext context,
             IMapper mapper,
             IHttpClientFactory httpClientFactory,
+            IHttpContextAccessor httpContextAccessor,
             IConfiguration configuration)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AlarmRecordTrackingDto> GetByIdAsync(Guid id)
@@ -78,6 +83,8 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             await ValidateForeignKeys(createDto.VisitorId, createDto.ReaderId, createDto.FloorplanMaskedAreaId, createDto.ApplicationId);
 
             var alarm = _mapper.Map<AlarmRecordTracking>(createDto);
+            var username = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+
             alarm.Id = Guid.NewGuid();
             alarm.Timestamp = DateTime.UtcNow;
             alarm.IdleTimestamp = DateTime.UtcNow;
@@ -85,11 +92,11 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             alarm.CancelTimestamp = DateTime.MaxValue;
             alarm.WaitingTimestamp = DateTime.MaxValue;
             alarm.InvestigatedTimestamp = DateTime.MaxValue;
-            alarm.IdleBy = "System";
-            alarm.DoneBy = "System";
-            alarm.CancelBy = "System";
-            alarm.WaitingBy = "System";
-            alarm.InvestigatedBy = "System";
+            alarm.IdleBy = username;
+            alarm.DoneBy = username;
+            alarm.CancelBy = username;
+            alarm.WaitingBy = username;
+            alarm.InvestigatedBy = username;
             alarm.InvestigatedDoneAt = DateTime.MaxValue;
 
             _context.AlarmRecordTrackings.Add(alarm);
@@ -134,7 +141,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task<VisitorDto> GetVisitorAsync(Guid visitorId)
         {
             var client = _httpClientFactory.CreateClient("VisitorService");
-            var response = await client.GetAsync($"/api/visitor/{visitorId}");
+            var response = await client.GetAsync($"/{visitorId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Visitor with ID {visitorId}. Status: {response.StatusCode}");
@@ -148,7 +155,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task<MstBleReaderDto> GetReaderAsync(Guid readerId)
         {
             var client = _httpClientFactory.CreateClient("MstBleReaderService");
-            var response = await client.GetAsync($"/api/mstblereader/{readerId}");
+            var response = await client.GetAsync($"/{readerId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get Reader with ID {readerId}. Status: {response.StatusCode}");
@@ -162,7 +169,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task<FloorplanMaskedAreaDto> GetFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var response = await client.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
+            var response = await client.GetAsync($"/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
                 Console.WriteLine($"Failed to get FloorplanMaskedArea with ID {floorplanMaskedAreaId}. Status: {response.StatusCode}");
@@ -176,22 +183,22 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
         private async Task ValidateForeignKeys(Guid visitorId, Guid readerId, Guid floorplanMaskedAreaId, Guid applicationId)
         {
             var visitorClient = _httpClientFactory.CreateClient("VisitorService");
-            var visitorResponse = await visitorClient.GetAsync($"/api/visitor/{visitorId}");
+            var visitorResponse = await visitorClient.GetAsync($"/{visitorId}");
             if (!visitorResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Visitor with ID {visitorId} not found. Status: {visitorResponse.StatusCode}");
 
             var readerClient = _httpClientFactory.CreateClient("MstBleReaderService");
-            var readerResponse = await readerClient.GetAsync($"/api/mstblereader/{readerId}");
+            var readerResponse = await readerClient.GetAsync($"/{readerId}");
             if (!readerResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Reader with ID {readerId} not found. Status: {readerResponse.StatusCode}");
 
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/{floorplanMaskedAreaId}");
+            var maskedAreaResponse = await maskedAreaClient.GetAsync($"/{floorplanMaskedAreaId}");
             if (!maskedAreaResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"FloorplanMaskedArea with ID {floorplanMaskedAreaId} not found. Status: {maskedAreaResponse.StatusCode}");
 
             var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-            var appResponse = await appClient.GetAsync($"/api/mstapplication/{applicationId}");
+            var appResponse = await appClient.GetAsync($"/{applicationId}");
             if (!appResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {applicationId} not found. Status: {appResponse.StatusCode}");
         }
@@ -201,7 +208,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.VisitorId != updateDto.VisitorId)
             {
                 var client = _httpClientFactory.CreateClient("VisitorService");
-                var response = await client.GetAsync($"/api/visitor/{updateDto.VisitorId}");
+                var response = await client.GetAsync($"/{updateDto.VisitorId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Visitor with ID {updateDto.VisitorId} not found. Status: {response.StatusCode}");
             }
@@ -209,7 +216,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.ReaderId != updateDto.ReaderId)
             {
                 var client = _httpClientFactory.CreateClient("MstBleReaderService");
-                var response = await client.GetAsync($"/api/mstblereader/{updateDto.ReaderId}");
+                var response = await client.GetAsync($"/{updateDto.ReaderId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Reader with ID {updateDto.ReaderId} not found. Status: {response.StatusCode}");
             }
@@ -217,7 +224,7 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.FloorplanMaskedAreaId != updateDto.FloorplanMaskedAreaId)
             {
                 var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-                var response = await client.GetAsync($"/api/floorplanmaskedarea/{updateDto.FloorplanMaskedAreaId}");
+                var response = await client.GetAsync($"/{updateDto.FloorplanMaskedAreaId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"FloorplanMaskedArea with ID {updateDto.FloorplanMaskedAreaId} not found. Status: {response.StatusCode}");
             }
@@ -225,10 +232,35 @@ namespace TrackingBle.src._2AlarmRecordTracking.Services
             if (alarm.ApplicationId != updateDto.ApplicationId)
             {
                 var client = _httpClientFactory.CreateClient("MstApplicationService");
-                var response = await client.GetAsync($"/api/mstapplication/{updateDto.ApplicationId}");
+                var response = await client.GetAsync($"/{updateDto.ApplicationId}");
                 if (!response.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {response.StatusCode}");
             }
+        }
+    }
+    public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
+    {
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public HttpClientAuthorizationDelegatingHandler(IHttpContextAccessor httpContextAccessor)
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            var token = _httpContextAccessor.HttpContext?.Request.Headers["Authorization"].ToString();
+            if (!string.IsNullOrEmpty(token))
+            {
+                request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
+                Console.WriteLine($"Forwarding token to request: {token}");
+            }
+            else
+            {
+                Console.WriteLine("No Authorization token found in HttpContext.");
+            }
+
+            return await base.SendAsync(request, cancellationToken);
         }
     }
 }

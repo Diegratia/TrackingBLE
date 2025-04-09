@@ -70,7 +70,7 @@ namespace TrackingBle.src._3FloorplanDevice.Services
                 return new List<FloorplanDeviceDto>();
             }
 
-            Console.WriteLine($"Found {devices.Count} FloorplanDevices in database.");
+            // Console.WriteLine($"Found {devices.Count} FloorplanDevices in database.");
             var dtos = _mapper.Map<List<FloorplanDeviceDto>>(devices);
 
             foreach (var dto in dtos)
@@ -137,23 +137,23 @@ namespace TrackingBle.src._3FloorplanDevice.Services
         }
 private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
         {
-            Console.WriteLine($"Populating relations for FloorplanDevice ID: {dto.Id}");
+            // Console.WriteLine($"Populating relations for FloorplanDevice ID: {dto.Id}");
             dto.Floorplan = await GetFloorplanAsync(dto.FloorplanId);
-            Console.WriteLine($"Floorplan: {(dto.Floorplan != null ? "Loaded" : "Null")}");
+            // Console.WriteLine($"Floorplan: {(dto.Floorplan != null ? "Loaded" : "Null")}");
             dto.AccessCctv = await GetAccessCctvAsync(dto.AccessCctvId);
-            Console.WriteLine($"AccessCctv: {(dto.AccessCctv != null ? "Loaded" : "Null")}");
+            // Console.WriteLine($"AccessCctv: {(dto.AccessCctv != null ? "Loaded" : "Null")}");
             dto.Reader = await GetReaderAsync(dto.ReaderId);
-            Console.WriteLine($"Reader: {(dto.Reader != null ? "Loaded" : "Null")}");
+            // Console.WriteLine($"Reader: {(dto.Reader != null ? "Loaded" : "Null")}");
             dto.AccessControl = await GetAccessControlAsync(dto.AccessControlId);
-            Console.WriteLine($"AccessControl: {(dto.AccessControl != null ? "Loaded" : "Null")}");
+            // Console.WriteLine($"AccessControl: {(dto.AccessControl != null ? "Loaded" : "Null")}");
             dto.FloorplanMaskedArea = await GetFloorplanMaskedAreaAsync(dto.FloorplanMaskedAreaId);
-            Console.WriteLine($"FloorplanMaskedArea: {(dto.FloorplanMaskedArea != null ? "Loaded" : "Null")}");
+            // Console.WriteLine($"FloorplanMaskedArea: {(dto.FloorplanMaskedArea != null ? "Loaded" : "Null")}");
         }
 
         private async Task<MstFloorplanDto> GetFloorplanAsync(Guid floorplanId)
         {
             var client = _httpClientFactory.CreateClient("MstFloorplanService");
-            Console.WriteLine($"Fetching Floorplan with ID {floorplanId} from {client.BaseAddress}");
+            // Console.WriteLine($"Fetching Floorplan with ID {floorplanId} from {client.BaseAddress}");
             var response = await client.GetAsync($"/{floorplanId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -162,14 +162,14 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Floorplan Response: {json}");
+            // Console.WriteLine($"Floorplan Response: {json}");
             return DeserializeSingle<MstFloorplanDto>(json, floorplanId);
         }
 
         private async Task<MstAccessCctvDto> GetAccessCctvAsync(Guid accessCctvId)
         {
             var client = _httpClientFactory.CreateClient("MstAccessCctvService");
-            Console.WriteLine($"Fetching AccessCctv with ID {accessCctvId} from {client.BaseAddress}");
+            // Console.WriteLine($"Fetching AccessCctv with ID {accessCctvId} from {client.BaseAddress}");
             var response = await client.GetAsync($"/{accessCctvId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -178,14 +178,14 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"AccessCctv Response: {json}");
+            // Console.WriteLine($"AccessCctv Response: {json}");
             return DeserializeSingle<MstAccessCctvDto>(json, accessCctvId);
         }
 
         private async Task<MstBleReaderDto> GetReaderAsync(Guid readerId)
         {
             var client = _httpClientFactory.CreateClient("MstBleReaderService");
-            Console.WriteLine($"Fetching Reader with ID {readerId} from {client.BaseAddress}");
+            // Console.WriteLine($"Fetching Reader with ID {readerId} from {client.BaseAddress}");
             var response = await client.GetAsync($"/{readerId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -194,14 +194,14 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Reader Response: {json}");
+            // Console.WriteLine($"Reader Response: {json}");
             return DeserializeSingle<MstBleReaderDto>(json, readerId);
         }
 
         private async Task<MstAccessControlDto> GetAccessControlAsync(Guid accessControlId)
         {
             var client = _httpClientFactory.CreateClient("MstAccessControlService");
-            Console.WriteLine($"Fetching AccessControl with ID {accessControlId} from {client.BaseAddress}");
+            // Console.WriteLine($"Fetching AccessControl with ID {accessControlId} from {client.BaseAddress}");
             var response = await client.GetAsync($"/{accessControlId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -210,14 +210,14 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"AccessControl Response: {json}");
+            // Console.WriteLine($"AccessControl Response: {json}");
             return DeserializeSingle<MstAccessControlDto>(json, accessControlId);
         }
 
         private async Task<FloorplanMaskedAreaDto> GetFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            Console.WriteLine($"Fetching FloorplanMaskedArea with ID {floorplanMaskedAreaId} from {client.BaseAddress}");
+            // Console.WriteLine($"Fetching FloorplanMaskedArea with ID {floorplanMaskedAreaId} from {client.BaseAddress}");
             var response = await client.GetAsync($"/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -226,7 +226,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"FloorplanMaskedArea Response: {json}");
+            // Console.WriteLine($"FloorplanMaskedArea Response: {json}");
             return DeserializeSingle<FloorplanMaskedAreaDto>(json, floorplanMaskedAreaId);
         }
 
@@ -378,7 +378,7 @@ private async Task PopulateRelationsAsync(FloorplanDeviceDto dto)
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
-                Console.WriteLine($"Forwarding token to request: {token}");
+                // Console.WriteLine($"Forwarding token to request: {token}");
             }
             else
             {

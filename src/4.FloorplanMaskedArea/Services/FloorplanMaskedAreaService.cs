@@ -137,16 +137,16 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
         {
             var client = _httpClientFactory.CreateClient("MstFloorService");
             var url = $"/{floorId}";
-            Console.WriteLine($"Fetching Floor with ID {floorId} from {client.BaseAddress}{url}");
+            // Console.WriteLine($"Fetching Floor with ID {floorId} from {client.BaseAddress}{url}");
             var response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Failed to get Floor with ID {floorId}. Status: {response.StatusCode}, Response: {await response.Content.ReadAsStringAsync()}");
+                // Console.WriteLine($"Failed to get Floor with ID {floorId}. Status: {response.StatusCode}, Response: {await response.Content.ReadAsStringAsync()}");
                 return null;
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Floor Response: {json}");
+            // Console.WriteLine($"Floor Response: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstFloorDto>>(
@@ -155,7 +155,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
                 );
                 if (apiResponse?.Success != true || apiResponse.Collection?.Data == null)
                 {
-                    Console.WriteLine($"Invalid Floor response structure: {json}");
+                    // Console.WriteLine($"Invalid Floor response structure: {json}");
                     return null;
                 }
                 return apiResponse.Collection.Data;
@@ -171,16 +171,16 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
         {
             var client = _httpClientFactory.CreateClient("MstFloorplanService");
             var url = $"/{floorplanId}";
-            Console.WriteLine($"Fetching Floorplan with ID {floorplanId} from {client.BaseAddress}{url}");
+            // Console.WriteLine($"Fetching Floorplan with ID {floorplanId} from {client.BaseAddress}{url}");
             var response = await client.GetAsync(url);
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"Failed to get Floorplan with ID {floorplanId}. Status: {response.StatusCode}, Response: {await response.Content.ReadAsStringAsync()}");
+                // Console.WriteLine($"Failed to get Floorplan with ID {floorplanId}. Status: {response.StatusCode}, Response: {await response.Content.ReadAsStringAsync()}");
                 return null;
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Floorplan Response: {json}");
+            // Console.WriteLine($"Floorplan Response: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstFloorplanDto>>(
@@ -189,7 +189,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
                 );
                 if (apiResponse?.Success != true || apiResponse.Collection?.Data == null)
                 {
-                    Console.WriteLine($"Invalid Floorplan response structure: {json}");
+                    // Console.WriteLine($"Invalid Floorplan response structure: {json}");
                     return null;
                 }
                 return apiResponse.Collection.Data;
@@ -249,7 +249,7 @@ namespace TrackingBle.src._4FloorplanMaskedArea.Services
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
-                Console.WriteLine($"Forwarding token to request: {token}");
+                // Console.WriteLine($"Forwarding token to request: {token}");
             }
             else
             {

@@ -53,7 +53,7 @@ namespace TrackingBle.src._13MstFloor.Services
 
             var dto = _mapper.Map<MstFloorDto>(floor);
             dto.Building = await GetBuildingAsync(floor.BuildingId);
-            Console.WriteLine($"Building for Floor ID {id}: {(dto.Building != null ? "Loaded" : "Null")}");
+            // Console.WriteLine($"Building for Floor ID {id}: {(dto.Building != null ? "Loaded" : "Null")}");
             return dto;
         }
 
@@ -66,13 +66,13 @@ namespace TrackingBle.src._13MstFloor.Services
                 return new List<MstFloorDto>();
             }
 
-            Console.WriteLine($"Found {floors.Count} MstFloors in database.");
+            // Console.WriteLine($"Found {floors.Count} MstFloors in database.");
             var dtos = _mapper.Map<List<MstFloorDto>>(floors);
 
             foreach (var dto in dtos)
             {
                 dto.Building = await GetBuildingAsync(dto.BuildingId);
-                Console.WriteLine($"Building for Floor ID {dto.Id}: {(dto.Building != null ? "Loaded" : "Null")}");
+                // Console.WriteLine($"Building for Floor ID {dto.Id}: {(dto.Building != null ? "Loaded" : "Null")}");
             }
 
             return dtos;
@@ -82,7 +82,7 @@ namespace TrackingBle.src._13MstFloor.Services
         {
             // Validasi BuildingId via HTTP
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
-            Console.WriteLine($"Validating Building with ID {createDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{createDto.BuildingId}");
+            // Console.WriteLine($"Validating Building with ID {createDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{createDto.BuildingId}");
             var buildingResponse = await buildingClient.GetAsync($"/{createDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
             {
@@ -137,7 +137,7 @@ namespace TrackingBle.src._13MstFloor.Services
                 throw new KeyNotFoundException("Floor not found");
 
             var buildingClient = _httpClientFactory.CreateClient("BuildingService");
-            Console.WriteLine($"Validating Building with ID {updateDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{updateDto.BuildingId}");
+            // Console.WriteLine($"Validating Building with ID {updateDto.BuildingId} at {buildingClient.BaseAddress}/api/mstbuilding/{updateDto.BuildingId}");
             var buildingResponse = await buildingClient.GetAsync($"/{updateDto.BuildingId}");
             if (!buildingResponse.IsSuccessStatusCode)
             {
@@ -193,7 +193,7 @@ namespace TrackingBle.src._13MstFloor.Services
                 throw new KeyNotFoundException("Floor not found");
 
             var maskedAreaClient = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            Console.WriteLine($"Checking FloorplanMaskedAreas for Floor ID {id} at {maskedAreaClient.BaseAddress}/api/floorplanmaskedarea/byfloor/{id}");
+            // Console.WriteLine($"Checking FloorplanMaskedAreas for Floor ID {id} at {maskedAreaClient.BaseAddress}/api/floorplanmaskedarea/byfloor/{id}");
             // var maskedAreaResponse = await maskedAreaClient.GetAsync($"/api/floorplanmaskedarea/byfloor/{id}");
             var maskedAreaResponse = await maskedAreaClient.GetAsync($"/{id}");
             if (maskedAreaResponse.IsSuccessStatusCode)
@@ -213,7 +213,7 @@ namespace TrackingBle.src._13MstFloor.Services
         private async Task<MstBuildingDto> GetBuildingAsync(Guid buildingId)
         {
             var client = _httpClientFactory.CreateClient("BuildingService");
-            Console.WriteLine($"Fetching Building with ID {buildingId} from {client.BaseAddress}/api/mstbuilding/{buildingId}");
+            // Console.WriteLine($"Fetching Building with ID {buildingId} from {client.BaseAddress}/api/mstbuilding/{buildingId}");
             var response = await client.GetAsync($"/{buildingId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -222,13 +222,13 @@ namespace TrackingBle.src._13MstFloor.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Building response JSON: {json}");
+            // Console.WriteLine($"Building response JSON: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBuildingDto>>(json, _jsonOptions);
                 if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
                 {
-                    Console.WriteLine($"Successfully deserialized Building with ID {buildingId}");
+                    // Console.WriteLine($"Successfully deserialized Building with ID {buildingId}");
                     return apiResponse.Collection.Data;
                 }
 
@@ -271,7 +271,7 @@ public class HttpClientAuthorizationDelegatingHandler : DelegatingHandler
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
-                Console.WriteLine($"Forwarding token to request: {token}");
+                // Console.WriteLine($"Forwarding token to request: {token}");
             }
             else
             {

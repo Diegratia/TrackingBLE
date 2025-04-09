@@ -222,7 +222,7 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateApplicationAsync(Guid applicationId)
         {
             var client = _httpClientFactory.CreateClient("MstApplicationService");
-            Console.WriteLine($"Validating Application with ID {applicationId} at {client.BaseAddress}/{applicationId}");
+            // Console.WriteLine($"Validating Application with ID {applicationId} at {client.BaseAddress}/{applicationId}");
             var response = await client.GetAsync($"/{applicationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {applicationId} not found. Status: {response.StatusCode}");
@@ -231,7 +231,7 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateOrganizationAsync(Guid organizationId)
         {
             var client = _httpClientFactory.CreateClient("MstOrganizationService");
-            Console.WriteLine($"Validating Organization with ID {organizationId} at {client.BaseAddress}/{organizationId}");
+            // Console.WriteLine($"Validating Organization with ID {organizationId} at {client.BaseAddress}/{organizationId}");
             var response = await client.GetAsync($"/{organizationId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Organization with ID {organizationId} not found. Status: {response.StatusCode}");
@@ -240,7 +240,7 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateDepartmentAsync(Guid departmentId)
         {
             var client = _httpClientFactory.CreateClient("MstDepartmentService");
-            Console.WriteLine($"Validating Department with ID {departmentId} at {client.BaseAddress}/{departmentId}");
+            // Console.WriteLine($"Validating Department with ID {departmentId} at {client.BaseAddress}/{departmentId}");
             var response = await client.GetAsync($"/{departmentId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"Department with ID {departmentId} not found. Status: {response.StatusCode}");
@@ -249,7 +249,7 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task ValidateDistrictAsync(Guid districtId)
         {
             var client = _httpClientFactory.CreateClient("MstDistrictService");
-            Console.WriteLine($"Validating District with ID {districtId} at {client.BaseAddress}/{districtId}");
+            // Console.WriteLine($"Validating District with ID {districtId} at {client.BaseAddress}/{districtId}");
             var response = await client.GetAsync($"/{districtId}");
             if (!response.IsSuccessStatusCode)
                 throw new ArgumentException($"District with ID {districtId} not found. Status: {response.StatusCode}");
@@ -258,7 +258,7 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task<MstOrganizationDto> GetOrganizationAsync(Guid organizationId)
         {
             var client = _httpClientFactory.CreateClient("MstOrganizationService");
-            Console.WriteLine($"Fetching Organization with ID {organizationId} from {client.BaseAddress}/{organizationId}");
+            // Console.WriteLine($"Fetching Organization with ID {organizationId} from {client.BaseAddress}/{organizationId}");
             var response = await client.GetAsync($"/{organizationId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -267,13 +267,13 @@ namespace TrackingBle.src._16MstMember.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Organization response JSON: {json}");
+            // Console.WriteLine($"Organization response JSON: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstOrganizationDto>>(json, _jsonOptions);
                 if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
                 {
-                    Console.WriteLine($"Successfully deserialized Organization with ID {organizationId}");
+                    // Console.WriteLine($"Successfully deserialized Organization with ID {organizationId}");
                     return apiResponse.Collection.Data;
                 }
 
@@ -290,7 +290,7 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task<MstDepartmentDto> GetDepartmentAsync(Guid departmentId)
         {
             var client = _httpClientFactory.CreateClient("MstDepartmentService");
-            Console.WriteLine($"Fetching Department with ID {departmentId} from {client.BaseAddress}/{departmentId}");
+            // Console.WriteLine($"Fetching Department with ID {departmentId} from {client.BaseAddress}/{departmentId}");
             var response = await client.GetAsync($"/{departmentId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -299,13 +299,13 @@ namespace TrackingBle.src._16MstMember.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Department response JSON: {json}");
+            // Console.WriteLine($"Department response JSON: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstDepartmentDto>>(json, _jsonOptions);
                 if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
                 {
-                    Console.WriteLine($"Successfully deserialized Department with ID {departmentId}");
+                    // Console.WriteLine($"Successfully deserialized Department with ID {departmentId}");
                     return apiResponse.Collection.Data;
                 }
 
@@ -322,7 +322,7 @@ namespace TrackingBle.src._16MstMember.Services
         private async Task<MstDistrictDto> GetDistrictAsync(Guid districtId)
         {
             var client = _httpClientFactory.CreateClient("MstDistrictService");
-            Console.WriteLine($"Fetching District with ID {districtId} from {client.BaseAddress}/{districtId}");
+            // Console.WriteLine($"Fetching District with ID {districtId} from {client.BaseAddress}/{districtId}");
             var response = await client.GetAsync($"/{districtId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -331,13 +331,13 @@ namespace TrackingBle.src._16MstMember.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"District response JSON: {json}");
+            // Console.WriteLine($"District response JSON: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstDistrictDto>>(json, _jsonOptions);
                 if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
                 {
-                    Console.WriteLine($"Successfully deserialized District with ID {districtId}");
+                    // Console.WriteLine($"Successfully deserialized District with ID {districtId}");
                     return apiResponse.Collection.Data;
                 }
 
@@ -381,7 +381,7 @@ namespace TrackingBle.src._16MstMember.Services
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
-                Console.WriteLine($"Forwarding token to request: {token}");
+                // Console.WriteLine($"Forwarding token to request: {token}");
             }
             else
             {

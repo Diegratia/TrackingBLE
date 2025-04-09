@@ -62,7 +62,7 @@ namespace TrackingBle.src._15MstIntegration.Services
                 return new List<MstIntegrationDto>();
             }
 
-            Console.WriteLine($"Found {integrations.Count} MstIntegrations in database.");
+            // Console.WriteLine($"Found {integrations.Count} MstIntegrations in database.");
             var dtos = _mapper.Map<List<MstIntegrationDto>>(integrations);
 
             foreach (var dto in dtos)
@@ -78,13 +78,13 @@ namespace TrackingBle.src._15MstIntegration.Services
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
             var brandClient = _httpClientFactory.CreateClient("MstBrandService");
-            Console.WriteLine($"Validating Brand with ID {createDto.BrandId} at {brandClient.BaseAddress}api/mstbrand/{createDto.BrandId}");
+            // Console.WriteLine($"Validating Brand with ID {createDto.BrandId} at {brandClient.BaseAddress}api/mstbrand/{createDto.BrandId}");
             var brandResponse = await brandClient.GetAsync($"/{createDto.BrandId}");
             if (!brandResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Brand with ID {createDto.BrandId} not found. Status: {brandResponse.StatusCode}");
 
             var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-            Console.WriteLine($"Validating Application with ID {createDto.ApplicationId} at {appClient.BaseAddress}api/mstapplication/{createDto.ApplicationId}");
+            // Console.WriteLine($"Validating Application with ID {createDto.ApplicationId} at {appClient.BaseAddress}api/mstapplication/{createDto.ApplicationId}");
             var appResponse = await appClient.GetAsync($"api/mstapplication/{createDto.ApplicationId}");
             if (!appResponse.IsSuccessStatusCode)
                 throw new ArgumentException($"Application with ID {createDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
@@ -118,7 +118,7 @@ namespace TrackingBle.src._15MstIntegration.Services
             if (integration.BrandId != updateDto.BrandId)
             {
                 var brandClient = _httpClientFactory.CreateClient("MstBrandService");
-                Console.WriteLine($"Validating Brand with ID {updateDto.BrandId} at {brandClient.BaseAddress}api/mstbrand/{updateDto.BrandId}");
+                // Console.WriteLine($"Validating Brand with ID {updateDto.BrandId} at {brandClient.BaseAddress}api/mstbrand/{updateDto.BrandId}");
                 var brandResponse = await brandClient.GetAsync($"/{updateDto.BrandId}");
                 if (!brandResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Brand with ID {updateDto.BrandId} not found. Status: {brandResponse.StatusCode}");
@@ -127,7 +127,7 @@ namespace TrackingBle.src._15MstIntegration.Services
             if (integration.ApplicationId != updateDto.ApplicationId)
             {
                 var appClient = _httpClientFactory.CreateClient("MstApplicationService");
-                Console.WriteLine($"Validating Application with ID {updateDto.ApplicationId} at {appClient.BaseAddress}api/mstapplication/{updateDto.ApplicationId}");
+                // Console.WriteLine($"Validating Application with ID {updateDto.ApplicationId} at {appClient.BaseAddress}api/mstapplication/{updateDto.ApplicationId}");
                 var appResponse = await appClient.GetAsync($"api/mstapplication/{updateDto.ApplicationId}");
                 if (!appResponse.IsSuccessStatusCode)
                     throw new ArgumentException($"Application with ID {updateDto.ApplicationId} not found. Status: {appResponse.StatusCode}");
@@ -156,7 +156,7 @@ namespace TrackingBle.src._15MstIntegration.Services
         private async Task<MstBrandDto> GetBrandAsync(Guid brandId)
         {
             var client = _httpClientFactory.CreateClient("MstBrandService");
-            Console.WriteLine($"Calling MstBrandService at {client.BaseAddress}api/mstbrand/{brandId}");
+            // Console.WriteLine($"Calling MstBrandService at {client.BaseAddress}api/mstbrand/{brandId}");
             var response = await client.GetAsync($"/{brandId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -165,13 +165,13 @@ namespace TrackingBle.src._15MstIntegration.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Brand response JSON: {json}");
+            // Console.WriteLine($"Brand response JSON: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<MstBrandDto>>(json, _jsonOptions);
                 if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
                 {
-                    Console.WriteLine($"Successfully deserialized Brand with ID {brandId}");
+                    // Console.WriteLine($"Successfully deserialized Brand with ID {brandId}");
                     return apiResponse.Collection.Data;
                 }
 
@@ -201,7 +201,7 @@ namespace TrackingBle.src._15MstIntegration.Services
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
-                Console.WriteLine($"Forwarding token to request: {token}");
+                // Console.WriteLine($"Forwarding token to request: {token}");
             }
             else
             {

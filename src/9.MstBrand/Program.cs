@@ -80,6 +80,20 @@ builder.Services.AddSwaggerGen(c =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("TrackingBleDbConnection") ?? 
                             "Server=192.168.1.116,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True"));
 
+// jika ingin pakai env untuk konfigurasi database
+//     builder.Services.AddDbContext<MstBrandDbContext>(options =>
+// {
+//     var dbServer = Environment.GetEnvironmentVariable("DB_SERVER");
+//     var dbPort = Environment.GetEnvironmentVariable("DB_PORT");
+//     var dbName = Environment.GetEnvironmentVariable("DB_NAME");
+//     var dbUser  = Environment.GetEnvironmentVariable("DB_USER");
+//     var dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD");
+
+//     var connectionString = $"Server={dbServer},{dbPort};Database={dbName};User  Id={dbUser };Password={dbPassword};TrustServerCertificate=True";
+
+//     options.UseSqlServer(connectionString);
+// });              
+
     builder.Services.AddScoped<IMstBrandService, MstBrandService>();
     builder.Services.AddAutoMapper(typeof(MstBrandProfile));
 

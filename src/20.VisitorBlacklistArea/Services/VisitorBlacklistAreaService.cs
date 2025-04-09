@@ -66,11 +66,7 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
                 return new List<VisitorBlacklistAreaDto>();
             }
 
-            Console.WriteLine($"Found {blacklistAreas.Count} VisitorBlacklistAreas in database.");
-            foreach (var area in blacklistAreas)
-            {
-                Console.WriteLine($"ID: {area.Id}, FloorplanMaskedAreaId: {area.FloorplanMaskedAreaId}, VisitorId: {area.VisitorId}");
-            }
+            // Console.WriteLine($"Found {blacklistAreas.Count} VisitorBlacklistAreas in database.");
 
             var dtos = _mapper.Map<List<VisitorBlacklistAreaDto>>(blacklistAreas);
 
@@ -156,7 +152,7 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
        private async Task<FloorplanMaskedAreaDto> GetFloorplanMaskedAreaAsync(Guid floorplanMaskedAreaId)
         {
             var client = _httpClientFactory.CreateClient("FloorplanMaskedAreaService");
-            Console.WriteLine($"Calling FloorplanMaskedAreaService at {client.BaseAddress}/{floorplanMaskedAreaId}");
+            // Console.WriteLine($"Calling FloorplanMaskedAreaService at {client.BaseAddress}/{floorplanMaskedAreaId}");
             var response = await client.GetAsync($"/{floorplanMaskedAreaId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -165,13 +161,13 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"FloorplanMaskedArea response JSON: {json}");
+            // Console.WriteLine($"FloorplanMaskedArea response JSON: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<FloorplanMaskedAreaDto>>(json, _jsonOptions);
                 if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
                 {
-                    Console.WriteLine($"Successfully deserialized FloorplanMaskedArea with ID {floorplanMaskedAreaId}");
+                    // Console.WriteLine($"Successfully deserialized FloorplanMaskedArea with ID {floorplanMaskedAreaId}");
                     return apiResponse.Collection.Data;
                 }
                 Console.WriteLine($"No valid data found in FloorplanMaskedArea response for ID {floorplanMaskedAreaId}. Success: {apiResponse?.Success}, Data: {apiResponse?.Collection?.Data != null}");
@@ -187,7 +183,7 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
         private async Task<VisitorDto> GetVisitorAsync(Guid visitorId)
         {
             var client = _httpClientFactory.CreateClient("VisitorService");
-            Console.WriteLine($"Calling VisitorService at {client.BaseAddress}/{visitorId}");
+            // Console.WriteLine($"Calling VisitorService at {client.BaseAddress}/{visitorId}");
             var response = await client.GetAsync($"/{visitorId}");
             if (!response.IsSuccessStatusCode)
             {
@@ -196,13 +192,13 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Visitor response JSON: {json}");
+            // Console.WriteLine($"Visitor response JSON: {json}");
             try
             {
                 var apiResponse = JsonSerializer.Deserialize<ApiResponse<VisitorDto>>(json, _jsonOptions);
                 if (apiResponse?.Success == true && apiResponse.Collection?.Data != null)
                 {
-                    Console.WriteLine($"Successfully deserialized Visitor with ID {visitorId}");
+                    // Console.WriteLine($"Successfully deserialized Visitor with ID {visitorId}");
                     return apiResponse.Collection.Data;
                 }
                 Console.WriteLine($"No valid data found in Visitor response for ID {visitorId}. Success: {apiResponse?.Success}, Data: {apiResponse?.Collection?.Data != null}");
@@ -230,7 +226,7 @@ namespace TrackingBle.src._20VisitorBlacklistArea.Services
             if (!string.IsNullOrEmpty(token))
             {
                 request.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token.Replace("Bearer ", ""));
-                Console.WriteLine($"Forwarding token to request: {token}");
+                // Console.WriteLine($"Forwarding token to request: {token}");
             }
             else
             {

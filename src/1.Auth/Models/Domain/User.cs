@@ -29,7 +29,7 @@ namespace TrackingBle.src._1Auth.Models.Domain
         [Required]
         [Column("password")]
         [StringLength(255)]
-        public string Password { get; set; } // Hash
+        public string Password { get; set; } 
 
         [Required]
         [Column("is_created_password")]
@@ -67,9 +67,9 @@ namespace TrackingBle.src._1Auth.Models.Domain
 
         [Required]
         [Column("group_id")]
-        public Guid GroupId { get; set; } // Foreign key
+        public Guid GroupId { get; set; } 
 
         [ForeignKey("GroupId")]
-        public virtual UserGroup Group { get; set; } // Navigation property
+        public virtual UserGroup Group { get; set; } 
     }
 }

@@ -13,7 +13,6 @@ namespace TrackingBle.src._14MstFloorplan.MappingProfiles
                 .ForMember(dest => dest.Floor, opt => opt.Ignore()) 
                 .ForMember(dest => dest.Generate, opt => opt.MapFrom(src => src.Generate));
 
-            // Mapping dari MstFloorplanCreateDto ke MstFloorplan
             CreateMap<MstFloorplanCreateDto, MstFloorplan>();
 
             // Mapping dari MstFloorplanUpdateDto ke MstFloorplan

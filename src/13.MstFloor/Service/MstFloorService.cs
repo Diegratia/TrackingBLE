@@ -203,6 +203,8 @@ namespace TrackingBle.src._13MstFloor.Services
                     throw new InvalidOperationException("Cannot delete Floor because it is used by active FloorplanMaskedAreas.");
             }
 
+            floor.UpdatedBy = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.Name)?.Value ?? "";
+            floor.UpdatedAt = DateTime.UtcNow;
             floor.Status = 0;
             // _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();

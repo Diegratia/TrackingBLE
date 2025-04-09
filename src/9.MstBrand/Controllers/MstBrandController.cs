@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace TrackingBle.src._9MstBrand.Controllers
 {
+    [Authorize]
     [Route("/")]
     [ApiController]
     public class MstBrandController : ControllerBase

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.VisitorBlacklistAreaDto;
+using TrackingBle.Models.Dto.VisitorBlacklistAreaDtos;
 
 namespace TrackingBle.Services
 {
@@ -25,8 +25,8 @@ namespace TrackingBle.Services
         {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-            if (!await _context.FloorplanMaskedAreas.AnyAsync(f => f.Id == dto.FloorplanId))
-                throw new ArgumentException($"Floorplan with ID {dto.FloorplanId} not found.");
+            if (!await _context.FloorplanMaskedAreas.AnyAsync(f => f.Id == dto.FloorplanMaskedAreaId))
+                throw new ArgumentException($"FloorplanMaskedArea with ID {dto.FloorplanMaskedAreaId} not found.");
             if (!await _context.Visitors.AnyAsync(v => v.Id == dto.VisitorId))
                 throw new ArgumentException($"Visitor with ID {dto.VisitorId} not found.");
 
@@ -42,7 +42,7 @@ namespace TrackingBle.Services
         public async Task<VisitorBlacklistAreaDto> GetVisitorBlacklistAreaByIdAsync(Guid id)
         {
             var blacklistArea = await _context.VisitorBlacklistAreas
-                .Include(v => v.Floorplan)
+                .Include(v => v.FloorplanMaskedArea)
                 .Include(v => v.Visitor)
                 .FirstOrDefaultAsync(v => v.Id == id);
             return _mapper.Map<VisitorBlacklistAreaDto>(blacklistArea);
@@ -51,28 +51,39 @@ namespace TrackingBle.Services
         public async Task<IEnumerable<VisitorBlacklistAreaDto>> GetAllVisitorBlacklistAreasAsync()
         {
             var blacklistAreas = await _context.VisitorBlacklistAreas
-                .Include(v => v.Floorplan)
+                .Include(v => v.FloorplanMaskedArea)
                 .Include(v => v.Visitor)
                 .ToListAsync();
             return _mapper.Map<IEnumerable<VisitorBlacklistAreaDto>>(blacklistAreas);
         }
 
-        public async Task UpdateVisitorBlacklistAreaAsync(Guid id, VisitorBlacklistAreaUpdateDto dto)
+        public async Task UpdateVisitorBlacklistAreaAsync(Guid id, VisitorBlacklistAreaUpdateDto updateDto)
         {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (updateDto == null) throw new ArgumentNullException(nameof(updateDto));
 
             var blacklistArea = await _context.VisitorBlacklistAreas.FindAsync(id);
             if (blacklistArea == null)
             {
                 throw new KeyNotFoundException($"VisitorBlacklistArea with ID {id} not found.");
             }
+                //validasi FloorplanMaskedArea
+                 if (blacklistArea.FloorplanMaskedAreaId != updateDto.FloorplanMaskedAreaId)
+            {
+                var floorplanmaskedarea = await _context.FloorplanMaskedAreas.FirstOrDefaultAsync(a => a.Id == updateDto.FloorplanMaskedAreaId);
+                    if (!await _context.FloorplanMaskedAreas.AnyAsync(f => f.Id == updateDto.FloorplanMaskedAreaId))
+                    throw new ArgumentException($"FloorplanMaskedArea with ID {updateDto.FloorplanMaskedAreaId} not found.");
+                blacklistArea.FloorplanMaskedAreaId = updateDto.FloorplanMaskedAreaId;
+            }
+                  // validasi visitor
+                if (blacklistArea.VisitorId != updateDto.VisitorId)
+            {
+                var visitor = await _context.Visitors.FirstOrDefaultAsync(a => a.Id == updateDto.VisitorId);
+                if (!await _context.Visitors.AnyAsync(v => v.Id == updateDto.VisitorId))
+                throw new ArgumentException($"Visitor with ID {updateDto.VisitorId} not found.");
+                blacklistArea.VisitorId = updateDto.VisitorId;
+            }
 
-            if (!await _context.FloorplanMaskedAreas.AnyAsync(f => f.Id == dto.FloorplanId))
-                throw new ArgumentException($"Floorplan with ID {dto.FloorplanId} not found.");
-            if (!await _context.Visitors.AnyAsync(v => v.Id == dto.VisitorId))
-                throw new ArgumentException($"Visitor with ID {dto.VisitorId} not found.");
-
-            _mapper.Map(dto, blacklistArea);
+            _mapper.Map(updateDto, blacklistArea);
             await _context.SaveChangesAsync();
         }
 

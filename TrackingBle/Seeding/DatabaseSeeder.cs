@@ -191,7 +191,7 @@ namespace TrackingBle.Seeding
             {
                 var areaFaker = new Faker<FloorplanMaskedArea>()
                     .RuleFor(a => a.Id, f => Guid.NewGuid())
-                    .RuleFor(a => a.FloorplanId, f => context.MstFloors.OrderBy(r => Guid.NewGuid()).First().Id.ToString())
+                    .RuleFor(a => a.FloorplanId, f => "Floor" + f.Random.Word())
                     .RuleFor(a => a.FloorId, f => context.MstFloors.OrderBy(r => Guid.NewGuid()).First().Id)
                     .RuleFor(a => a.Name, f => f.Address.City() + " Area")
                     .RuleFor(a => a.AreaShape, f => f.PickRandom("Rectangle", "Circle", "Polygon"))
@@ -346,7 +346,7 @@ namespace TrackingBle.Seeding
                     .RuleFor(t => t.TransTime, f => f.Date.Recent(1))
                     .RuleFor(t => t.ReaderId, f => context.MstBleReaders.OrderBy(r => Guid.NewGuid()).First().Id)
                     .RuleFor(t => t.CardId, f => f.Random.Long(1000, 9999))
-                    .RuleFor(t => t.FloorplanId, f => context.FloorplanMaskedAreas.OrderBy(r => Guid.NewGuid()).First().Id)
+                    .RuleFor(t => t.FloorplanMaskedAreaId, f => context.FloorplanMaskedAreas.OrderBy(r => Guid.NewGuid()).First().Id)
                     .RuleFor(t => t.CoordinateX, f => f.Random.Decimal(0, 100))
                     .RuleFor(t => t.CoordinateY, f => f.Random.Decimal(0, 100))
                     .RuleFor(t => t.CoordinatePxX, f => f.Random.Long(0, 1920))
@@ -364,7 +364,7 @@ namespace TrackingBle.Seeding
             {
                 var blacklistFaker = new Faker<VisitorBlacklistArea>()
                     .RuleFor(v => v.Id, f => Guid.NewGuid())
-                    .RuleFor(v => v.FloorplanId, f => context.FloorplanMaskedAreas.OrderBy(r => Guid.NewGuid()).First().Id)
+                    .RuleFor(v => v.FloorplanMaskedAreaId, f => context.FloorplanMaskedAreas.OrderBy(r => Guid.NewGuid()).First().Id)
                     .RuleFor(v => v.VisitorId, f => context.Visitors.OrderBy(r => Guid.NewGuid()).First().Id);
 
                 var blacklists = blacklistFaker.Generate(5);

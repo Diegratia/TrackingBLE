@@ -6,7 +6,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstMemberDto;
+using TrackingBle.Models.Dto.MstMemberDtos;
 
 namespace TrackingBle.Services
 {
@@ -26,26 +26,45 @@ namespace TrackingBle.Services
 
         public async Task<IEnumerable<MstMemberDto>> GetAllMembersAsync()
         {
-            var members = await _context.MstMembers.ToListAsync(); 
+            var members = await _context.MstMembers
+                .Include(m => m.Department)
+                .Include(m => m.District)
+                .Include(m => m.Organization)
+                .ToListAsync(); 
             return _mapper.Map<IEnumerable<MstMemberDto>>(members);
         }
 
         public async Task<MstMemberDto> GetMemberByIdAsync(Guid id)
         {
-            var member = await _context.MstMembers.FirstOrDefaultAsync(m => m.Id == id);
+            var member = await _context.MstMembers
+                .Include(m => m.Department)
+                .Include(m => m.District)
+                .Include(m => m.Organization)
+                .FirstOrDefaultAsync(m => m.Id == id);
             return _mapper.Map<MstMemberDto>(member);
         }
 
         public async Task<MstMemberDto> CreateMemberAsync(MstMemberCreateDto createDto)
         {
+            // validasi 
+            var department = await _context.MstDepartments.FirstOrDefaultAsync(a => a.Id == createDto.DepartmentId);
+            if (department == null)
+                throw new ArgumentException($"Department with ID {createDto.DepartmentId} not found.");
+             // validasi 
+            var organization = await _context.MstOrganizations.FirstOrDefaultAsync(a => a.Id == createDto.OrganizationId);
+            if (organization == null)
+                throw new ArgumentException($"Organization with ID {createDto.OrganizationId} not found.");
+             // validasi 
+            var district = await _context.MstDistricts.FirstOrDefaultAsync(a => a.Id == createDto.DistrictId);
+            if (district == null)
+                throw new ArgumentException($"District with ID {createDto.DistrictId} not found.");
+
             var member = _mapper.Map<MstMember>(createDto);
             if (createDto == null) throw new ArgumentNullException(nameof(createDto));
 
             if (createDto.FaceImage != null && createDto.FaceImage.Length > 0)
             {  
                try{
-
-
                 if(!_allowedImageTypes.Contains(createDto.FaceImage.ContentType))
                     throw new ArgumentException("Only image files (jpg, png, jpeg) are allowed.");
                 
@@ -98,6 +117,11 @@ namespace TrackingBle.Services
 
             _context.MstMembers.Add(member);
             await _context.SaveChangesAsync();
+            var savedMember = await _context.MstMembers
+                .Include(m => m.Department)
+                .Include(m => m.District)
+                .Include(m => m.Organization)
+                .FirstOrDefaultAsync(d => d.Id == member.Id);
             return _mapper.Map<MstMemberDto>(member);
         }
 
@@ -110,6 +134,31 @@ namespace TrackingBle.Services
             {
                 throw new KeyNotFoundException($"Member with ID {id} not found or has been deleted.");
             }
+            
+                // validasi Department
+                if (member.DepartmentId != updateDto.DepartmentId)
+            {
+                var department = await _context.MstDepartments.FirstOrDefaultAsync(a => a.Id == updateDto.DepartmentId);
+                if (department == null)
+                    throw new ArgumentException($"Department with ID {updateDto.DepartmentId} not found.");
+                member.DepartmentId = updateDto.DepartmentId;
+            }
+                  // validasi Organization
+                if (member.OrganizationId != updateDto.OrganizationId)
+            {
+                var organization = await _context.MstOrganizations.FirstOrDefaultAsync(a => a.Id == updateDto.OrganizationId);
+                if (organization == null)
+                    throw new ArgumentException($"Organization with ID {updateDto.OrganizationId} not found.");
+                member.OrganizationId = updateDto.OrganizationId;
+            }
+               // validasi District
+                if (member.DistrictId != updateDto.DistrictId)
+            {
+                var district = await _context.MstDistricts.FirstOrDefaultAsync(a => a.Id == updateDto.DistrictId);
+                if (district == null)
+                    throw new ArgumentException($"District with ID {updateDto.DistrictId} not found.");
+                member.DistrictId = updateDto.DistrictId;
+            }     
 
               if (updateDto.FaceImage != null && updateDto.FaceImage.Length > 0)
             {  
@@ -153,12 +202,13 @@ namespace TrackingBle.Services
                 member.FaceImage = null;
             }
 
-            _mapper.Map(updateDto, member);
+            
             member.UpdatedBy = ""; 
             member.UpdatedAt = DateTime.UtcNow;
 
             member.BirthDate = updateDto.BirthDate; 
 
+            _mapper.Map(updateDto, member);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstMemberDto>(member);
             

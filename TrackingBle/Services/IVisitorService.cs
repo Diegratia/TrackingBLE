@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.VisitorDto;
+using TrackingBle.Models.Dto.VisitorDtos;
 
 namespace TrackingBle.Services
 {

@@ -355,12 +355,12 @@ namespace TrackingBle.Data
             modelBuilder.Entity<VisitorBlacklistArea>(entity =>
             {
                 entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
-                entity.Property(e => e.FloorplanId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.FloorplanMaskedAreaId).HasMaxLength(36).IsRequired();
                 entity.Property(e => e.VisitorId).HasMaxLength(36).IsRequired();
 
-                entity.HasOne(v => v.Floorplan)
+                entity.HasOne(v => v.FloorplanMaskedArea)
                     .WithMany()
-                    .HasForeignKey(v => v.FloorplanId)
+                    .HasForeignKey(v => v.FloorplanMaskedAreaId)
                     .OnDelete(DeleteBehavior.NoAction);
 
                 entity.HasOne(v => v.Visitor)
@@ -391,7 +391,7 @@ namespace TrackingBle.Data
             {
                 entity.Property(e => e.Id).HasMaxLength(36).IsRequired();
                 entity.Property(e => e.ReaderId).HasMaxLength(36).IsRequired();
-                entity.Property(e => e.FloorplanId).HasMaxLength(36).IsRequired();
+                entity.Property(e => e.FloorplanMaskedAreaId).HasMaxLength(36).IsRequired();
                 entity.Property(e => e.AlarmStatus)
                     .HasColumnType("nvarchar(255)")
                     .IsRequired()
@@ -405,9 +405,9 @@ namespace TrackingBle.Data
                     .HasForeignKey(t => t.ReaderId)
                     .OnDelete(DeleteBehavior.NoAction);
 
-                entity.HasOne(t => t.Floorplan)
+                entity.HasOne(t => t.FloorplanMaskedArea)
                     .WithMany()
-                    .HasForeignKey(t => t.FloorplanId)
+                    .HasForeignKey(t => t.FloorplanMaskedAreaId)
                     .OnDelete(DeleteBehavior.NoAction);
             });
         }

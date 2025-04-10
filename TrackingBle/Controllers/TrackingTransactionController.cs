@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.TrackingTransactionDto;
+using TrackingBle.Models.Dto.TrackingTransactionDtos;
 using TrackingBle.Services;
 using Microsoft.AspNetCore.Mvc;
 

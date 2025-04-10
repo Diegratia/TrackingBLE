@@ -1,5 +1,5 @@
 using AutoMapper;
-using TrackingBle.Models.Dto.MstAccessControlDto;
+using TrackingBle.Models.Dto.MstAccessControlDtos;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.MappingProfiles

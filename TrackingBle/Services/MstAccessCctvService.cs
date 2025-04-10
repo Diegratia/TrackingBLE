@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstAccessCctvDto;
+using TrackingBle.Models.Dto.MstAccessCctvDtos;
 
 namespace TrackingBle.Services
 {
@@ -42,6 +42,9 @@ namespace TrackingBle.Services
              accessCctv.UpdatedBy = "";
 
             _context.MstAccessCctvs.Add(accessCctv);
+
+            // notes untuk nanti, jika ingin memisahkan service dan repository, bisa memisahkan proses logika bisnis
+            // dengan service, dan proses database dengan repository, contohnya pada _context
             await _context.SaveChangesAsync();
             return _mapper.Map<MstAccessCctvDto>(accessCctv);
         }
@@ -55,7 +58,7 @@ namespace TrackingBle.Services
             accessCctv.UpdatedBy = "";
             
             _mapper.Map(updateDto, accessCctv);
-            _context.MstAccessCctvs.Update(accessCctv);
+            // _context.MstAccessCctvs.Update(accessCctv);
             await _context.SaveChangesAsync();
         }
 

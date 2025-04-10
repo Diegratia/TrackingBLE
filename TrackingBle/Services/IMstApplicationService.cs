@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using TrackingBle.Models.Dto.MstApplicationDto;
+using TrackingBle.Models.Dto.MstApplicationDtos;
 
 namespace TrackingBle.Services
 {

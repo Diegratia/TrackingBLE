@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
-using TrackingBle.Models.Dto.MstBrandDto;
+using TrackingBle.Models.Dto.MstBrandDtos;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.Services
@@ -50,9 +50,12 @@ namespace TrackingBle.Services
             if (brand == null)
                 throw new KeyNotFoundException("Brand not found");
 
+            Console.WriteLine($"Generate before update: {brand.Generate}");
             _mapper.Map(updateDto, brand);
-            _context.MstBrands.Update(brand);
+            Console.WriteLine($"Generate after update: {brand.Generate}");
+            // _context.MstBrands.Update(brand);
             await _context.SaveChangesAsync();
+
         }
 
         public async Task DeleteAsync(Guid id)

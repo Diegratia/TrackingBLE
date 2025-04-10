@@ -1,5 +1,5 @@
 using AutoMapper;
-using TrackingBle.Models.Dto.MstBrandDto;
+using TrackingBle.Models.Dto.MstBrandDtos;
 using TrackingBle.Models.Domain;
 
 namespace TrackingBle.MappingProfiles
@@ -16,6 +16,7 @@ namespace TrackingBle.MappingProfiles
             CreateMap<MstBrandUpdateDto, MstBrand>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore());
+                 
         }
     }
 }

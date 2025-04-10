@@ -1,6 +1,9 @@
 using AutoMapper;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstMemberDto;
+using TrackingBle.Models.Dto.MstMemberDtos;
+using TrackingBle.Models.Dto.MstOrganizationDtos;
+using TrackingBle.Models.Dto.MstDepartmentDtos;
+using TrackingBle.Models.Dto.MstDistrictDtos;
 
 namespace TrackingBle.MappingProfiles
 {
@@ -32,6 +35,10 @@ namespace TrackingBle.MappingProfiles
                 .ForMember(dest => dest.FaceImage, opt => opt.Ignore()) // Ditangani manual
                 .ForMember(dest => dest.UploadFr, opt => opt.Ignore())
                 .ForMember(dest => dest.UploadFrError, opt => opt.Ignore());
+            CreateMap<MstMemberDto, MstMember>();
+            CreateMap<MstOrganization, MstOrganizationDto>();
+            CreateMap<MstDistrict, MstDistrictDto>();
+            CreateMap<MstDepartment, MstDepartmentDto>();
         }
     }
 }

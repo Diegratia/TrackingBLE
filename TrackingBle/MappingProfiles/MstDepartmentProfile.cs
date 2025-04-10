@@ -1,6 +1,7 @@
 using AutoMapper;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstDepartmentDto;
+using TrackingBle.Models.Dto.MstDepartmentDtos;
+using TrackingBle.Models.Dto.MstApplicationDtos;
 
 namespace TrackingBle.MappingProfiles
 {
@@ -10,6 +11,7 @@ namespace TrackingBle.MappingProfiles
         {
             CreateMap<MstDepartment, MstDepartmentDto>()
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
+                // .ForMember(dest => dest.Application, opt => opt.MapFrom(src => src.Application));
             CreateMap<MstDepartmentCreateDto, MstDepartment>()
                 .ForMember(dest => dest.Id, opt => opt.Ignore())
                 .ForMember(dest => dest.Generate, opt => opt.Ignore())
@@ -21,6 +23,7 @@ namespace TrackingBle.MappingProfiles
                 .ForMember(dest => dest.CreatedBy, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedAt, opt => opt.Ignore())
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => DateTime.UtcNow));
+            // CreateMap<MstApplication, MstApplicationDto>();
         }
     }
 }

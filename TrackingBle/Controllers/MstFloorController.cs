@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstFloorDto;
+using TrackingBle.Models.Dto.MstFloorDtos;
 using TrackingBle.Services;
 using System.Linq;
 

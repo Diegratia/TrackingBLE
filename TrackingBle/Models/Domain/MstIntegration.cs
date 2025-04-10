@@ -66,6 +66,8 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int? Status { get; set; } = 1;
 
+        //relasi dari mstIntegration terhadap domain dibawah ini
+        //relasi one to .. terhadap domain dibawah ini
         public virtual MstBrand Brand { get; set; }
 
         public virtual MstApplication Application { get; set; }

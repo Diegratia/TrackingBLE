@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.MstFloorDto;
+using TrackingBle.Models.Dto.MstFloorDtos;
 
 namespace TrackingBle.Services
 {
@@ -121,7 +121,7 @@ namespace TrackingBle.Services
             _mapper.Map(updateDto, floor);
            
 
-            _context.MstFloors.Update(floor);
+            // _context.MstFloors.Update(floor);
             await _context.SaveChangesAsync();
             return _mapper.Map<MstFloorDto>(floor);
         }

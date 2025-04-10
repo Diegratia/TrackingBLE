@@ -7,9 +7,13 @@ using TrackingBle.Data;
 using TrackingBle.MappingProfiles;
 using TrackingBle.Services;
 using TrackingBle.Seeding;
+using Microsoft.Extensions.FileProviders;
+using DotNetEnv;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+Env.Load();
 
 builder.Services.AddCors(options =>
 {
@@ -117,7 +121,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<TrackingBleDbContext>();
     context.Database.Migrate();
-    // DatabaseSeeder.Seed(context);
+    DatabaseSeeder.Seed(context);
 }
 
 if (app.Environment.IsDevelopment())
@@ -130,7 +134,11 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseStaticFiles(); 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+    RequestPath = "/Uploads"
+});
 app.UseCors("AllowAll");
 
 app.UseRouting();

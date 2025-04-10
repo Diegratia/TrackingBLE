@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using TrackingBle.Models.Dto.MstIntegrationDto; // Assuming this namespace
+using TrackingBle.Models.Dto.MstIntegrationDtos; // Assuming this namespace
 using TrackingBle.Services;
 using System.Linq;
 

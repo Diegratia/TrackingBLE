@@ -76,6 +76,8 @@ namespace TrackingBle.Models.Domain
         public int? ApplicationStatus { get; set; } = 1;
 
        
+       //relasi antar domain table database
+       //mstapplication many to ... terhadap table dibawah ini
         public virtual ICollection<MstIntegration> Integrations { get; set; } = new List<MstIntegration>();
         public virtual ICollection<MstAccessCctv> AccessCctvs { get; set; } = new List<MstAccessCctv>();
         public virtual ICollection<MstAccessControl> AccessControls { get; set; } = new List<MstAccessControl>();

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TrackingBle.Data;
 using TrackingBle.Models.Domain;
-using TrackingBle.Models.Dto.VisitorDto;
+using TrackingBle.Models.Dto.VisitorDtos;
 
 namespace TrackingBle.Services
 {
@@ -38,6 +38,7 @@ namespace TrackingBle.Services
             if (createDto.FaceImage != null && createDto.FaceImage.Length > 0)
                 {  
                 try{
+                    // extensi file yang diterima
                     if(!_allowedImageTypes.Contains(createDto.FaceImage.ContentType))
                         throw new ArgumentException("Only image files (jpg, png, jpeg) are allowed.");
                     

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TrackingBle")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9393ff00623811f0aad2d9b483d4a3a981df0f99")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+68f9d22a3732bce976a2ab0a5506f17061df06f0")]
 [assembly: System.Reflection.AssemblyProductAttribute("TrackingBle")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TrackingBle")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

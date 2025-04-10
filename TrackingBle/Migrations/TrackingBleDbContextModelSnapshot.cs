@@ -1505,6 +1505,136 @@ namespace TrackingBle.Migrations
                     b.ToTable("tracking_transaction", (string)null);
                 });
 
+            modelBuilder.Entity("TrackingBle.Models.Domain.User", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(255)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("email");
+
+                    b.Property<DateTime>("EmailConfirmationAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("email_confirmation_at");
+
+                    b.Property<string>("EmailConfirmationCode")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("email_confirmation_code");
+
+                    b.Property<DateTime>("EmailConfirmationExpiredAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("email_confirmation_expired_at");
+
+                    b.Property<long>("Generate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("_generate");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("group_id");
+
+                    b.Property<int>("IsCreatedPassword")
+                        .HasColumnType("int")
+                        .HasColumnName("is_created_password");
+
+                    b.Property<int>("IsEmailConfirmation")
+                        .HasColumnType("int")
+                        .HasColumnName("is_email_confirmation");
+
+                    b.Property<DateTime>("LastLoginAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("last_login_at");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("password");
+
+                    b.Property<int>("StatusActive")
+                        .HasColumnType("int")
+                        .HasColumnName("status_active");
+
+                    b.Property<Guid?>("UserGroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("username");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GroupId");
+
+                    b.HasIndex("UserGroupId");
+
+                    b.ToTable("user", (string)null);
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.UserGroup", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("application_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("created_by");
+
+                    b.Property<int>("LevelPriority")
+                        .HasColumnType("int")
+                        .HasColumnName("level_priority");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("Status")
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.ToTable("user_group", (string)null);
+                });
+
             modelBuilder.Entity("TrackingBle.Models.Domain.Visitor", b =>
                 {
                     b.Property<Guid>("Id")
@@ -2119,6 +2249,32 @@ namespace TrackingBle.Migrations
                     b.Navigation("Reader");
                 });
 
+            modelBuilder.Entity("TrackingBle.Models.Domain.User", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.UserGroup", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.UserGroup", null)
+                        .WithMany("Users")
+                        .HasForeignKey("UserGroupId");
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.UserGroup", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", "Application")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Application");
+                });
+
             modelBuilder.Entity("TrackingBle.Models.Domain.Visitor", b =>
                 {
                     b.HasOne("TrackingBle.Models.Domain.MstApplication", "Application")
@@ -2264,6 +2420,11 @@ namespace TrackingBle.Migrations
             modelBuilder.Entity("TrackingBle.Models.Domain.MstOrganization", b =>
                 {
                     b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.UserGroup", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.Visitor", b =>

@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  floorplan-masked-area:
+    build:
+      context: ./src/4.FloorplanMaskedArea
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - Ports__FloorplanMaskedAreaService=5000
+      - ServiceUrls__MstFloorService=http://mst-floor:5013
+      - ServiceUrls__MstFloorplanService=http://mst-floorplan:5014
+      - ConnectionStrings__TrackingBleDbConnection=Server=sqlserver,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True;
+    depends_on:
+      - mst-floor
+      - mst-floorplan
+      - sqlserver
+
+  mst-floor:
+    build:
+      context: ./src/13.MstFloor
+      dockerfile: Dockerfile
+    ports:
+      - "5013:5013"
+    environment:
+      - Ports__MstFloorService=5013
+      - ConnectionStrings__TrackingBleDbConnection=Server=sqlserver,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True;
+    volumes:
+      - ./Uploads/FloorImages:/app/Uploads/FloorImages
+    depends_on:
+      - sqlserver
+
+  mst-floorplan:
+    build:
+      context: ./src/14.MstFloorplan
+      dockerfile: Dockerfile
+    ports:
+      - "5014:5014"
+    environment:
+      - Ports__MstFloorplanService=5014
+      - ServiceUrls__MstFloorService=http://mst-floor:5013
+      - ConnectionStrings__TrackingBleDbConnection=Server=sqlserver,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True;
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Password_123#
+    ports:
+      - "1433:1433"

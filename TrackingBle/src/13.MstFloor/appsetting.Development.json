@@ -1,0 +1,15 @@
+{
+  "ConnectionStrings": {
+    "TrackingBleDbConnection": "Server=localhost,1433;Database=TrackingBleDevV3;User Id=sa;Password=Password_123#;TrustServerCertificate=True;"
+  },
+  "Ports": {
+    "MstFloorService": "5013"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft": "Warning",
+      "Microsoft.Hosting.Lifetime": "Information"
+    }
+  }
+}

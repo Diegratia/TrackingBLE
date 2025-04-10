@@ -1,0 +1,9 @@
+{
+  "ConnectionStrings": {
+    "TrackingBleDbConnection": "Server=trackingble_db_1;Database=TrackingBleDb;User Id=sa;Password=Password_123#;TrustServerCertificate=True;"
+  },
+  "ServiceUrls": {
+    "MstFloorService": "http://mstfloor:5013",
+    "MstFloorplanService": "http://mstfloorplan:5014"
+  }
+}

@@ -77,4 +77,43 @@ namespace TrackingBle.Models.Domain
         NonActive,
         Active
     }
+
+        public enum DeviceType
+    {
+        Cctv,
+        AccessDoor,
+        BleReader
+    }
+
+    public enum DeviceStatus
+    {
+        Active,
+        NonActive,
+        Damaged,
+        Close,
+        Open,
+        Monitor,
+        Alarm
+    }
+
+    public enum ActionStatus
+    {
+        Idle,
+        Done,
+        Cancel,
+        Need,
+        Waiting,
+        Investigated,
+        DoneInvestigated,
+        PostponeInvestigated
+    }
+
+        public enum AlarmRecordStatus
+    {
+        Block,
+        Help,
+        WrongZone,
+        Expired,
+        Lost
+    }
 }

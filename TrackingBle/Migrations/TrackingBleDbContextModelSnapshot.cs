@@ -22,6 +22,297 @@ namespace TrackingBle.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("TrackingBle.Models.Domain.AlarmRecordTracking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("action");
+
+                    b.Property<string>("Alarm")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("alarm_record_status");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("application_id");
+
+                    b.Property<string>("CancelBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("cancel_by");
+
+                    b.Property<DateTime>("CancelTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("cancel_timestamp");
+
+                    b.Property<string>("DoneBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("done_by");
+
+                    b.Property<DateTime>("DoneTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("done_timestamp");
+
+                    b.Property<Guid>("FloorplanMaskedAreaId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("floorplan_masked_area_id");
+
+                    b.Property<Guid?>("FloorplanMaskedAreaId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("Generate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("_generate");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
+
+                    b.Property<string>("IdleBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("idle_by");
+
+                    b.Property<DateTime>("IdleTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("idle_timestamp");
+
+                    b.Property<string>("InvestigatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("investigated_by");
+
+                    b.Property<DateTime>("InvestigatedDoneAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("investigated_done_at");
+
+                    b.Property<string>("InvestigatedResult")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("investigated_result");
+
+                    b.Property<DateTime>("InvestigatedTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("investigated_timestamp");
+
+                    b.Property<Guid?>("MstBleReaderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ReaderId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ble_reader_id");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("timestamp");
+
+                    b.Property<Guid>("VisitorId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("visitor");
+
+                    b.Property<Guid?>("VisitorId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("WaitingBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("waiting_by");
+
+                    b.Property<DateTime>("WaitingTimestamp")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("waiting_timestamp");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId")
+                        .IsUnique();
+
+                    b.HasIndex("FloorplanMaskedAreaId")
+                        .IsUnique();
+
+                    b.HasIndex("FloorplanMaskedAreaId1");
+
+                    b.HasIndex("Generate")
+                        .IsUnique()
+                        .HasDatabaseName("alarm_record_tracking__generate_unique");
+
+                    b.HasIndex("MstBleReaderId");
+
+                    b.HasIndex("ReaderId")
+                        .IsUnique();
+
+                    b.HasIndex("VisitorId")
+                        .IsUnique();
+
+                    b.HasIndex("VisitorId1");
+
+                    b.ToTable("alarm_record_tracking", (string)null);
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanDevice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("AccessCctvId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("access_cctv_id");
+
+                    b.Property<Guid>("AccessControlId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("access_control_id");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("application_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("created_by");
+
+                    b.Property<string>("DeviceStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("device_status");
+
+                    b.Property<Guid>("FloorplanId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("floorplan_id");
+
+                    b.Property<Guid>("FloorplanMaskedAreaId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("floorplan_masked_area_id");
+
+                    b.Property<Guid?>("FloorplanMaskedAreaId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("Generate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("_generate");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
+
+                    b.Property<Guid?>("MstAccessCctvId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MstAccessControlId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MstApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MstBleReaderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<long>("PosPxX")
+                        .HasColumnType("bigint")
+                        .HasColumnName("pos_px_x");
+
+                    b.Property<long>("PosPxY")
+                        .HasColumnType("bigint")
+                        .HasColumnName("pos_px_y");
+
+                    b.Property<decimal>("PosX")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("pos_x");
+
+                    b.Property<decimal>("PosY")
+                        .HasColumnType("decimal(18,2)")
+                        .HasColumnName("pos_y");
+
+                    b.Property<Guid>("ReaderId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("ble_reader_id");
+
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .HasColumnType("int")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccessCctvId");
+
+                    b.HasIndex("AccessControlId");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("FloorplanId");
+
+                    b.HasIndex("FloorplanMaskedAreaId");
+
+                    b.HasIndex("FloorplanMaskedAreaId1");
+
+                    b.HasIndex("Generate")
+                        .IsUnique();
+
+                    b.HasIndex("MstAccessCctvId");
+
+                    b.HasIndex("MstAccessControlId");
+
+                    b.HasIndex("MstApplicationId");
+
+                    b.HasIndex("MstBleReaderId");
+
+                    b.HasIndex("ReaderId");
+
+                    b.ToTable("floorplan_device", (string)null);
+                });
+
             modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanMaskedArea", b =>
                 {
                     b.Property<Guid>("Id")
@@ -55,9 +346,8 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("FloorplanId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<Guid>("FloorplanId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Generate")
                         .ValueGeneratedOnAdd()
@@ -103,6 +393,8 @@ namespace TrackingBle.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("FloorId");
+
+                    b.HasIndex("FloorplanId");
 
                     b.HasIndex("MstFloorId");
 
@@ -474,6 +766,83 @@ namespace TrackingBle.Migrations
                     b.ToTable("mst_brand", (string)null);
                 });
 
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstBuilding", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("application_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("created_by");
+
+                    b.Property<long>("Generate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("_generate");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("image");
+
+                    b.Property<Guid?>("MstApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MstBuildingId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("Generate")
+                        .IsUnique();
+
+                    b.HasIndex("MstApplicationId");
+
+                    b.HasIndex("MstBuildingId");
+
+                    b.ToTable("mst_building", (string)null);
+                });
+
             modelBuilder.Entity("TrackingBle.Models.Domain.MstDepartment", b =>
                 {
                     b.Property<Guid>("Id")
@@ -613,10 +982,9 @@ namespace TrackingBle.Migrations
                         .HasMaxLength(36)
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("BuildingId")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                    b.Property<Guid>("BuildingId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -674,7 +1042,89 @@ namespace TrackingBle.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BuildingId");
+
                     b.ToTable("mst_floor", (string)null);
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstFloorplan", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ApplicationId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("application_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("created_by");
+
+                    b.Property<Guid>("FloorId")
+                        .HasMaxLength(36)
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("floor_id");
+
+                    b.Property<long>("Generate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint")
+                        .HasColumnName("_generate");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Generate"));
+
+                    b.Property<Guid?>("MstApplicationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("MstFloorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<int?>("Status")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("status");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("UpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("updated_by");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationId");
+
+                    b.HasIndex("FloorId");
+
+                    b.HasIndex("Generate")
+                        .IsUnique();
+
+                    b.HasIndex("MstApplicationId");
+
+                    b.HasIndex("MstFloorId");
+
+                    b.ToTable("mst_floorplan", (string)null);
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstIntegration", b =>
@@ -1256,6 +1706,124 @@ namespace TrackingBle.Migrations
                     b.ToTable("visitor_blacklist_area", (string)null);
                 });
 
+            modelBuilder.Entity("TrackingBle.Models.Domain.AlarmRecordTracking", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", "Application")
+                        .WithOne("AlarmRecordTracking")
+                        .HasForeignKey("TrackingBle.Models.Domain.AlarmRecordTracking", "ApplicationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "FloorplanMaskedArea")
+                        .WithOne("AlarmRecordTracking")
+                        .HasForeignKey("TrackingBle.Models.Domain.AlarmRecordTracking", "FloorplanMaskedAreaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", null)
+                        .WithMany("AlarmRecordTrackings")
+                        .HasForeignKey("FloorplanMaskedAreaId1");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstBleReader", null)
+                        .WithMany("AlarmRecordTrackings")
+                        .HasForeignKey("MstBleReaderId");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstBleReader", "Reader")
+                        .WithOne("AlarmRecordTracking")
+                        .HasForeignKey("TrackingBle.Models.Domain.AlarmRecordTracking", "ReaderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.Visitor", "Visitor")
+                        .WithOne("AlarmRecordTracking")
+                        .HasForeignKey("TrackingBle.Models.Domain.AlarmRecordTracking", "VisitorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.Visitor", null)
+                        .WithMany("AlarmRecordTrackings")
+                        .HasForeignKey("VisitorId1");
+
+                    b.Navigation("Application");
+
+                    b.Navigation("FloorplanMaskedArea");
+
+                    b.Navigation("Reader");
+
+                    b.Navigation("Visitor");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanDevice", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.MstAccessCctv", "AccessCctv")
+                        .WithMany()
+                        .HasForeignKey("AccessCctvId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.MstAccessControl", "AccessControl")
+                        .WithMany()
+                        .HasForeignKey("AccessControlId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", "Application")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.MstFloorplan", "Floorplan")
+                        .WithMany("FloorplanDevices")
+                        .HasForeignKey("FloorplanId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", "FloorplanMaskedArea")
+                        .WithMany()
+                        .HasForeignKey("FloorplanMaskedAreaId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.FloorplanMaskedArea", null)
+                        .WithMany("FloorplanDevices")
+                        .HasForeignKey("FloorplanMaskedAreaId1");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstAccessCctv", null)
+                        .WithMany("FloorplanDevices")
+                        .HasForeignKey("MstAccessCctvId");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstAccessControl", null)
+                        .WithMany("FloorplanDevices")
+                        .HasForeignKey("MstAccessControlId");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", null)
+                        .WithMany("FloorplanDevices")
+                        .HasForeignKey("MstApplicationId");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstBleReader", null)
+                        .WithMany("FloorplanDevices")
+                        .HasForeignKey("MstBleReaderId");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstBleReader", "Reader")
+                        .WithMany()
+                        .HasForeignKey("ReaderId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AccessCctv");
+
+                    b.Navigation("AccessControl");
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Floorplan");
+
+                    b.Navigation("FloorplanMaskedArea");
+
+                    b.Navigation("Reader");
+                });
+
             modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanMaskedArea", b =>
                 {
                     b.HasOne("TrackingBle.Models.Domain.MstFloor", "Floor")
@@ -1264,11 +1832,19 @@ namespace TrackingBle.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
+                    b.HasOne("TrackingBle.Models.Domain.MstFloorplan", "Floorplan")
+                        .WithMany("FloorplanMaskedAreas")
+                        .HasForeignKey("FloorplanId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("TrackingBle.Models.Domain.MstFloor", null)
-                        .WithMany("FloorplanMaskedArea")
+                        .WithMany("FloorplanMaskedAreas")
                         .HasForeignKey("MstFloorId");
 
                     b.Navigation("Floor");
+
+                    b.Navigation("Floorplan");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstAccessCctv", b =>
@@ -1340,6 +1916,25 @@ namespace TrackingBle.Migrations
                     b.Navigation("Brand");
                 });
 
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstBuilding", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", "Application")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", null)
+                        .WithMany("Buildings")
+                        .HasForeignKey("MstApplicationId");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstBuilding", null)
+                        .WithMany("Buildings")
+                        .HasForeignKey("MstBuildingId");
+
+                    b.Navigation("Application");
+                });
+
             modelBuilder.Entity("TrackingBle.Models.Domain.MstDepartment", b =>
                 {
                     b.HasOne("TrackingBle.Models.Domain.MstApplication", "Application")
@@ -1368,6 +1963,44 @@ namespace TrackingBle.Migrations
                         .HasForeignKey("MstApplicationId");
 
                     b.Navigation("Application");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstFloor", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.MstBuilding", "Building")
+                        .WithMany()
+                        .HasForeignKey("BuildingId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Building");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstFloorplan", b =>
+                {
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", "Application")
+                        .WithMany()
+                        .HasForeignKey("ApplicationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.MstFloor", "Floor")
+                        .WithMany()
+                        .HasForeignKey("FloorId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("TrackingBle.Models.Domain.MstApplication", null)
+                        .WithMany("Floorplans")
+                        .HasForeignKey("MstApplicationId");
+
+                    b.HasOne("TrackingBle.Models.Domain.MstFloor", null)
+                        .WithMany("Floorplans")
+                        .HasForeignKey("MstFloorId");
+
+                    b.Navigation("Application");
+
+                    b.Navigation("Floor");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstIntegration", b =>
@@ -1530,9 +2163,26 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.FloorplanMaskedArea", b =>
                 {
+                    b.Navigation("AlarmRecordTracking")
+                        .IsRequired();
+
+                    b.Navigation("AlarmRecordTrackings");
+
                     b.Navigation("BlacklistAreas");
 
+                    b.Navigation("FloorplanDevices");
+
                     b.Navigation("TrackingTransactions");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstAccessCctv", b =>
+                {
+                    b.Navigation("FloorplanDevices");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstAccessControl", b =>
+                {
+                    b.Navigation("FloorplanDevices");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstApplication", b =>
@@ -1541,9 +2191,18 @@ namespace TrackingBle.Migrations
 
                     b.Navigation("AccessControls");
 
+                    b.Navigation("AlarmRecordTracking")
+                        .IsRequired();
+
+                    b.Navigation("Buildings");
+
                     b.Navigation("Departments");
 
                     b.Navigation("Districts");
+
+                    b.Navigation("FloorplanDevices");
+
+                    b.Navigation("Floorplans");
 
                     b.Navigation("Integrations");
 
@@ -1556,6 +2215,13 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstBleReader", b =>
                 {
+                    b.Navigation("AlarmRecordTracking")
+                        .IsRequired();
+
+                    b.Navigation("AlarmRecordTrackings");
+
+                    b.Navigation("FloorplanDevices");
+
                     b.Navigation("TrackingTransactions");
                 });
 
@@ -1564,6 +2230,11 @@ namespace TrackingBle.Migrations
                     b.Navigation("BleReaders");
 
                     b.Navigation("Integrations");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstBuilding", b =>
+                {
+                    b.Navigation("Buildings");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstDepartment", b =>
@@ -1578,7 +2249,16 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstFloor", b =>
                 {
-                    b.Navigation("FloorplanMaskedArea");
+                    b.Navigation("FloorplanMaskedAreas");
+
+                    b.Navigation("Floorplans");
+                });
+
+            modelBuilder.Entity("TrackingBle.Models.Domain.MstFloorplan", b =>
+                {
+                    b.Navigation("FloorplanDevices");
+
+                    b.Navigation("FloorplanMaskedAreas");
                 });
 
             modelBuilder.Entity("TrackingBle.Models.Domain.MstOrganization", b =>
@@ -1588,6 +2268,11 @@ namespace TrackingBle.Migrations
 
             modelBuilder.Entity("TrackingBle.Models.Domain.Visitor", b =>
                 {
+                    b.Navigation("AlarmRecordTracking")
+                        .IsRequired();
+
+                    b.Navigation("AlarmRecordTrackings");
+
                     b.Navigation("BlacklistAreas");
                 });
 #pragma warning restore 612, 618

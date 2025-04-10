@@ -49,5 +49,6 @@ namespace TrackingBle.Models.Domain
         public virtual MstIntegration Integration { get; set; }
 
         public virtual MstApplication Application { get; set; }
+        public virtual ICollection<FloorplanDevice> FloorplanDevices { get; set; } = new List<FloorplanDevice>();
     }
 }

@@ -78,6 +78,8 @@ namespace TrackingBle.Models.Domain
        
        //relasi antar domain table database
        //mstapplication many to ... terhadap table dibawah ini
+
+        public virtual AlarmRecordTracking AlarmRecordTracking { get; set; }
         public virtual ICollection<MstIntegration> Integrations { get; set; } = new List<MstIntegration>();
         public virtual ICollection<MstAccessCctv> AccessCctvs { get; set; } = new List<MstAccessCctv>();
         public virtual ICollection<MstAccessControl> AccessControls { get; set; } = new List<MstAccessControl>();
@@ -85,7 +87,9 @@ namespace TrackingBle.Models.Domain
         public virtual ICollection<MstDistrict> Districts { get; set; } = new List<MstDistrict>();
         public virtual ICollection<MstOrganization> Organizations { get; set; } = new List<MstOrganization>();
         public virtual ICollection<MstMember> Members { get; set; } = new List<MstMember>();
-        public virtual ICollection<Visitor> Visitors { get; set; } = new List<Visitor>();
+        public virtual ICollection<Visitor> Visitors { get; set; } = new List<Visitor>();        public virtual ICollection<MstBuilding> Buildings { get; set; } = new List<MstBuilding>();
+        public virtual ICollection<MstFloorplan> Floorplans { get; set; } = new List<MstFloorplan>();
+        public virtual ICollection<FloorplanDevice> FloorplanDevices { get; set; } = new List<FloorplanDevice>();
 
     
     }

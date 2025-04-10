@@ -55,7 +55,7 @@ namespace TrackingBle.Models.Domain
         public DateTime CreatedAt { get; set; }
 
         [Required]
-        public String UpdatedBy { get; set; }
+        public string UpdatedBy { get; set; }
 
         [Required]
         public DateTime UpdatedAt { get; set; }
@@ -66,5 +66,6 @@ namespace TrackingBle.Models.Domain
         public virtual MstApplication Application { get; set; }
         public virtual MstBrand Brand { get; set; }
         public virtual MstIntegration Integration { get; set; }
+        public virtual ICollection<FloorplanDevice> FloorplanDevices { get; set; } = new List<FloorplanDevice>();
     }
 }

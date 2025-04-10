@@ -64,7 +64,10 @@ namespace TrackingBle.Models.Domain
         public int? Status { get; set; } = 1;
 
         public virtual MstBrand Brand { get; set; }
+        public virtual AlarmRecordTracking AlarmRecordTracking { get; set; }
 
         public virtual ICollection<TrackingTransaction> TrackingTransactions { get; set; } = new List<TrackingTransaction>();
+        public virtual ICollection<AlarmRecordTracking> AlarmRecordTrackings { get; set; } = new List<AlarmRecordTracking>();
+        public virtual ICollection<FloorplanDevice> FloorplanDevices { get; set; } = new List<FloorplanDevice>();
     }
 }

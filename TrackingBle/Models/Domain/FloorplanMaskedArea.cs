@@ -15,7 +15,8 @@ namespace TrackingBle.Models.Domain
         public Guid Id { get; set; } = Guid.NewGuid();
 
         [Required]
-        public string FloorplanId { get; set; }
+        [ForeignKey("Floorplan")]
+        public Guid FloorplanId { get; set; }
 
         [Required]
         [ForeignKey("Floor")]
@@ -65,9 +66,13 @@ namespace TrackingBle.Models.Domain
         [Required]
         public int? Status { get; set; } = 1;
 
-        public virtual MstFloor Floor { get; set; }
 
+        public virtual AlarmRecordTracking AlarmRecordTracking { get; set; }
+        public virtual MstFloor Floor { get; set; }
+        public virtual MstFloorplan Floorplan { get; set; }
         public virtual ICollection<VisitorBlacklistArea> BlacklistAreas { get; set; } = new List<VisitorBlacklistArea>();
         public virtual ICollection<TrackingTransaction> TrackingTransactions { get; set; } = new List<TrackingTransaction>();
+        public virtual ICollection<AlarmRecordTracking> AlarmRecordTrackings { get; set; } = new List<AlarmRecordTracking>();
+        public virtual ICollection<FloorplanDevice> FloorplanDevices { get; set; } = new List<FloorplanDevice>();
     }
 }

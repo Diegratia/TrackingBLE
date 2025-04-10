@@ -9,6 +9,7 @@ using TrackingBle.Services;
 using TrackingBle.Seeding;
 using Microsoft.Extensions.FileProviders;
 using DotNetEnv;
+using TrackingBle.Services.Interfaces;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,7 +43,10 @@ builder.Services.AddAutoMapper(typeof(MstMemberProfile));
 builder.Services.AddAutoMapper(typeof(MstOrganizationProfile));
 builder.Services.AddAutoMapper(typeof(TrackingTransactionProfile));
 builder.Services.AddAutoMapper(typeof(VisitorBlacklistAreaProfile));
-builder.Services.AddAutoMapper(typeof(VisitorProfile));
+builder.Services.AddAutoMapper(typeof(AlarmRecordTrackingProfile));
+builder.Services.AddAutoMapper(typeof(FloorplanDeviceProfile));
+builder.Services.AddAutoMapper(typeof(MstBuildingProfile));
+builder.Services.AddAutoMapper(typeof(MstFloorplanProfile));
 
 builder.Services.AddControllers();
 
@@ -115,6 +119,10 @@ builder.Services.AddScoped<IMstOrganizationService, MstOrganizationService>();
 builder.Services.AddScoped<ITrackingTransactionService, TrackingTransactionService>();
 builder.Services.AddScoped<IVisitorBlacklistAreaService, VisitorBlacklistAreaService>();
 builder.Services.AddScoped<IVisitorService, VisitorService>();
+builder.Services.AddScoped<IAlarmRecordTrackingService, AlarmRecordTrackingService>();
+builder.Services.AddScoped<IFloorplanDeviceService, FloorplanDeviceService>();
+builder.Services.AddScoped<IAlarmRecordTrackingService, AlarmRecordTrackingService>();
+builder.Services.AddScoped<IMstBuildingService, MstBuildingService>();
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
